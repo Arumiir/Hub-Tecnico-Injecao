@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Padrões e Caixas</title>
+    <style>
+        body {
+            background-color: #36393f;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2 {
+            font-weight: bold;
+            color: #7289da;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-top: 20px;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        form {
+            width: 100%;
+            max-width: 600px;
+            background-color: #2f3136;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        label {
+            font-size: 1.2em;
+            margin-top: 10px;
+            display: block;
+            text-align: left;
+        }
+
+        input {
+            width: calc(100% - 22px); /* Adjust width to fit padding and border */
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #40444b;
+            color: #ffffff;
+            font-size: 1em;
+            box-sizing: border-box; /* Ensure padding and border are included in width */
+        }
+
+        button {
+            background-color: #7289da;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            box-sizing: border-box; /* Ensure padding and border are included in width */
+        }
+
+        button:hover {
+            background-color: #677bc4;
+        }
+
+        #result {
+            margin-top: 30px;
+            font-size: 1.2em;
+            white-space: pre-wrap;
+            text-align: left;
+            display: inline-block;
+            background-color: #2f3136;
+            padding: 15px;
+            border-radius: 10px;
+            width: 80%;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="calcForm">
+            <h1>Calculadora de Padrões e Caixas</h1>
+            <label for="standardTime">Padrão Hora Carga:</label>
+            <input type="number" id="standardTime" step="0.01" required>
+            
+            <label for="numCycles">Quantidade de Ciclos:</label>
+            <input type="number" id="numCycles" required>
+            
+            <label for="pairsPerBox">Quantidade de Pares por Caixa:</label>
+            <input type="number" id="pairsPerBox" required>
+            
+            <label for="goal">Meta (em formato alfanumérico, ex: "9:55"):</label>
+            <input type="text" id="goal" required>
+            
+            <label for="numMatrices">Quantidade de Matrizes:</label>
+            <input type="number" id="numMatrices" value="1" required>
+            
+            <button type="button" onclick="calculatePatterns()">Calcular</button>
+        </form>
+    </div>
+    
+    <script>
+        function parseGoal(goal) {
+            const [hours, minutes] = goal.split(':').map(Number);
+            return hours + (minutes / 60);
+        }
+        
+        function formatHours(hoursDecimal) {
+            const hours = Math.floor(hoursDecimal);
+            const minutes = Math.round((hoursDecimal - hours) * 60);
+            return `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+        }
+
+        function calculatePatterns() {
+            const standardTime = parseFloat(document.getElementById('standardTime').value) || 0;
+            const numCycles = parseInt(document.getElementById('numCycles').value) || 0;
+            const pairsPerBox = parseInt(document.getElementById('pairsPerBox').value) || 0;
+            const goalAlphanumeric = document.getElementById('goal').value.trim();
+            const numMatrices = parseInt(document.getElementById('numMatrices').value) || 1;
+            
+            const goal = parseGoal(goalAlphanumeric);
+            
+            const pattern = Math.floor((standardTime * numMatrices) / numCycles * 100) / 100;
+            const hoursPerBox = pairsPerBox / pattern;
+            let totalHours = 0;
+            let boxesRequired = 0;
+            
+            while (totalHours < goal) {
+                totalHours += hoursPerBox;
+                boxesRequired++;
+            }
+            
+            const isAboveGoal = totalHours >= goal;
+            const status = isAboveGoal ? "Acima" : "Abaixo";
+            const formattedHours = formatHours(totalHours);
+            
+            const resultText = `
+Padrão com ${numMatrices} Matriz(es):
+${pattern.toFixed(2)}
+
+Caixas Necessárias para a Meta:
+${boxesRequired} caixas
+
+Total de Horas com ${boxesRequired} Caixa(s):
+${formattedHours} (${status} da Meta)
+            `;
+            
+            const boxDetails = [
+                {
+                    numMatrices,
+                    hoursList: Array.from({ length: boxesRequired }, (_, idx) => formatHours((idx + 1) * hoursPerBox))
+                }
+            ];
+            
+            localStorage.setItem('results', resultText);
+            localStorage.setItem('boxDetails', JSON.stringify(boxDetails));
+
+            // Redirect to results.html
+            window.location.href = 'results.html';
+        }
+    </script>
+</body>
+</html>
