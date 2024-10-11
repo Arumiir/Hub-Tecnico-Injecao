@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Horas Já Baixadas</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Incluindo o CSS externo -->
+</head>
+<body>
+    <div class="container">
+        <form id="hoursForm">
+            <h1>Adicionar Horas Já Baixadas</h1>
+            
+            <label for="previousHours">Horas Já Baixadas (HH:MM):</label>
+            <input type="text" id="previousHours" placeholder="00:00" required>
+
+            <button type="button" onclick="handleHours()">Adicionar Horas e Calcular</button>
+            <button type="button" class="skip-button" onclick="skipHours()">Pular Adição de Horas</button>
+        </form>
+    </div>
+
+    <script>
+        // Função para converter string de horas para número decimal
+        function parseTime(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours + (minutes / 60);
+        }
+
+        // Função para formatar o tempo decimal em HH:MM
+        function formatTime(decimalHours) {
+            const hours = Math.floor(decimalHours);
+            const minutes = Math.round((decimalHours - hours) * 60);
+            return `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+        }
+
+        // Função para lidar com a adição de horas
+        function handleHours() {
+            const previousHoursStr = document.getElementById('previousHours').value.trim();
+            const previousHours = parseTime(previousHoursStr);
+            
+            localStorage.setItem('previousHours', previousHours);
+
+            // Redireciona para resultados.html
+            window.location.href = 'resultados.html';
+        }
+
+        // Função para pular a adição de horas
+        function skipHours() {
+            // Redireciona para resultados.html sem definir previousHours
+            localStorage.setItem('previousHours', 0);
+            window.location.href = 'resultados.html';
+        }
+    </script>
+</body>
+</html>
