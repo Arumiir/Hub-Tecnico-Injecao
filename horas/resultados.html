@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link para o arquivo CSS -->
+    <style>
+        /* Estilos para a caixa de ênfase */
+        .highlight-box {
+            background-color: #40444b; /* Cor de fundo da caixa */
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-top: 20px; /* Espaçamento acima da caixa */
+            font-size: 1.1em; /* Tamanho da fonte */
+            color: #ffffff; /* Cor do texto */
+            white-space: pre-wrap; /* Para manter quebras de linha */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Resultados</h1>
+        <div class="highlight-box" id="result"></div> <!-- Caixa de ênfase para resultados -->
+        <button onclick="window.location.href='detalhes.html'">Ver Detalhes das Caixas</button>
+    </div>
+
+    <script>
+        // Recupera os resultados e horas baixadas do localStorage
+        const resultText = localStorage.getItem('results') || 'Nenhum resultado disponível.';
+        const downloadedHours = parseFloat(localStorage.getItem('downloadedHours')) || 0;
+
+        // Ajusta as informações exibidas de acordo com as horas já baixadas
+        if (downloadedHours > 0) {
+            const resultLines = resultText.split('\n');
+            const goalLineIndex = resultLines.findIndex(line => line.includes('Meta:'));
+            const boxesLineIndex = resultLines.findIndex(line => line.includes('Caixas Necessárias para a Meta:'));
+            const totalHoursLineIndex = resultLines.findIndex(line => line.includes('Total de Horas'));
+
+            if (goalLineIndex !== -1 && boxesLineIndex !== -1 && totalHoursLineIndex !== -1) {
+                const goalHours = parseFloat(resultLines[goalLineIndex].match(/\d+/)[0]);
+                const boxesRequired = parseInt(resultLines[boxesLineIndex].match(/\d+/)[0]);
+
+                const adjustedGoalHours = goalHours - downloadedHours;
+                const adjustedBoxesRequired = Math.max(0, boxesRequired - 1);
+
+                resultLines[goalLineIndex] = `Meta: ${adjustedGoalHours} horas`;
+                resultLines[boxesLineIndex] = `Caixas Necessárias para a Meta: ${adjustedBoxesRequired} caixas`;
+
+                const totalHoursText = `Total de Horas com ${adjustedBoxesRequired} Caixa(s):\n`;
+                const adjustedTotalHours = adjustedBoxesRequired * downloadedHours;
+                resultLines[totalHoursLineIndex] = totalHoursText + `${adjustedTotalHours.toFixed(2)} horas`;
+
+                document.getElementById('result').innerText = resultLines.join('\n');
+            }
+        } else {
+            document.getElementById('result').innerText = resultText;
+        }
+    </script>
+</body>
+</html>
