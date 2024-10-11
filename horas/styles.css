@@ -1,0 +1,162 @@
+/* styles.css */
+
+/* Estilos gerais */
+body {
+    background: linear-gradient(135deg, #2c3e50, #fd746c); /* Gradiente suave */
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif; /* Fonte mais moderna */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    box-sizing: border-box; /* Garantir que padding e bordas não afetem o tamanho total */
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #ffffff;
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-align: center;
+    animation: fadeInDown 1s ease;
+}
+
+.intro {
+    font-size: 1.5em;
+    color: #eeeeee;
+    margin-bottom: 40px;
+    text-align: center;
+    animation: fadeInUp 1s ease;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    text-align: center;
+    width: 90%; /* Ajusta para telas menores */
+    max-width: 500px; /* Limita o tamanho máximo */
+}
+
+form {
+    width: 100%;
+    max-width: 500px;
+    background-color: #2f3136;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+label {
+    font-size: 1.2em;
+    margin-top: 10px;
+    display: block;
+    text-align: left;
+}
+
+input, select {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #40444b;
+    color: #ffffff;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #7289da;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 15px 30px;
+    font-size: 1.4em;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 1s ease;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #677bc4;
+    transform: translateY(-5px); /* Faz o botão 'subir' levemente */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Animações */
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em; /* Reduz o tamanho da fonte para caber na tela */
+    }
+
+    form {
+        padding: 15px;
+        max-width: 90%; /* Formulário ocupará mais espaço da tela */
+    }
+
+    label {
+        font-size: 1em;
+    }
+
+    button {
+        font-size: 1.2em;
+        padding: 12px 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8em;
+        letter-spacing: 2px;
+    }
+
+    form {
+        padding: 10px;
+        max-width: 100%;
+    }
+
+    label, input, select {
+        font-size: 1em;
+    }
+
+    button {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+}
