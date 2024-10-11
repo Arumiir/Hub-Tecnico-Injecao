@@ -1,1 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Padrões e Caixas</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Ligando ao arquivo CSS externo -->
+</head>
+<body>
+    <div class="container">
+        <form id="calcForm">
+            <h1>Calculadora de Padrões e Caixas</h1>
 
+            <label for="standardTime">Padrão Hora Carga:</label>
+            <input type="number" id="standardTime" step="0.01" required>
+
+            <label for="numCycles">Quantidade de Ciclos:</label>
+            <select id="numCycles" required>
+                <option value="12">12 estágios</option>
+                <option value="18">18 estágios</option>
+            </select>
+
+            <label for="pairsPerBox">Quantidade de Pares por Caixa:</label>
+            <input type="number" id="pairsPerBox" required>
+
+            <label for="goal">Meta:</label>
+            <select id="goal" required>
+                <option value="6">6 horas</option>
+                <option value="8">8 horas</option>
+                <option value="9">9 horas</option>
+            </select>
+
+            <label for="numMatrices">Quantidade de Matrizes:</label>
+            <input type="number" id="numMatrices" min="1" max="18" required>
+
+            <button type="button" onclick="calculatePatterns()">Calcular</button>
+        </form>
+    </div>
+
+    <script>
+        function calculatePatterns() {
+            const standardTime = parseFloat(document.getElementById('standardTime').value) || 0;
+            const numCycles = parseInt(document.getElementById('numCycles').value) || 0;
+            const pairsPerBox = parseInt(document.getElementById('pairsPerBox').value) || 0;
+            const goal = parseInt(document.getElementById('goal').value) || 0;
+            const numMatrices = parseInt(document.getElementById('numMatrices').value) || 1;
+
+            // Cálculo do padrão
+            const pattern = (standardTime * numMatrices) / numCycles;
+            // Cálculo das horas por caixa
+            const hoursPerBox = pairsPerBox / pattern;
+
+            let totalHours = 0;
+            let boxesRequired = 0;
+
+            // Cálculo de caixas necessárias
+            while (totalHours < goal) {
+                totalHours += hoursPerBox;
+                boxesRequired++;
+            }
+
+            const isAboveGoal = totalHours >= goal;
+            const status = isAboveGoal ? "Acima" : "Abaixo";
+            const formattedHours = formatHours(totalHours);
+
+            const resultText = `
+Padrão com ${numMatrices} Matriz(es):
+${pattern.toFixed(2)}
+
+Caixas Necessárias para a Meta:
+${boxesRequired} caixas
+
+Total de Horas com ${boxesRequired} Caixa(s):
+${formattedHours} (${status} da Meta)
+            `;
+
+            const boxDetails = [
+                {
+                    numMatrices,
+                    hoursList: Array.from({ length: boxesRequired }, (_, idx) => formatHours((idx + 1) * hoursPerBox))
+                }
+            ];
+
+            localStorage.setItem('results', resultText);
+            localStorage.setItem('boxDetails', JSON.stringify(boxDetails));
+
+            // Redireciona para a tela intermediária
+            window.location.href = 'intermediario.html';
+        }
+
+        function formatHours(hoursDecimal) {
+            const hours = Math.floor(hoursDecimal);
+            const minutes = Math.round((hoursDecimal - hours) * 60);
+            return `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+        }
+    </script>
+</body>
+  </html>
