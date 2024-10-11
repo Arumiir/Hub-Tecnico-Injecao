@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes das Caixas</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Incluindo o CSS externo -->
+    <style>
+        /* Estilos para a caixa de ênfase */
+        .highlight-box {
+            background-color: #40444b; /* Cor de fundo da caixa */
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-top: 20px; /* Espaçamento acima da caixa */
+            font-size: 1.1em; /* Tamanho da fonte */
+            color: #ffffff; /* Cor do texto */
+            white-space: pre-wrap; /* Para manter quebras de linha */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Detalhes das Caixas</h1>
+        <div class="details-container" id="details"></div>
+        <button onclick="window.history.back()">Voltar</button> <!-- Botão para voltar -->
+    </div>
+
+    <script>
+        // Recupera detalhes das caixas do armazenamento local
+        const boxDetails = JSON.parse(localStorage.getItem('boxDetails')) || [];
+        const detailsDiv = document.getElementById('details');
+
+        // Exibe as caixas e as horas correspondentes
+        boxDetails.forEach(detail => {
+            detailsDiv.innerHTML += `
+                <div class="highlight-box">
+                    <h2>Padrão com ${detail.numMatrices} Matriz(es)</h2>
+                    <ul>
+                        ${detail.hoursList.map((hours, index) => `<li>Caixa ${index + 1}: ${hours}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        });
+
+        // Verifica se não há detalhes disponíveis e exibe mensagem
+        if (boxDetails.length === 0) {
+            detailsDiv.innerHTML = '<p>Nenhum detalhe disponível.</p>';
+        }
+    </script>
+</body>
+</html>
