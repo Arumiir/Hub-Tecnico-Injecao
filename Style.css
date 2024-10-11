@@ -1,0 +1,84 @@
+body {
+    background: linear-gradient(135deg, #2c3e50, #fd746c); /* Gradiente suave */
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif; /* Fonte mais moderna */
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+h1 {
+    font-size: 3em;
+    color: #ffffff;
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-align: center;
+    animation: fadeInDown 1s ease;
+}
+
+.intro {
+    font-size: 1.5em;
+    color: #eeeeee;
+    margin-bottom: 40px;
+    text-align: center;
+    animation: fadeInUp 1s ease;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    text-align: center;
+}
+
+button {
+    background-color: #7289da;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 15px 30px;
+    font-size: 1.4em;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 1s ease;
+}
+
+button:hover {
+    background-color: #677bc4;
+    transform: translateY(-5px); /* Faz o botão 'subir' levemente */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Animações */
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
