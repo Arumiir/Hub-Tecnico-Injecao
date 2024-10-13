@@ -12,7 +12,7 @@
             <h1>Calculadora de Padrões e Caixas</h1>
 
             <label for="standardTime">Padrão Hora Carga:</label>
-            <input type="number" id="standardTime" step="0.01" required>
+            <input type="number" id="standardTime" step="0.01" placeholder="Ex: 182" required>
 
             <label for="numCycles">Quantidade de Ciclos:</label>
             <select id="numCycles" required>
@@ -21,7 +21,7 @@
             </select>
 
             <label for="pairsPerBox">Quantidade de Pares por Caixa:</label>
-            <input type="number" id="pairsPerBox" required>
+            <input type="number" id="pairsPerBox" placeholder="Ex: 35" required>
 
             <label for="goal">Meta:</label>
             <select id="goal" required>
@@ -31,13 +31,19 @@
             </select>
 
             <label for="numMatrices">Quantidade de Matrizes:</label>
-            <input type="number" id="numMatrices" min="1" max="18" required>
+            <input type="number" id="numMatrices" min="1" max="18" placeholder="Ex: 3" required>
 
-            <button type="button" onclick="calculatePatterns()">Calcular</button>
+            <button type="submit">Calcular</button>
         </form>
     </div>
 
     <script>
+        // Adiciona o evento de submissão ao formulário
+        document.getElementById('calcForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+            calculatePatterns(); // Chama a função para calcular os padrões
+        });
+
         function calculatePatterns() {
             const standardTime = parseFloat(document.getElementById('standardTime').value) || 0;
             const numCycles = parseInt(document.getElementById('numCycles').value) || 0;
@@ -95,4 +101,4 @@ ${formattedHours} (${status} da Meta)
         }
     </script>
 </body>
-  </html>
+</html>
