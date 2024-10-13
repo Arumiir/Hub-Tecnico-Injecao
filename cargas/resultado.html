@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados do Ajuste de Carga Digital</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link para o CSS -->
+</head>
+<body>
+    <div class="container">
+        <h1>Resultados do Ajuste de Carga Digital</h1>
+        <div class="resultado" id="resultado">
+            <div class="resultado-detalhes" id="resultadoDetalhes">
+                <!-- Resultados serão inseridos aqui -->
+            </div>
+        </div>
+
+        <button class="voltar" onclick="window.location.href='index.html'">Voltar</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Recuperar os dados armazenados na sessionStorage
+            const pesoEsperado = sessionStorage.getItem('pesoEsperado');
+            const cargaDigital = sessionStorage.getItem('cargaDigital');
+            const pesoReal = sessionStorage.getItem('pesoReal');
+            const novaCargaDigital = sessionStorage.getItem('novaCargaDigital');
+
+            // Criar a exibição dos resultados
+            const resultadoDetalhes = document.getElementById('resultadoDetalhes');
+            resultadoDetalhes.innerHTML = `
+                <p>Peso Total Esperado: <strong>${pesoEsperado} g</strong></p>
+                <p>Carga Digital Atual no IHM: <strong>${cargaDigital}</strong></p>
+                <p>Peso Real Após Injeção: <strong>${pesoReal} g</strong></p>
+                <p><strong>Nova Carga Digital Necessária: ${novaCargaDigital}</strong></p>
+            `;
+        });
+    </script>
+</body>
+</html>
