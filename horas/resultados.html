@@ -6,15 +6,19 @@
     <title>Resultados</title>
     <link rel="stylesheet" href="styles.css"> <!-- Link para o arquivo CSS -->
     <style>
-        /* Estilos para a caixa de ênfase */
-        .highlight-box {
-            background-color: #40444b; /* Cor de fundo da caixa */
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        /* Estilos para a caixa de resultados */
+        .resultado {
+            border: 2px solid #40444b; /* Cor da borda */
+            border-radius: 10px; /* Cantos arredondados */
+            padding: 20px; /* Espaçamento interno */
             margin-top: 20px; /* Espaçamento acima da caixa */
+            background-color: #ffffff; /* Cor de fundo (branco) */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra da caixa */
+        }
+
+        .resultado-detalhes {
             font-size: 1.1em; /* Tamanho da fonte */
-            color: #ffffff; /* Cor do texto */
+            color: #000000; /* Cor do texto (preto) */
             white-space: pre-wrap; /* Para manter quebras de linha */
         }
     </style>
@@ -22,8 +26,11 @@
 <body>
     <div class="container">
         <h1>Resultados</h1>
-        <div class="highlight-box" id="result"></div> <!-- Caixa de ênfase para resultados -->
-        <button onclick="window.location.href='detalhes.html'">Ver Detalhes das Caixas</button>
+        <div class="resultado" id="resultado">
+            <div class="resultado-detalhes" id="result"></div> <!-- Resultados serão inseridos aqui -->
+        </div>
+
+        <button class="voltar" onclick="window.location.href='detalhes.html'">Ver Detalhes das Caixas</button>
     </div>
 
     <script>
