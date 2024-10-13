@@ -44,7 +44,7 @@ h1 {
 form {
     width: 100%;
     max-width: 500px;
-    background-color: #2f3136;
+    background-color: #2f3136; /* Cor de fundo do formulário */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -64,15 +64,15 @@ input, select {
     margin-bottom: 20px;
     border: none;
     border-radius: 5px;
-    background-color: #40444b;
-    color: #ffffff;
+    background-color: #40444b; /* Cor de fundo dos campos */
+    color: #ffffff; /* Cor do texto nos campos */
     font-size: 1em;
     box-sizing: border-box;
 }
 
 button {
-    background-color: #7289da;
-    color: #ffffff;
+    background-color: #ffffff; /* Cor de fundo do botão */
+    color: #40444b; /* Cor do texto do botão */
     border: none;
     border-radius: 8px;
     padding: 15px 30px;
@@ -86,7 +86,7 @@ button {
 }
 
 button:hover {
-    background-color: #677bc4;
+    background-color: #d0d0d0; /* Cor do botão ao passar o mouse */
     transform: translateY(-5px); /* Faz o botão 'subir' levemente */
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
