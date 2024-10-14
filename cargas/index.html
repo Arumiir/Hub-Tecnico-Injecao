@@ -19,12 +19,6 @@
             <label for="pesoReal">Peso Real (g):</label>
             <input type="number" id="pesoReal" placeholder="93" required>
 
-            <label for="tipoMolde">Tipo de Molde:</label>
-            <select id="tipoMolde">
-                <option value="1">1 Sola</option>
-                <option value="4">4 Solas</option>
-            </select>
-
             <button type="submit">Calcular Nova Carga Digital</button>
         </form>
     </div>
@@ -36,14 +30,9 @@
             const pesoEsperado = parseFloat(document.getElementById('pesoEsperado').value);
             const cargaDigital = parseFloat(document.getElementById('cargaDigital').value);
             const pesoReal = parseFloat(document.getElementById('pesoReal').value);
-            const tipoMolde = document.getElementById('tipoMolde').value;
 
-            let novaCargaDigital;
-            if (tipoMolde === "1") {
-                novaCargaDigital = cargaDigital + (pesoEsperado - pesoReal);
-            } else {
-                novaCargaDigital = cargaDigital + ((pesoEsperado * 4) - pesoReal); // Ajuste conforme necessário
-            }
+            // Cálculo da nova carga digital
+            const novaCargaDigital = cargaDigital + (pesoEsperado - pesoReal);
 
             // Armazenar os resultados na sessionStorage
             sessionStorage.setItem('pesoEsperado', pesoEsperado);
@@ -56,4 +45,4 @@
         });
     </script>
 </body>
-</html>
+</html
