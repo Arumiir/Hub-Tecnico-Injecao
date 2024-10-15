@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tela Inicial</title>
-    <link rel="stylesheet" href="style.css"> <!-- Link para o arquivo CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json"> <!-- Link para o manifesto -->
+    <meta name="theme-color" content="#317EFB"> <!-- Cor da barra superior -->
 </head>
 <body>
     <div class="container">
@@ -13,5 +15,17 @@
         <button onclick="window.location.href='horas/index.html'">Calculadora de Horas</button>
         <button onclick="window.location.href='cargas/index.html'">Calculadora de Pesos</button>
     </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker registrado com sucesso:', registration);
+                })
+                .catch(error => {
+                    console.log('Falha ao registrar o Service Worker:', error);
+                });
+        }
+    </script>
 </body>
 </html>
