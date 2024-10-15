@@ -1,6 +1,6 @@
 {
-  "name": "Minha Aplicação PWA",
-  "short_name": "PWA",
+  "name": "Aplicativo de Líderes Expandindo",
+  "short_name": "Ferramentas de Líderes",
   "description": "Uma aplicação progressiva para cálculos de horas e pesos.",
   "start_url": "https://arumiir.github.io/Hub-Tecnico-Injecao/",
   "display": "standalone",
