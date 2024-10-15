@@ -13,6 +13,7 @@ body {
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 h1 {
@@ -23,6 +24,7 @@ h1 {
     letter-spacing: 4px;
     text-align: center;
     animation: fadeInDown 1s ease;
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 .intro {
@@ -31,6 +33,7 @@ h1 {
     margin-bottom: 40px;
     text-align: center;
     animation: fadeInUp 1s ease;
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 .container {
@@ -43,6 +46,7 @@ h1 {
     max-width: 500px; /* Limita o tamanho máximo */
     text-align: center;
     padding: 20px;
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 form {
@@ -52,6 +56,7 @@ form {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 label {
@@ -59,6 +64,7 @@ label {
     margin-top: 10px;
     display: block;
     text-align: left;
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 input, select {
@@ -87,6 +93,7 @@ button {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     animation: fadeInUp 1s ease;
     width: 100%;
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 button:hover {
@@ -150,4 +157,10 @@ button:active {
         max-width: 100%;
     }
     label, input, select {
-        font-size
+        font-size: 1em;
+    }
+    button {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+        }
