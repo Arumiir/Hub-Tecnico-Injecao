@@ -5,8 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tela Inicial</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json"> <!-- Link para o manifesto -->
+    <link rel="manifest" href="/manifest.json"> <!-- Link atualizado para o manifesto -->
     <meta name="theme-color" content="#317EFB"> <!-- Cor da barra superior -->
+    
+    <!-- Meta tags adicionais para PWA -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png"> <!-- Ícone para iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
     <div class="container">
@@ -18,7 +24,7 @@
 
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
+            navigator.serviceWorker.register('/service-worker.js')  // Verifique se o caminho do Service Worker está correto
                 .then(registration => {
                     console.log('Service Worker registrado com sucesso:', registration);
                 })
