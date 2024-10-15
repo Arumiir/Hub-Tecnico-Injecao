@@ -7,7 +7,11 @@ body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
+    overflow: hidden; /* Remove o rolamento */
+    height: 100vh; /* Ocupa toda a altura da tela */
+    display: flex;
+    justify-content: center;
+    align-items: center;
     box-sizing: border-box;
 }
 
@@ -34,11 +38,11 @@ h1 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-    text-align: center;
+    height: 100%; /* Ocupa toda a altura disponível */
     width: 90%; /* Ajusta para telas menores */
     max-width: 500px; /* Limita o tamanho máximo */
+    text-align: center;
+    padding: 20px;
 }
 
 form {
@@ -146,10 +150,4 @@ button:active {
         max-width: 100%;
     }
     label, input, select {
-        font-size: 1em;
-    }
-    button {
-        font-size: 1em;
-        padding: 10px 20px;
-    }
-}
+        font-size
