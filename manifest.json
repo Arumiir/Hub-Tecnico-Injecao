@@ -2,18 +2,18 @@
   "name": "Aplicativo de Líderes Expandindo",
   "short_name": "Ferramentas de Líderes",
   "description": "Uma aplicação progressiva para cálculos de horas e pesos.",
-  "start_url": "https://arumiir.github.io/Hub-Tecnico-Injecao/",
+  "start_url": "/index.html",  <!-- Caminho relativo para o início da aplicação -->
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#317EFB",
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "icons/icon-192x192.png",  <!-- Caminho relativo dos ícones -->
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
