@@ -2,7 +2,7 @@
 
 /* Estilos gerais */
 body {
-    background: linear-gradient(135deg, #2c3e50, #fd746c); /* Gradiente suave */
+    background: #000000; /* Preto AMOLED */
     color: #ffffff;
     font-family: 'Poppins', sans-serif; /* Fonte mais moderna */
     margin: 0;
@@ -124,16 +124,13 @@ button:active {
     h1 {
         font-size: 2em; /* Reduz o tamanho da fonte para caber na tela */
     }
-
     form {
         padding: 15px;
         max-width: 90%; /* Formulário ocupará mais espaço da tela */
     }
-
     label {
         font-size: 1em;
     }
-
     button {
         font-size: 1.2em;
         padding: 12px 25px;
@@ -145,16 +142,13 @@ button:active {
         font-size: 1.8em;
         letter-spacing: 2px;
     }
-
     form {
         padding: 10px;
         max-width: 100%;
     }
-
     label, input, select {
         font-size: 1em;
     }
-
     button {
         font-size: 1em;
         padding: 10px 20px;
