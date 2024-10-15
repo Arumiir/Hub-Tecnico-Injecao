@@ -1,8 +1,8 @@
 {
-  "name": "Meu PWA",
-  "short_name": "PWA",
-  "description": "Descrição do meu PWA",
-  "start_url": "/index.html",
+  "name": "Calculadora Expandido",
+  "short_name": "Calculadora Expandido",
+  "description": "Programa para ajudar aos preparadores de processos de injeção a fazer certos cálculos mais rápidos.",
+  "start_url": "https://arumiir.github.io/Hub-Tecnico-Injecao/",
   "display": "standalone",
   "background_color": "#317EFB",
   "theme_color": "#317EFB",
