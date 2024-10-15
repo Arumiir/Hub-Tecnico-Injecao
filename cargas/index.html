@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -12,37 +13,29 @@
         <form id="form">
             <label for="pesoEsperado">Peso Esperado (g):</label>
             <input type="number" id="pesoEsperado" placeholder="107" required>
-
             <label for="cargaDigital">Carga Digital (IHM):</label>
             <input type="number" id="cargaDigital" placeholder="270" required>
-
             <label for="pesoReal">Peso Real (g):</label>
             <input type="number" id="pesoReal" placeholder="93" required>
-
             <button type="submit">Calcular Nova Carga Digital</button>
         </form>
     </div>
-
     <script>
         document.getElementById('form').addEventListener('submit', function(event) {
             event.preventDefault();
-
             const pesoEsperado = parseFloat(document.getElementById('pesoEsperado').value);
             const cargaDigital = parseFloat(document.getElementById('cargaDigital').value);
             const pesoReal = parseFloat(document.getElementById('pesoReal').value);
-
             // Cálculo da nova carga digital
             const novaCargaDigital = cargaDigital + (pesoEsperado - pesoReal);
-
             // Armazenar os resultados na sessionStorage
             sessionStorage.setItem('pesoEsperado', pesoEsperado);
             sessionStorage.setItem('cargaDigital', cargaDigital);
             sessionStorage.setItem('pesoReal', pesoReal);
             sessionStorage.setItem('novaCargaDigital', novaCargaDigital);
-
             // Redirecionar para a página de resultados
             window.location.href = 'resultado.html';
         });
     </script>
 </body>
-</html
+</html>
