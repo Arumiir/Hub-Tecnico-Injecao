@@ -1,11 +1,11 @@
 {
-  "name": "Meu PWA",
+  "name": "Minha Aplicação PWA",
   "short_name": "PWA",
-  "description": "Este é um Progressive Web App para a tela Home",
-  "start_url": "/index.html", 
-  "display": "standalone", 
+  "description": "Uma aplicação progressiva para cálculos de horas e pesos.",
+  "start_url": "/index.html",
+  "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "theme_color": "#317EFB",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
