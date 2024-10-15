@@ -1,4 +1,4 @@
-// Service worker otimizado e atualizado
+// Service worker otimizado para funcionalidade offline completa
 
 self.addEventListener('install', event => {
     event.waitUntil(
@@ -7,17 +7,20 @@ self.addEventListener('install', event => {
                 '/',
                 '/index.html',
                 '/style.css',
+                '/manifest.json',
                 '/service-worker.js',
                 '/icons/icon-192x192.png',
                 '/icons/icon-512x512.png',
-                // Adicione outros arquivos necessários aqui
+                '/horas/index.html', // Incluindo páginas adicionais
+                '/cargas/index.html', // Incluindo páginas adicionais
+                // Adicione outros arquivos e pastas necessários aqui
             ]);
         })
     );
 });
 
 self.addEventListener('activate', event => {
-    const cacheWhitelist = ['app-cache-v2']; // Lista de caches a manter
+    const cacheWhitelist = ['app-cache-v2'];
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
@@ -39,7 +42,9 @@ self.addEventListener('fetch', event => {
             }
             return fetch(event.request).then(fetchResponse => {
                 return caches.open('app-cache-v2').then(cache => {
-                    cache.put(event.request, fetchResponse.clone());
+                    if (event.request.url.startsWith(self.location.origin)) {
+                        cache.put(event.request, fetchResponse.clone());
+                    }
                     return fetchResponse;
                 });
             });
