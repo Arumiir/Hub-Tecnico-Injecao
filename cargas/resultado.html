@@ -1,3 +1,4 @@
+<!-- resultado.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -14,10 +15,8 @@
                 <!-- Resultados serão inseridos aqui -->
             </div>
         </div>
-
         <button class="voltar" onclick="window.location.href='index.html'">Voltar</button>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Recuperar os dados armazenados na sessionStorage
@@ -25,7 +24,6 @@
             const cargaDigital = sessionStorage.getItem('cargaDigital');
             const pesoReal = sessionStorage.getItem('pesoReal');
             const novaCargaDigital = sessionStorage.getItem('novaCargaDigital');
-
             // Criar a exibição dos resultados
             const resultadoDetalhes = document.getElementById('resultadoDetalhes');
             resultadoDetalhes.innerHTML = `
