@@ -2,7 +2,7 @@
   "name": "Minha Aplicação PWA",
   "short_name": "PWA",
   "description": "Uma aplicação progressiva para cálculos de horas e pesos.",
-  "start_url": "/index.html",
+  "start_url": "https://arumiir.github.io/Hub-Tecnico-Injecao/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#317EFB",
