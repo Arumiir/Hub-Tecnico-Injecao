@@ -1,14 +1,19 @@
-/* styles.css */
+/* styles.css AMOLED */
 
 /* Estilos gerais */
 body {
-    background: #000000; /* Preto AMOLED */
+    background-color: #000000; /* Fundo AMOLED */
     color: #ffffff;
-    font-family: 'Poppins', sans-serif; /* Fonte mais moderna */
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
-    box-sizing: border-box; /* Garantir que padding e bordas não afetem o tamanho total */
+    overflow: hidden; /* Remove o rolamento */
+    height: 100vh; /* Ocupa toda a altura da tela */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 h1 {
@@ -19,6 +24,7 @@ h1 {
     letter-spacing: 4px;
     text-align: center;
     animation: fadeInDown 1s ease;
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 .intro {
@@ -27,6 +33,7 @@ h1 {
     margin-bottom: 40px;
     text-align: center;
     animation: fadeInUp 1s ease;
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 .container {
@@ -34,20 +41,22 @@ h1 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-    text-align: center;
+    height: 100%; /* Ocupa toda a altura disponível */
     width: 90%; /* Ajusta para telas menores */
     max-width: 500px; /* Limita o tamanho máximo */
+    text-align: center;
+    padding: 20px;
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 form {
     width: 100%;
     max-width: 500px;
-    background-color: #2f3136; /* Cor de fundo do formulário */
+    background-color: #1a1a1a; /* Fundo AMOLED para formulário */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 label {
@@ -55,6 +64,7 @@ label {
     margin-top: 10px;
     display: block;
     text-align: left;
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 input, select {
@@ -64,7 +74,7 @@ input, select {
     margin-bottom: 20px;
     border: none;
     border-radius: 5px;
-    background-color: #40444b; /* Cor de fundo dos campos */
+    background-color: #333333; /* Fundo AMOLED para campos */
     color: #ffffff; /* Cor do texto nos campos */
     font-size: 1em;
     box-sizing: border-box;
@@ -83,6 +93,7 @@ button {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     animation: fadeInUp 1s ease;
     width: 100%;
+    user-select: none; /* Torna o texto não selecionável */
 }
 
 button:hover {
@@ -117,7 +128,6 @@ button:active {
         opacity: 1;
         transform: translateY(0);
     }
-}
 
 /* Responsividade para telas menores */
 @media (max-width: 768px) {
@@ -153,4 +163,4 @@ button:active {
         font-size: 1em;
         padding: 10px 20px;
     }
-}
+    }
