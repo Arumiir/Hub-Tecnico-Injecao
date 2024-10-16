@@ -7,13 +7,14 @@ body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Remove o rolamento */
+    overflow: auto; /* Permitir rolamento se necessário */
     height: 100vh; /* Ocupa toda a altura da tela */
     display: flex;
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
     user-select: none; /* Torna o texto não selecionável */
+    flex-direction: column; /* Permitir que o conteúdo se expanda verticalmente */
 }
 
 h1 {
@@ -41,9 +42,8 @@ h1 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%; /* Ocupa toda a altura disponível */
     width: 90%; /* Ajusta para telas menores */
-    max-width: 500px; /* Limita o tamanho máximo */
+    max-width: 600px; /* Limita o tamanho máximo */
     text-align: center;
     padding: 20px;
     user-select: none; /* Torna o texto não selecionável */
@@ -51,7 +51,6 @@ h1 {
 
 form {
     width: 100%;
-    max-width: 500px;
     background-color: #1a1a1a; /* Fundo AMOLED para formulário */
     padding: 20px;
     border-radius: 10px;
@@ -154,6 +153,7 @@ button:active {
         opacity: 1;
         transform: translateY(0);
     }
+}
 
 /* Responsividade para telas menores */
 @media (max-width: 768px) {
@@ -189,4 +189,4 @@ button:active {
         font-size: 1em;
         padding: 10px 20px;
     }
-                              }
+}
