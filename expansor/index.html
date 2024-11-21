@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajuste de Expansor e Moído</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Expansor</h1>
+        <form>
+            <label for="cenario">Escolha o Cenário:</label>
+            <select id="cenario">
+                <option value="com">Com Moído</option>
+                <option value="mais">Com Mais Moído</option>
+                <option value="menos">Com Menos Moído</option>
+                <option value="sem">Sem Moído</option>
+            </select>
+
+            <label for="moidoAtual">Percentual de Moído Atual (%):</label>
+            <input type="number" id="moidoAtual" min="0" max="100" placeholder="Ex: 30">
+
+            <label for="expansorAtual">Percentual de Expansor Atual (%):</label>
+            <input type="number" id="expansorAtual" step="0.01" min="0" placeholder="Ex: 1.10">
+
+            <label for="novoMoido">Percentual de Moído Desejado (%):</label>
+            <input type="number" id="novoMoido" min="0" max="100" placeholder="Ex: 10">
+
+            <button type="button" onclick="calcularExpansor()">Calcular Ajuste</button>
+        </form>
+
+        <div class="result" id="resultado"></div>
+        <button id="copyButton" style="display: none;" onclick="copiarResultado()">Copiar Resultado</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
