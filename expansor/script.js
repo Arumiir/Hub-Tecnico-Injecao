@@ -1,166 +1,56 @@
-/* styles.css AMOLED */
+function calcularExpansor() {
+  const cenario = document.getElementById("cenario").value;
+  const moidoAtual = parseFloat(document.getElementById("moidoAtual").value);
+  const expansorAtual = parseFloat(document.getElementById("expansorAtual").value);
+  const novoMoido = parseFloat(document.getElementById("novoMoido").value);
+  const resultadoDiv = document.getElementById("resultado");
 
-/* Estilos gerais */
-body {
-    background-color: #000000; /* Fundo AMOLED */
-    color: #ffffff;
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-    overflow: hidden; /* Remove o rolamento */
-    height: 100vh; /* Ocupa toda a altura da tela */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-    user-select: none; /* Torna o texto não selecionável */
+  if (isNaN(moidoAtual) || isNaN(expansorAtual) || isNaN(novoMoido)) {
+    resultadoDiv.textContent = "Por favor, insira valores válidos.";
+    return;
+  }
+
+  if (moidoAtual < 0 || moidoAtual > 100 || novoMoido < 0 || novoMoido > 100) {
+    resultadoDiv.textContent = "Os percentuais de moído devem estar entre 0 e 100.";
+    return;
+  }
+
+  let expansorAjustado;
+  const reducaoPor10Porcento = 0.2;
+
+  switch (cenario) {
+    case "com":
+      expansorAjustado = expansorAtual.toFixed(2);
+      resultadoDiv.textContent = `Nenhum ajuste necessário. O expansor atual é ${expansorAjustado}%.`;
+      break;
+
+    case "mais":
+      if (novoMoido > moidoAtual) {
+        let ajusteMais = ((novoMoido - moidoAtual) / 10) * reducaoPor10Porcento;
+        expansorAjustado = (expansorAtual + ajusteMais).toFixed(2);
+        resultadoDiv.textContent = `Para aumentar o moído de ${moidoAtual}% para ${novoMoido}%, ajuste o expansor para ${expansorAjustado}%.`;
+      } else {
+        resultadoDiv.textContent = "O novo moído deve ser maior que o moído atual.";
+      }
+      break;
+
+    case "menos":
+      if (novoMoido < moidoAtual) {
+        let ajusteMenos = ((moidoAtual - novoMoido) / 10) * reducaoPor10Porcento;
+        expansorAjustado = (expansorAtual - ajusteMenos).toFixed(2);
+        resultadoDiv.textContent = `Para reduzir o moído de ${moidoAtual}% para ${novoMoido}%, ajuste o expansor para ${expansorAjustado}%.`;
+      } else {
+        resultadoDiv.textContent = "O novo moído deve ser menor que o moído atual.";
+      }
+      break;
+
+    case "sem":
+      let ajusteZero = (moidoAtual / 10) * reducaoPor10Porcento;
+      expansorAjustado = (expansorAtual - ajusteZero).toFixed(2);
+      resultadoDiv.textContent = `Para remover completamente o moído (${moidoAtual}% para 0%), ajuste o expansor para ${expansorAjustado}%.`;
+      break;
+
+    default:
+      resultadoDiv.textContent = "Selecione um cenário válido.";
+  }
 }
-
-h1 {
-    font-size: 2.5em;
-    color: #ffffff;
-    margin-top: 0;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    text-align: center;
-    animation: fadeInDown 1s ease;
-    user-select: none; /* Torna o texto não selecionável */
-}
-
-.intro {
-    font-size: 1.5em;
-    color: #eeeeee;
-    margin-bottom: 40px;
-    text-align: center;
-    animation: fadeInUp 1s ease;
-    user-select: none; /* Torna o texto não selecionável */
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%; /* Ocupa toda a altura disponível */
-    width: 90%; /* Ajusta para telas menores */
-    max-width: 500px; /* Limita o tamanho máximo */
-    text-align: center;
-    padding: 20px;
-    user-select: none; /* Torna o texto não selecionável */
-}
-
-form {
-    width: 100%;
-    max-width: 500px;
-    background-color: #1a1a1a; /* Fundo AMOLED para formulário */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    user-select: none; /* Torna o texto não selecionável */
-}
-
-label {
-    font-size: 1.2em;
-    margin-top: 10px;
-    display: block;
-    text-align: left;
-    user-select: none; /* Torna o texto não selecionável */
-}
-
-input, select {
-    width: calc(100% - 22px);
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #333333; /* Fundo AMOLED para campos */
-    color: #ffffff; /* Cor do texto nos campos */
-    font-size: 1em;
-    box-sizing: border-box;
-}
-
-button {
-    background-color: #ffffff; /* Cor de fundo do botão */
-    color: #40444b; /* Cor do texto do botão */
-    border: none;
-    border-radius: 8px;
-    padding: 15px 30px;
-    font-size: 1.4em;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    animation: fadeInUp 1s ease;
-    width: 100%;
-    user-select: none; /* Torna o texto não selecionável */
-}
-
-button:hover {
-    background-color: #d0d0d0; /* Cor do botão ao passar o mouse */
-    transform: translateY(-5px); /* Faz o botão 'subir' levemente */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
-button:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Animações */
-@keyframes fadeInDown {
-    0% {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-/* Responsividade para telas menores */
-@media (max-width: 768px) {
-    h1 {
-        font-size: 2em; /* Reduz o tamanho da fonte para caber na tela */
-    }
-    form {
-        padding: 15px;
-        max-width: 90%; /* Formulário ocupará mais espaço da tela */
-    }
-    label {
-        font-size: 1em;
-    }
-    button {
-        font-size: 1.2em;
-        padding: 12px 25px;
-    }
-}
-
-@media (max-width: 480px) {
-    h1 {
-        font-size: 1.8em;
-        letter-spacing: 2px;
-    }
-    form {
-        padding: 10px;
-        max-width: 100%;
-    }
-    label, input, select {
-        font-size: 1em;
-    }
-    button {
-        font-size: 1em;
-        padding: 10px 20px;
-    }
-        }
