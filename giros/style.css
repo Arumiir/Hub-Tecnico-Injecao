@@ -1,0 +1,128 @@
+body {
+  background-color: #000000;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  box-sizing: border-box;
+  user-select: none;
+  overflow-y: auto;
+  display: block;
+}
+
+h1 {
+  font-size: 2.5em;
+  color: #ffffff;
+  margin-top: 30px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-align: center;
+  animation: fadeInDown 1s ease;
+  user-select: none;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+  padding: 20px;
+  margin: 40px auto;
+  user-select: none;
+}
+
+form {
+  width: 100%;
+  background-color: #1a1a1a;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  user-select: none;
+}
+
+label {
+  font-size: 1.2em;
+  margin-top: 10px;
+  display: block;
+  text-align: left;
+  user-select: none;
+}
+
+input, select {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #333333;
+  color: #ffffff;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #ffffff;
+  color: #40444b;
+  border: none;
+  border-radius: 8px;
+  padding: 15px 30px;
+  font-size: 1.4em;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 1s ease;
+  width: 100%;
+  user-select: none;
+}
+
+button:hover {
+  background-color: #d0d0d0;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.resultado, .resultado-detalhes {
+  border: 2px solid #40444b;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  color: #000000;
+  white-space: pre-wrap;
+}
+
+.voltar {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #40444b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.voltar:hover {
+  background-color: #5a626b;
+}
+
+@keyframes fadeInDown {
+  0% { opacity: 0; transform: translateY(-30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
