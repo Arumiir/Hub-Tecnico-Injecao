@@ -6,18 +6,18 @@ function adicionarGrupo() {
   const div = document.createElement("div");
   div.innerHTML = `
     <label for="nome${contador}">Número da Sola:</label>
-    <input type="text" id="nome${contador}" placeholder="Ex: N°33">
+    <input type="text" id="nome${contador}" placeholder="Ex: N°33/4">
 
-    <label for="x${contador}">Pares por caixa (x):</label>
+    <label for="x${contador}">Pares por caixa:</label>
     <input type="number" id="x${contador}">
 
-    <label for="y${contador}">Caixas completas (y):</label>
+    <label for="y${contador}">Caixas completas:</label>
     <input type="number" id="y${contador}">
 
-    <label for="z${contador}">Última caixa (pares quebrados) (z):</label>
+    <label for="z${contador}">Última caixa (pares quebrados):</label>
     <input type="number" id="z${contador}">
 
-    <label for="a${contador}">Matrizes na máquina (a):</label>
+    <label for="a${contador}">Quantidade de matrizes na máquina:</label>
     <input type="number" id="a${contador}">
     <hr>
   `;
