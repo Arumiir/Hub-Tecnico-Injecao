@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Resultado</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>Resultado dos Giros</h1>
+  <div class="container">
+    <div class="resultado" id="resultado"></div>
+    <button class="voltar" onclick="voltar()">Voltar</button>
+  </div>
+
+  <script>
+    function voltar() {
+      window.location.href = 'index.html';
+    }
+
+    const dados = JSON.parse(localStorage.getItem('dadosGiros')) || [];
+
+    let maiorGiro = -Infinity;
+    let solaComMaiorGiro = '';
+    let resultadoHTML = "<ul>";
+
+    dados.forEach((item, i) => {
+      const { nome, x, y, z, a } = item;
+      const giros = Math.floor(((x * y) + z) / a);
+      resultadoHTML += `<li>${nome} tem ${giros} giros</li>`;
+
+      if (giros > maiorGiro) {
+        maiorGiro = giros;
+        solaComMaiorGiro = nome;
+      }
+    });
+
+    resultadoHTML += "</ul>";
+    resultadoHTML += `<strong>${solaComMaiorGiro} tem o maior giro (${maiorGiro} giros)</strong>`;
+    document.getElementById("resultado").innerHTML = resultadoHTML;
+  </script>
+</body>
+</html>
