@@ -27,7 +27,7 @@
     dados.forEach((item, i) => {
       const { nome, x, y, z, a } = item;
       const giros = Math.floor(((x * y) + z) / a);
-      resultadoHTML += `<li>$N° {nome} tem ${giros} giros</li>`;
+      resultadoHTML += `<li>N° ${nome} tem ${giros} giros</li>`;
 
       if (giros > maiorGiro) {
         maiorGiro = giros;
@@ -36,7 +36,7 @@
     });
 
     resultadoHTML += "</ul>";
-    resultadoHTML += `<strong>$O n° {solaComMaiorGiro} tem o maior giro (${maiorGiro} giros)</strong>`;
+    resultadoHTML += `<strong>O n° ${solaComMaiorGiro} tem o maior giro (${maiorGiro} giros)</strong>`;
     document.getElementById("resultado").innerHTML = resultadoHTML;
   </script>
 </body>
