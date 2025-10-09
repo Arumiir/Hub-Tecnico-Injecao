@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fator de Ineficiência</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Centraliza o texto no quadro branco do resultado */
+    .resultado {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fator de Ineficiência</h1>
+
+  <div class="container">
+    <form onsubmit="event.preventDefault(); calcular();">
+      <label for="ineficiencia">Ineficiência (%)</label>
+      <input type="number" id="ineficiencia" placeholder="Ex: 3.5" step="0.01">
+      <button type="submit">Calcular</button>
+    </form>
+
+    <!-- Oculto até o cálculo -->
+    <div class="resultado" id="resultado" style="display: none;"></div>
+  </div>
+
+  <script>
+    function calcular() {
+      const inef = parseFloat(document.getElementById("ineficiencia").value);
+      const res = document.getElementById("resultado");
+
+      if (isNaN(inef) || inef < 0) {
+        res.style.display = "flex";
+        res.innerHTML = "Insira um valor válido!";
+        return;
+      }
+
+      let minutos = 1440 * (inef / 100);
+
+      // Arredondamento personalizado
+      const parteDecimal = minutos - Math.floor(minutos);
+      if (parteDecimal >= 0.56) {
+        minutos = Math.ceil(minutos);
+      } else if (parteDecimal < 0.5) {
+        minutos = Math.floor(minutos);
+      }
+
+      // Exibe o resultado centralizado
+      res.style.display = "flex";
+      res.innerHTML = `
+        <div>
+          <strong style="font-size: 2em;">${minutos}</strong> minutos<br>
+          <span style="font-size: 1em; color: #333;">(Base: ${inef}% de ineficiência)</span>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
