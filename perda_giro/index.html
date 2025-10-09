@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perdas de Giro</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Ajustes para rolagem e centralização do resultado */
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 20px 0;
+      overflow-y: auto; /* Permite rolagem vertical */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+      user-select: none;
+      justify-content: flex-start; /* conteúdo começa do topo */
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      padding: 20px;
+      user-select: none;
+    }
+
+    .resultado {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Perdas de Giro (%)</h1>
+
+  <div class="container">
+    <form onsubmit="event.preventDefault(); calcularPerdas();">
+      <label for="maquina">Máquina</label>
+      <select id="maquina" required>
+        <option value="">Selecione...</option>
+        <option value="12">12 estágios</option>
+        <option value="18">18 estágios</option>
+      </select>
+
+      <label for="matrizesEmUso">Matrizes em uso</label>
+      <input type="number" id="matrizesEmUso" placeholder="Ex: 10" min="1">
+
+      <label for="matriz">Tipo de Matriz</label>
+      <select id="matriz" required>
+        <option value="">Selecione...</option>
+        <option value="2">Simples (1 par = 2 solas)</option>
+        <option value="4">Dupla (2 pares = 4 solas)</option>
+        <option value="8">Quádrupla (4 pares = 8 solas)</option>
+      </select>
+
+      <label for="perdidas">Total de Solas Perdidas no Giro</label>
+      <input type="number" id="perdidas" placeholder="Ex: 3" min="0">
+
+      <button type="submit">Calcular</button>
+    </form>
+
+    <div class="resultado" id="resultado" style="display: none;"></div>
+  </div>
+
+  <script>
+    function calcularPerdas() {
+      const maquina = parseInt(document.getElementById("maquina").value);
+      const matrizesEmUso = parseInt(document.getElementById("matrizesEmUso").value);
+      const matriz = parseInt(document.getElementById("matriz").value);
+      const perdidas = parseFloat(document.getElementById("perdidas").value);
+      const res = document.getElementById("resultado");
+
+      if (!maquina || !matriz || isNaN(perdidas) || perdidas < 0 || isNaN(matrizesEmUso) || matrizesEmUso <= 0) {
+        res.style.display = "flex";
+        res.innerHTML = "Preencha todos os campos corretamente!";
+        return;
+      }
+
+      if (matrizesEmUso > maquina) {
+        res.style.display = "flex";
+        res.innerHTML = "O número de matrizes em uso não pode ser maior que o total de estágios da máquina!";
+        return;
+      }
+
+      // Total de solas produzidas
+      const totalSolas = matrizesEmUso * matriz;
+
+      // Perdas de giro (%) reais
+      let perdasPercentual = (perdidas / totalSolas) * 100;
+
+      // Truncar para 2 casas decimais sem arredondar
+      perdasPercentual = Math.floor(perdasPercentual * 100) / 100;
+
+      res.style.display = "flex";
+      res.innerHTML = `
+        <div>
+          <strong style="font-size: 2em;">${perdasPercentual.toFixed(2)}%</strong><br>
+          <span style="font-size: 1em; color: #333;">
+            ${perdidas} solas perdidas de ${totalSolas} solas produzidas<br>
+            (${matrizesEmUso} matrizes em uso × ${matriz} solas por matriz)
+          </span>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
