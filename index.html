@@ -5,49 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tela Inicial</title>
     <link rel="stylesheet" href="style.css">
-    
-    <!-- Manifest e Ícones -->
-    <link rel="manifest" href="manifest.json"> <!-- Verifique o caminho correto do manifest -->
-    <link rel="icon" href="icons/icon-192x192.png" sizes="192x192"> <!-- Favicon para navegadores -->
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png"> <!-- Ícone para iOS -->
-    
-    <meta name="theme-color" content="#317EFB"> <!-- Cor da barra superior no Android -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 40px 20px; /* Espaçamento topo/rodapé e laterais */
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .intro {
+            font-size: 1.2em;
+            color: #eeeeee;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .grid-botoes {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 700px;
+            padding: 0 10px; /* Pequeno padding interno para os botões não encostarem nas laterais */
+        }
+
+        .grid-botoes button {
+            flex: 1 1 200px;
+            padding: 15px;
+            font-size: 1.2em;
+            background-color: #ffffff;
+            color: #40444b;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            user-select: none;
+        }
+
+        .grid-botoes button:hover {
+            background-color: #d0d0d0;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .grid-botoes button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 480px) {
+            .grid-botoes button {
+                flex: 1 1 100%; /* Ocupa toda largura em telas pequenas */
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Bem-vindo!</h1>
-        <p class="intro">Escolha uma das opções abaixo para iniciar:</p>
+    <h1>Bem-vindo!</h1>
+    <p class="intro">Escolha uma das opções abaixo para iniciar:</p>
+
+    <div class="grid-botoes">
         <button onclick="window.location.href='giros/index.html'">Calculadora de Giros</button>
-        
         <button onclick="window.location.href='horas/index.html'">Calculadora de Horas</button>
-
-        <button
-onclick="window.location.href='cargas/index.html'">Calculadora de Pesos</button>
-
-<button
-onclick="window.location.href='expansor/index.html'">Calculadora de Expansor</button>
-
-        <button onclick="window.location.href='ineficiencia/Index.html'">Calculadora de Ineficiência
-    </div>
-
+        <button onclick="window.location.href='cargas/index.html'">Calculadora de Pesos</button>
+        <button onclick="window.location.href='expansor/index.html'">Calculadora de Expansor</button>
+        <button onclick="window.location.href='ineficiencia/Index.html'">Calculadora de Ineficiência</button>
         <button onclick="window.location.href='perda_giro/index.html'">Calculadora de Perdas no Giro</button>
-
-<button onclick="window.location.href='perda_producao/index.html'">Calculadora de Perdas de Produção</button>
-
-
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(registration => {
-                    console.log('Service Worker registrado com sucesso:', registration);
-                })
-                .catch(error => {
-                    console.log('Falha ao registrar o Service Worker:', error);
-                });
-        }
-    </script>
+        <button onclick="window.location.href='perda_producao/index.html'">Calculadora de Perdas de Produção</button>
+    </div>
 </body>
 </html>
