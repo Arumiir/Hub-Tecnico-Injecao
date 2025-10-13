@@ -41,6 +41,10 @@
       flex-direction: column;
       text-align: center;
     }
+
+    button {
+      margin: 8px;
+    }
   </style>
 </head>
 <body>
@@ -48,13 +52,14 @@
 
   <div class="container">
     <form onsubmit="event.preventDefault(); calcularPerdaProducao();">
-      <label for="totalPerdas">Total de Perdas</label>
-      <input type="number" id="totalPerdas" placeholder="Ex: 50" min="0" required>
-
       <label for="totalProducao">Total de Produção</label>
       <input type="number" id="totalProducao" placeholder="Ex: 1000" min="0" required>
 
+      <label for="totalPerdas">Total de Perdas</label>
+      <input type="number" id="totalPerdas" placeholder="Ex: 50" min="0" required>
+
       <button type="submit">Calcular</button>
+      <button type="button" onclick="resetarCampos()">Resetar</button>
     </form>
 
     <div class="resultado" id="resultado" style="display: none;"></div>
@@ -73,21 +78,27 @@
       }
 
       const perdaPercentual = totalPerdas / (totalPerdas + totalProducao) * 100;
-
-      // Truncar para 2 casas decimais sem arredondar
       const perdaTruncada = Math.floor(perdaPercentual * 100) / 100;
 
       res.style.display = "flex";
       res.innerHTML = `
         <div>
           <strong style="font-size: 2em;">${perdaTruncada.toFixed(2)}%</strong><br>
-          <span style="font-size: 1em; color: #333;">
+          <span style="font-size: 1em; color: #aaa;">
             Total de perdas: ${totalPerdas}<br>
             Total de produção: ${totalProducao}<br>
             Base de cálculo: ${totalPerdas + totalProducao}
           </span>
         </div>
       `;
+    }
+
+    function resetarCampos() {
+      document.getElementById("totalPerdas").value = "";
+      document.getElementById("totalProducao").value = "";
+      const res = document.getElementById("resultado");
+      res.style.display = "none";
+      res.innerHTML = "";
     }
   </script>
 </body>
