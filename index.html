@@ -15,18 +15,24 @@ body {
     color: #eaeaea;
     margin: 0;
     display: flex;
-    justify-content: center; /* centraliza horizontal */
-    align-items: center;     /* centraliza vertical */
+    justify-content: center; /* horizontal */
+    align-items: center;     /* vertical */
     height: 100vh;
+    padding: 10px;           /* espaço mínimo para telas pequenas */
+    box-sizing: border-box;
 }
 
 .container {
-    width: 400px; /* menor largura para tela inicial */
+    width: 100%;
+    max-width: 480px;       /* largura máxima */
     background: #0b0b0b;
     border-radius: 12px;
-    padding: 40px;
+    padding: 30px;
     box-shadow: 0 0 25px rgba(0, 80, 255, 0.25);
     text-align: center;
+    max-height: 90vh;       /* altura máxima */
+    overflow-y: auto;       /* permite scroll se conteúdo for maior */
+    box-sizing: border-box;
 }
 
 h2 {
@@ -59,8 +65,8 @@ button:hover {
 <div class="container">
     <h2>Meu App</h2>
 
-    <button onclick= "window.location.href='scrCalculadora.html'">Calculadoras</button>
-    <button onclick="window.location.href='scrRegulages.html">Regulagens</button>
+    <button onclick="alert('Calculadoras clicado!')">Calculadoras</button>
+    <button onclick="alert('Regulagens clicado!')">Regulagens</button>
 </div>
 
 </body>
