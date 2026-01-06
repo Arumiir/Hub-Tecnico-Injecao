@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Tela Inicial</title>
+
+<style>
+* {
+    user-select: none;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #000;
+    color: #eaeaea;
+    margin: 0;
+    display: flex;
+    justify-content: center; /* centraliza horizontal */
+    align-items: center;     /* centraliza vertical */
+    height: 100vh;
+}
+
+.container {
+    width: 400px; /* menor largura para tela inicial */
+    background: #0b0b0b;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 0 25px rgba(0, 80, 255, 0.25);
+    text-align: center;
+}
+
+h2 {
+    margin-top: 0;
+    color: #ffffff;
+    margin-bottom: 40px;
+}
+
+button {
+    padding: 15px 40px;
+    font-size: 18px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: #0072CE; /* azul Reebok */
+    color: #fff;
+    font-weight: bold;
+    margin: 10px;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #005bb5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Meu App</h2>
+
+    <button onclick= "window.location.href='scrCalculadora.html'">Calculadoras</button>
+    <button onclick="alert('Regulagens já já sai meu fi!')">Regulagens</button>
+</div>
+
+</body>
+</html>
