@@ -1,104 +1,322 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Padrões e Caixas</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Ligando ao arquivo CSS externo -->
+<meta charset="UTF-8">
+<title>Simulador de Produção</title>
+
+<style>
+* {
+    user-select: none;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #000;
+    color: #eaeaea;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    padding-top: 20px;
+}
+
+.container {
+    width: 960px;
+    background: #0b0b0b;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 0 25px rgba(0, 80, 255, 0.25);
+}
+
+h2 {
+    margin-top: 0;
+    color: #ffffff;
+}
+
+.slide {
+    display: none;
+}
+
+.slide.active {
+    display: block;
+}
+
+label {
+    display: block;
+    margin-top: 14px;
+    font-size: 14px;
+}
+
+input, select {
+    width: 100%;
+    padding: 9px;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: none;
+    font-size: 15px;
+    background: #111;
+    color: #fff;
+}
+
+input::placeholder {
+    color: #777;
+}
+
+.buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+button {
+    padding: 10px 26px;
+    font-size: 15px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: #2f6bff;
+    color: #fff;
+    font-weight: bold;
+}
+
+button.secondary {
+    background: #333;
+}
+
+button:disabled {
+    background: #222;
+    color: #666;
+}
+
+.erro {
+    margin-top: 15px;
+    color: #ff4c4c;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* RESULTADO */
+.resultado-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 28px;
+    margin-top: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.caixa {
+    background: #000;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border-left: 4px solid #2f6bff;
+}
+
+.caixa strong {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.caixa .tempo-total {
+    font-style: italic;
+    font-size: 15px;
+}
+
+.caixa .tempo-programa {
+    font-style: italic;
+    opacity: 0.6;
+    margin-left: 6px;
+    font-size: 14px;
+}
+
+.status {
+    margin-top: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #2f6bff;
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <form id="calcForm">
-            <h1>Calculadora de Padrões e Caixas</h1>
 
-            <label for="standardTime">Padrão Hora Carga:</label>
-            <input type="number" id="standardTime" step="0.01" placeholder="Ex: 182" required>
+<div class="container">
 
-            <label for="numCycles">Quantidade de Ciclos:</label>
-            <select id="numCycles" required>
-                <option value="12">12 estágios</option>
-                <option value="18">18 estágios</option>
-            </select>
+<!-- SLIDE 1 -->
+<div class="slide active">
+    <h2>Parâmetros do Processo</h2>
 
-            <label for="pairsPerBox">Quantidade de Pares por Caixa:</label>
-            <input type="number" id="pairsPerBox" placeholder="Ex: 35" required>
+    <label>Padrão hora carga</label>
+    <input id="padraoHora" placeholder="147">
 
-            <label for="goal">Meta:</label>
-            <select id="goal" required>
-                <option value="6">6 horas</option>
-                <option value="8">8 horas</option>
-                <option value="9">9 horas</option>
-            </select>
+    <label>Estágios da máquina</label>
+    <select id="estagios">
+        <option value="">Selecione</option>
+        <option value="12">12 estágios</option>
+        <option value="18">18 estágios</option>
+    </select>
 
-            <label for="numMatrices">Quantidade de Matrizes:</label>
-            <input type="number" id="numMatrices" min="1" max="18" placeholder="Ex: 3" required>
+    <label>Quantidade de matrizes</label>
+    <input id="matrizes" placeholder="1">
 
-            <button type="submit">Calcular</button>
-        </form>
+    <div class="erro" id="erro1"></div>
+
+    <div class="buttons">
+        <span></span>
+        <button onclick="validarSlide1()">Próximo</button>
     </div>
+</div>
 
-    <script>
-        // Adiciona o evento de submissão ao formulário
-        document.getElementById('calcForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Impede o envio padrão do formulário
-            calculatePatterns(); // Chama a função para calcular os padrões
-        });
+<!-- SLIDE 2 -->
+<div class="slide">
+    <h2>Configuração das Caixas</h2>
 
-        function calculatePatterns() {
-            const standardTime = parseFloat(document.getElementById('standardTime').value) || 0;
-            const numCycles = parseInt(document.getElementById('numCycles').value) || 0;
-            const pairsPerBox = parseInt(document.getElementById('pairsPerBox').value) || 0;
-            const goal = parseInt(document.getElementById('goal').value) || 0;
-            const numMatrices = parseInt(document.getElementById('numMatrices').value) || 1;
+    <label>Pares por caixa</label>
+    <input id="paresCaixa" placeholder="6">
 
-            // Cálculo do padrão
-            const pattern = (standardTime * numMatrices) / numCycles;
-            // Cálculo das horas por caixa
-            const hoursPerBox = pairsPerBox / pattern;
+    <label>Quantidade de etiquetas</label>
+    <input id="etiquetas" placeholder="10">
 
-            let totalHours = 0;
-            let boxesRequired = 0;
+    <label>Pares da última etiqueta</label>
+    <input id="paresUltima" placeholder="2">
 
-            // Cálculo de caixas necessárias
-            while (totalHours < goal) {
-                totalHours += hoursPerBox;
-                boxesRequired++;
-            }
+    <div class="erro" id="erro2"></div>
 
-            const isAboveGoal = totalHours >= goal;
-            const status = isAboveGoal ? "Acima" : "Abaixo";
-            const formattedHours = formatHours(totalHours);
+    <div class="buttons">
+        <button class="secondary" onclick="prev()">Voltar</button>
+        <button onclick="validarSlide2()">Próximo</button>
+    </div>
+</div>
 
-            const resultText = `
-Padrão com ${numMatrices} Matriz(es):
-${pattern.toFixed(2)}
+<!-- SLIDE 3 -->
+<div class="slide">
+    <h2>Meta</h2>
 
-Caixas Necessárias para a Meta:
-${boxesRequired} caixas
+    <label>Horas já produzidas (HH:MM) — opcional</label>
+    <input id="produzido" placeholder="02:34">
 
-Total de Horas com ${boxesRequired} Caixa(s):
-${formattedHours} (${status} da Meta)
-            `;
+    <label>Meta (HH:MM)</label>
+    <input id="meta" placeholder="08:42">
 
-            const boxDetails = [
-                {
-                    numMatrices,
-                    hoursList: Array.from({ length: boxesRequired }, (_, idx) => formatHours((idx + 1) * hoursPerBox))
-                }
-            ];
+    <div class="erro" id="erro3"></div>
 
-            localStorage.setItem('results', resultText);
-            localStorage.setItem('boxDetails', JSON.stringify(boxDetails));
+    <div class="buttons">
+        <button class="secondary" onclick="prev()">Voltar</button>
+        <button onclick="validarSlide3()">Calcular</button>
+    </div>
+</div>
 
-            // Redireciona para a tela de resultados
-            window.location.href = 'resultados.html';
-        }
+<!-- SLIDE 4 -->
+<div class="slide">
+    <h2>Resultado</h2>
 
-        function formatHours(hoursDecimal) {
-            const hours = Math.floor(hoursDecimal);
-            const minutes = Math.round((hoursDecimal - hours) * 60);
-            return `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
-        }
-    </script>
+    <div id="resultado" class="resultado-grid"></div>
+    <div id="status" class="status"></div>
+
+    <div class="buttons">
+        <button class="secondary" onclick="prev()">Voltar</button>
+        <button onclick="location.reload()">Reiniciar</button>
+    </div>
+</div>
+
+</div>
+
+<script>
+let slideAtual = 0;
+const slides = document.querySelectorAll(".slide");
+
+function next() {
+    slides[slideAtual].classList.remove("active");
+    slideAtual++;
+    slides[slideAtual].classList.add("active");
+}
+
+function prev() {
+    slides[slideAtual].classList.remove("active");
+    slideAtual--;
+    slides[slideAtual].classList.add("active");
+}
+
+function validarSlide1() {
+    if (!padraoHora.value || !estagios.value || !matrizes.value) {
+        erro1.textContent = "Preencha todos os campos para avançar.";
+        return;
+    }
+    erro1.textContent = "";
+    next();
+}
+
+function validarSlide2() {
+    if (!paresCaixa.value || !etiquetas.value || !paresUltima.value) {
+        erro2.textContent = "Todos os campos são obrigatórios.";
+        return;
+    }
+    erro2.textContent = "";
+    next();
+}
+
+function validarSlide3() {
+    if (!meta.value) {
+        erro3.textContent = "Informe a meta para calcular.";
+        return;
+    }
+    erro3.textContent = "";
+    calcular();
+}
+
+function hhmmParaMin(h) {
+    if (!h) return 0;
+    let [hh, mm] = h.split(":").map(Number);
+    return hh * 60 + mm;
+}
+
+function minParaHHMM(m) {
+    let h = Math.floor(m / 60);
+    let min = Math.round(m % 60);
+    return `${String(h).padStart(2,"0")}:${String(min).padStart(2,"0")}`;
+}
+
+function calcular() {
+    const prodHora = (padraoHora.value / estagios.value) * matrizes.value;
+    const tempoPar = 60 / prodHora;
+
+    let total = hhmmParaMin(produzido.value);
+    let acumulado = 0;
+    resultado.innerHTML = "";
+
+    for (let i = 1; i <= etiquetas.value; i++) {
+        let pares = (i == etiquetas.value) ? paresUltima.value : paresCaixa.value;
+        let tempo = pares * tempoPar;
+
+        acumulado += tempo;
+        total += tempo;
+
+        const box = document.createElement("div");
+        box.className = "caixa";
+
+        box.innerHTML = `
+            <strong>Caixa ${i}:</strong>
+            <div>
+                <span class="tempo-total">${minParaHHMM(total)}</span>
+                ${produzido.value ? `<span class="tempo-programa">(${minParaHHMM(acumulado)})</span>` : ""}
+            </div>
+        `;
+
+        resultado.appendChild(box);
+
+        if (total >= hhmmParaMin(meta.value)) break;
+    }
+
+    status.textContent = total >= hhmmParaMin(meta.value)
+        ? "Meta atingida ou superada"
+        : "Meta não atingida";
+
+    next();
+}
+</script>
+
 </body>
 </html>
