@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Simulador de Produção</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 * {
     user-select: none;
+    box-sizing: border-box;
 }
 
 body {
@@ -17,21 +19,22 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    height: 100vh;
-    padding-top: 20px;
+    padding: 20px;
 }
 
 .container {
-    width: 960px;
+    width: 100%;
+    max-width: 480px; /* responsivo para celular */
     background: #0b0b0b;
     border-radius: 12px;
-    padding: 30px;
+    padding: 20px;
     box-shadow: 0 0 25px rgba(0, 80, 255, 0.25);
 }
 
 h2 {
     margin-top: 0;
-    color: #ffffff;
+    color: #fff;
+    font-size: 20px;
 }
 
 .slide {
@@ -50,7 +53,7 @@ label {
 
 input, select {
     width: 100%;
-    padding: 9px;
+    padding: 10px;
     margin-top: 5px;
     border-radius: 6px;
     border: none;
@@ -64,9 +67,10 @@ input::placeholder {
 }
 
 .buttons {
-    margin-top: 30px;
+    margin-top: 20px;
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 button {
@@ -75,9 +79,11 @@ button {
     border-radius: 6px;
     border: none;
     cursor: pointer;
-    background: #2f6bff;
+    background: #2f6bff; /* azul Reebok */
     color: #fff;
     font-weight: bold;
+    margin-top: 10px;
+    flex: 1 1 auto;
 }
 
 button.secondary {
@@ -90,7 +96,7 @@ button:disabled {
 }
 
 .erro {
-    margin-top: 15px;
+    margin-top: 10px;
     color: #ff4c4c;
     font-size: 14px;
     font-weight: bold;
@@ -100,16 +106,16 @@ button:disabled {
 .resultado-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px 28px;
+    gap: 12px 20px;
     margin-top: 20px;
     max-height: 60vh;
     overflow-y: auto;
-    padding-right: 10px;
+    padding-right: 6px;
 }
 
 .caixa {
     background: #000;
-    padding: 12px 14px;
+    padding: 10px 12px;
     border-radius: 6px;
     border-left: 4px solid #2f6bff;
 }
@@ -133,7 +139,7 @@ button:disabled {
 }
 
 .status {
-    margin-top: 25px;
+    margin-top: 20px;
     font-size: 16px;
     font-weight: bold;
     color: #2f6bff;
@@ -150,22 +156,21 @@ button:disabled {
     <h2>Parâmetros do Processo</h2>
 
     <label>Padrão hora carga</label>
-    <input id="padraoHora" placeholder="147">
+    <input id="padraoHora" placeholder="Ex: 147">
 
     <label>Estágios da máquina</label>
     <select id="estagios">
-        <option value="">Selecione</option>
+        <option value="">Ex: 12</option>
         <option value="12">12 estágios</option>
         <option value="18">18 estágios</option>
     </select>
 
     <label>Quantidade de matrizes</label>
-    <input id="matrizes" placeholder="1">
+    <input id="matrizes" placeholder="Ex: 1">
 
     <div class="erro" id="erro1"></div>
 
     <div class="buttons">
-        <span></span>
         <button onclick="validarSlide1()">Próximo</button>
     </div>
 </div>
@@ -175,13 +180,13 @@ button:disabled {
     <h2>Configuração das Caixas</h2>
 
     <label>Pares por caixa</label>
-    <input id="paresCaixa" placeholder="6">
+    <input id="paresCaixa" placeholder="Ex: 6">
 
     <label>Quantidade de etiquetas</label>
-    <input id="etiquetas" placeholder="10">
+    <input id="etiquetas" placeholder="Ex: 10">
 
     <label>Pares da última etiqueta</label>
-    <input id="paresUltima" placeholder="2">
+    <input id="paresUltima" placeholder="Ex: 2">
 
     <div class="erro" id="erro2"></div>
 
@@ -196,10 +201,10 @@ button:disabled {
     <h2>Meta</h2>
 
     <label>Horas já produzidas (HH:MM) — opcional</label>
-    <input id="produzido" placeholder="02:34">
+    <input id="produzido" placeholder="Ex: 02:34">
 
     <label>Meta (HH:MM)</label>
-    <input id="meta" placeholder="08:42">
+    <input id="meta" placeholder="Ex: 08:42">
 
     <div class="erro" id="erro3"></div>
 
@@ -227,6 +232,8 @@ button:disabled {
 <script>
 let slideAtual = 0;
 const slides = document.querySelectorAll(".slide");
+const status = document.getElementById("status");
+const resultado = document.getElementById("resultado");
 
 function next() {
     slides[slideAtual].classList.remove("active");
@@ -310,9 +317,16 @@ function calcular() {
         if (total >= hhmmParaMin(meta.value)) break;
     }
 
-    status.textContent = total >= hhmmParaMin(meta.value)
-        ? "Meta atingida ou superada"
-        : "Meta não atingida";
+    if (total > hhmmParaMin(meta.value)) {
+        status.textContent = "Meta superada";
+        status.style.color = "#2f6bff";
+    } else if (total === hhmmParaMin(meta.value)) {
+        status.textContent = "Meta atingida";
+        status.style.color = "#2f6bff";
+    } else {
+        status.textContent = "Meta não atingida";
+        status.style.color = "#ff4c4c";
+    }
 
     next();
 }
