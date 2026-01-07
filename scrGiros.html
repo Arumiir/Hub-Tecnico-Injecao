@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Calculadora de Giro</title>
+
+<style>
+* { user-select: none; }
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #000;
+    color: #eaeaea;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 960px;
+    background: #0b0b0b;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 0 25px rgba(0, 80, 255, 0.25);
+}
+
+h2 { margin-top: 0; color: #fff; }
+
+.slide { display: none; }
+.slide.active { display: block; }
+
+label {
+    display: block;
+    margin-top: 14px;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 9px;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: none;
+    font-size: 15px;
+    background: #111;
+    color: #fff;
+}
+
+input::placeholder { color: #777; }
+
+.buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.buttons.vertical {
+    flex-direction: column;
+}
+
+button {
+    padding: 12px 26px;
+    font-size: 15px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: #2f6bff;
+    color: #fff;
+    font-weight: bold;
+}
+
+button.secondary { background: #333; }
+button.danger { background: #7a0000; }
+
+.erro {
+    margin-top: 15px;
+    color: #ff4c4c;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* RESULTADO */
+.resultado-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 28px;
+    margin-top: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.bloco {
+    background: #000;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border-left: 4px solid #2f6bff;
+}
+
+.bloco strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.bloco em { font-style: italic; }
+.bloco span { opacity: 0.6; font-style: italic; font-size: 14px; }
+
+.status {
+    margin-top: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #2f6bff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+    <h2>Controle do Programa</h2>
+
+    <!-- BOTÕES VERTICAIS -->
+    <div class="buttons vertical">
+        <button onclick="irPara(1)">Adicionar número</button>
+        <button onclick="irPara(2)">Ver números</button>
+    </div>
+
+    <!-- BOTÕES PARALELOS -->
+    <div class="buttons">
+        <button onclick="calcular()">Calcular</button>
+        <button class="danger" onclick="resetar()">Resetar</button>
+    </div>
+</div>
+
+<!-- SLIDE 1 -->
+<div class="slide">
+    <h2>Inserir Número</h2>
+
+    <label>Número</label>
+    <input id="numero" placeholder="Ex: 33/4">
+
+    <label>Quantidade de matrizes</label>
+    <input id="matrizes" placeholder="Ex: 2">
+
+    <label>Pares por caixa</label>
+    <input id="paresCaixa" placeholder="Ex: 6">
+
+    <label>Etiquetas completas</label>
+    <input id="etiquetas" placeholder="Ex: 3">
+
+    <label>Pares da última etiqueta</label>
+    <input id="ultima" placeholder="Ex: 2">
+
+    <div class="erro" id="erro1"></div>
+
+    <div class="buttons">
+        <button class="secondary" onclick="irPara(0)">Voltar</button>
+        <button onclick="salvar()">Salvar</button>
+    </div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide">
+    <h2>Números Inseridos</h2>
+    <div id="lista"></div>
+
+    <div class="buttons">
+        <button class="secondary" onclick="irPara(0)">Voltar</button>
+    </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide">
+    <h2>Resultado</h2>
+
+    <div id="resultado" class="resultado-grid"></div>
+    <div id="status" class="status"></div>
+
+    <div class="buttons">
+        <button class="secondary" onclick="irPara(0)">Voltar</button>
+        <button onclick="location.reload()">Reiniciar</button>
+    </div>
+</div>
+
+</div>
+
+<script>
+let slideAtual = 0;
+const slides = document.querySelectorAll(".slide");
+const dados = [];
+
+function irPara(n) {
+    slides[slideAtual].classList.remove("active");
+    slideAtual = n;
+    slides[slideAtual].classList.add("active");
+}
+
+function salvar() {
+    if (!numero.value || !matrizes.value || !paresCaixa.value || !etiquetas.value || !ultima.value) {
+        erro1.textContent = "Preencha todos os campos.";
+        return;
+    }
+
+    erro1.textContent = "";
+
+    dados.push({
+        numero: numero.value,
+        matrizes: +matrizes.value,
+        paresCaixa: +paresCaixa.value,
+        etiquetas: +etiquetas.value,
+        ultima: +ultima.value
+    });
+
+    numero.value = matrizes.value = paresCaixa.value = etiquetas.value = ultima.value = "";
+    irPara(0);
+}
+
+function calcular() {
+    if (dados.length === 0) {
+        alert("Nenhum número inserido.");
+        return;
+    }
+
+    resultado.innerHTML = "";
+    let maior = 0;
+    let numeroMaior = "";
+
+    dados.forEach(d => {
+        const totalPares = (d.paresCaixa * d.etiquetas) + d.ultima;
+        const giros = Math.ceil(totalPares / d.matrizes);
+
+        if (giros > maior) {
+            maior = giros;
+            numeroMaior = d.numero;
+        }
+
+        resultado.innerHTML += `
+            <div class="bloco">
+                <strong>N° ${d.numero}</strong>
+                <em>${giros} giros</em>
+                <span>(${totalPares} pares)</span>
+            </div>
+        `;
+    });
+
+    status.textContent = `O número ${numeroMaior} é o de maior giro e segura a produção.`;
+    irPara(3);
+}
+
+function resetar() {
+    if (confirm("Deseja apagar todos os dados?")) {
+        location.reload();
+    }
+}
+
+function atualizarLista() {
+    lista.innerHTML = dados.map(d =>
+        `<div class="bloco"><strong>N° ${d.numero}</strong></div>`
+    ).join("");
+}
+
+setInterval(atualizarLista, 300);
+</script>
+
+</body>
+  </html>
