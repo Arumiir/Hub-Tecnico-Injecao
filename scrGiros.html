@@ -5,7 +5,8 @@
 <title>Calculadora de Giro</title>
 
 <style>
-* { user-select: none; }
+<style>
+* { user-select: none; box-sizing: border-box; }
 
 body {
     font-family: Arial, Helvetica, sans-serif;
@@ -14,19 +15,25 @@ body {
     margin: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 15px;
 }
 
 .container {
-    width: 960px;
+    width: 100%;
+    max-width: 520px;
     background: #0b0b0b;
     border-radius: 12px;
-    padding: 30px;
+    padding: 20px;
     box-shadow: 0 0 25px rgba(0, 80, 255, 0.25);
 }
 
-h2 { margin-top: 0; color: #fff; }
+h2 {
+    margin-top: 0;
+    color: #fff;
+    text-align: center;
+}
 
 .slide { display: none; }
 .slide.active { display: block; }
@@ -39,11 +46,11 @@ label {
 
 input {
     width: 100%;
-    padding: 9px;
+    padding: 10px;
     margin-top: 5px;
     border-radius: 6px;
     border: none;
-    font-size: 15px;
+    font-size: 16px;
     background: #111;
     color: #fff;
 }
@@ -51,10 +58,9 @@ input {
 input::placeholder { color: #777; }
 
 .buttons {
-    margin-top: 30px;
+    margin-top: 20px;
     display: flex;
-    justify-content: space-between;
-    gap: 15px;
+    gap: 12px;
 }
 
 .buttons.vertical {
@@ -62,7 +68,8 @@ input::placeholder { color: #777; }
 }
 
 button {
-    padding: 12px 26px;
+    width: 100%;
+    padding: 14px;
     font-size: 15px;
     border-radius: 6px;
     border: none;
@@ -76,7 +83,7 @@ button.secondary { background: #333; }
 button.danger { background: #7a0000; }
 
 .erro {
-    margin-top: 15px;
+    margin-top: 12px;
     color: #ff4c4c;
     font-size: 14px;
     font-weight: bold;
@@ -85,12 +92,11 @@ button.danger { background: #7a0000; }
 /* RESULTADO */
 .resultado-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px 28px;
+    grid-template-columns: 1fr;
+    gap: 12px;
     margin-top: 20px;
-    max-height: 60vh;
+    max-height: 55vh;
     overflow-y: auto;
-    padding-right: 10px;
 }
 
 .bloco {
@@ -109,11 +115,13 @@ button.danger { background: #7a0000; }
 .bloco span { opacity: 0.6; font-style: italic; font-size: 14px; }
 
 .status {
-    margin-top: 25px;
-    font-size: 16px;
+    margin-top: 20px;
+    font-size: 15px;
     font-weight: bold;
     color: #2f6bff;
+    text-align: center;
 }
+</style>
 </style>
 </head>
 
