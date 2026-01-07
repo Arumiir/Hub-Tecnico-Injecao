@@ -2,47 +2,44 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Tela Inicial</title>
-
+<title>App de Produção</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 * {
     user-select: none;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     font-family: Arial, Helvetica, sans-serif;
     background: #000;
     color: #eaeaea;
-    margin: 0;
     display: flex;
-    justify-content: center; /* horizontal */
-    align-items: center;     /* vertical */
-    height: 60vh;
-    padding: 10px;           /* espaço mínimo para telas pequenas */
-    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
 }
 
 .container {
     width: 100%;
-    max-width: 480px;       /* largura máxima */
+    max-width: 480px; /* limita o container em telas grandes */
     background: #0b0b0b;
     border-radius: 12px;
     padding: 30px;
     box-shadow: 0 0 25px rgba(0, 80, 255, 0.25);
     text-align: center;
-    max-height: 90vh;       /* altura máxima */
-    overflow-y: auto;       /* permite scroll se conteúdo for maior */
-    box-sizing: border-box;
 }
 
 h2 {
-    margin-top: 0;
-    color: #ffffff;
+    color: #fff;
     margin-bottom: 40px;
 }
 
 button {
-    padding: 15px 40px;
+    padding: 15px 30px;
     font-size: 18px;
     border-radius: 6px;
     border: none;
@@ -57,17 +54,59 @@ button {
 button:hover {
     background: #005bb5;
 }
+
+/* Slides */
+.slide {
+    display: none;
+}
+
+.slide.active {
+    display: block;
+}
+
+/* Input padrão (para futuros simuladores) */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: none;
+    font-size: 15px;
+    background: #111;
+    color: #fff;
+}
+
+input::placeholder {
+    color: #777;
+}
 </style>
 </head>
-
 <body>
 
 <div class="container">
-    <h2>Meu App</h2>
 
-    <button onclick="window.location.href='scrCalculadora.html">Calculadoras</button>
-    <button onclick="alert('Regulagens clicado!')">Regulagens</button>
+    <!-- TELA INICIAL -->
+    <div class="slide active" id="telaInicial">
+        <h2>Meu App</h2>
+        <button onclick="showSlide('telaCalculadoras')">Calculadoras</button>
+        <button onclick="alert('Regulagens clicado!')">Regulagens</button>
+    </div>
+
+    <!-- TELA CALCULADORAS -->
+    <div class="slide" id="telaCalculadoras">
+        <h2>Calculadoras</h2>
+        <button onclick="window.location.href='scrHora.html'">Simulador de Produção</button>
+        <button onclick="showSlide('telaInicial')">Voltar</button>
+    </div>
+
 </div>
+
+<script>
+function showSlide(id) {
+    document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+</script>
 
 </body>
 </html>
