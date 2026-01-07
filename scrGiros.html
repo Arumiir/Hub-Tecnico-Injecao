@@ -2,27 +2,44 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+
+<!-- VIEWPORT CORRETO (CRÍTICO) -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
 <title>Calculadora de Giro</title>
 
 <style>
-<style>
-* { user-select: none; box-sizing: border-box; }
+* {
+    user-select: none;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 17px;
+    }
+}
 
 body {
     font-family: Arial, Helvetica, sans-serif;
     background: #000;
     color: #eaeaea;
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
     min-height: 100vh;
-    padding: 15px;
 }
 
+/* CONTAINER MOBILE-FIRST */
 .container {
     width: 100%;
     max-width: 520px;
+    margin: 0 auto;
     background: #0b0b0b;
     border-radius: 12px;
     padding: 20px;
@@ -46,21 +63,23 @@ label {
 
 input {
     width: 100%;
-    padding: 10px;
+    padding: 11px;
     margin-top: 5px;
     border-radius: 6px;
     border: none;
-    font-size: 16px;
+    font-size: 15px;
     background: #111;
     color: #fff;
 }
 
-input::placeholder { color: #777; }
+input::placeholder {
+    color: #777;
+}
 
 .buttons {
-    margin-top: 20px;
+    margin-top: 26px;
     display: flex;
-    gap: 12px;
+    gap: 14px;
 }
 
 .buttons.vertical {
@@ -68,10 +87,10 @@ input::placeholder { color: #777; }
 }
 
 button {
-    width: 100%;
+    flex: 1;
     padding: 14px;
     font-size: 15px;
-    border-radius: 6px;
+    border-radius: 8px;
     border: none;
     cursor: pointer;
     background: #2f6bff;
@@ -79,11 +98,16 @@ button {
     font-weight: bold;
 }
 
-button.secondary { background: #333; }
-button.danger { background: #7a0000; }
+button.secondary {
+    background: #333;
+}
+
+button.danger {
+    background: #7a0000;
+}
 
 .erro {
-    margin-top: 12px;
+    margin-top: 15px;
     color: #ff4c4c;
     font-size: 14px;
     font-weight: bold;
@@ -93,35 +117,49 @@ button.danger { background: #7a0000; }
 .resultado-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 14px;
     margin-top: 20px;
-    max-height: 55vh;
+    max-height: 60vh;
     overflow-y: auto;
+    padding-right: 6px;
+}
+
+@media (min-width: 480px) {
+    .resultado-grid {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 .bloco {
     background: #000;
-    padding: 12px 14px;
-    border-radius: 6px;
+    padding: 14px;
+    border-radius: 8px;
     border-left: 4px solid #2f6bff;
 }
 
 .bloco strong {
     display: block;
     margin-bottom: 4px;
+    font-size: 15px;
 }
 
-.bloco em { font-style: italic; }
-.bloco span { opacity: 0.6; font-style: italic; font-size: 14px; }
+.bloco em {
+    font-style: italic;
+}
+
+.bloco span {
+    opacity: 0.6;
+    font-style: italic;
+    font-size: 14px;
+}
 
 .status {
-    margin-top: 20px;
-    font-size: 15px;
+    margin-top: 22px;
+    font-size: 16px;
     font-weight: bold;
     color: #2f6bff;
     text-align: center;
 }
-</style>
 </style>
 </head>
 
@@ -133,13 +171,11 @@ button.danger { background: #7a0000; }
 <div class="slide active">
     <h2>Controle do Programa</h2>
 
-    <!-- BOTÕES VERTICAIS -->
     <div class="buttons vertical">
         <button onclick="irPara(1)">Adicionar número</button>
         <button onclick="irPara(2)">Ver números</button>
     </div>
 
-    <!-- BOTÕES PARALELOS -->
     <div class="buttons">
         <button onclick="calcular()">Calcular</button>
         <button class="danger" onclick="resetar()">Resetar</button>
@@ -154,16 +190,16 @@ button.danger { background: #7a0000; }
     <input id="numero" placeholder="Ex: 33/4">
 
     <label>Quantidade de matrizes</label>
-    <input id="matrizes" placeholder="Ex: 2">
+    <input id="matrizes" type="number" placeholder="Ex: 2">
 
     <label>Pares por caixa</label>
-    <input id="paresCaixa" placeholder="Ex: 6">
+    <input id="paresCaixa" type="number" placeholder="Ex: 6">
 
     <label>Etiquetas completas</label>
-    <input id="etiquetas" placeholder="Ex: 3">
+    <input id="etiquetas" type="number" placeholder="Ex: 3">
 
     <label>Pares da última etiqueta</label>
-    <input id="ultima" placeholder="Ex: 2">
+    <input id="ultima" type="number" placeholder="Ex: 2">
 
     <div class="erro" id="erro1"></div>
 
@@ -176,7 +212,7 @@ button.danger { background: #7a0000; }
 <!-- SLIDE 2 -->
 <div class="slide">
     <h2>Números Inseridos</h2>
-    <div id="lista"></div>
+    <div id="lista" class="resultado-grid"></div>
 
     <div class="buttons">
         <button class="secondary" onclick="irPara(0)">Voltar</button>
@@ -277,4 +313,4 @@ setInterval(atualizarLista, 300);
 </script>
 
 </body>
-  </html>
+</html>
