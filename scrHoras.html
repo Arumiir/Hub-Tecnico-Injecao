@@ -2,10 +2,17 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<!-- ADICIONADA: faz o navegador mobile usar a largura do dispositivo -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Simulador de Produção</title>
 
 <style>
-* {
+/* box-sizing para cálculos de largura previsíveis + mantém user-select */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
     user-select: none;
 }
 
@@ -16,18 +23,22 @@ body {
     margin: 0;
     display: flex;
     justify-content: center; /* centraliza horizontalmente */
-    align-items: center;     /* centraliza verticalmente */
-    height: 100vh;
+    align-items: center;     /* centraliza verticalmente em telas grandes */
+    min-height: 100vh;       /* usar min-height para permitir scroll em telas pequenas */
+    padding: 20px;           /* evita que o container encoste na borda em mobile */
 }
 
+/* Tornar o container responsivo: largura fluida com máximo de 960px */
 .container {
-    width: 960px;
+    max-width: 960px;
+    width: 100%;                   /* ocupa a largura disponível */
     background: #0b0b0b;
     border-radius: 12px;
     padding: 30px;
     box-shadow: 0 0 25px rgba(0, 80, 255, 0.25);
 }
 
+/* restante do CSS inalterado, com pequenos ajustes para mobile abaixo */
 h2 {
     margin-top: 0;
     color: #ffffff;
@@ -66,6 +77,8 @@ input::placeholder {
     margin-top: 30px;
     display: flex;
     justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 button {
@@ -136,6 +149,25 @@ button:disabled {
     font-size: 16px;
     font-weight: bold;
     color: #2f6bff;
+}
+
+/* Ajustes para telas pequenas (mobile) */
+@media (max-width: 600px) {
+    body {
+        align-items: flex-start; /* evita centralizar verticalmente em telas pequenas */
+    }
+    .container {
+        padding: 18px;
+    }
+    .resultado-grid {
+        grid-template-columns: 1fr; /* uma coluna no mobile */
+    }
+    .buttons {
+        justify-content: space-between;
+    }
+    button {
+        flex: 1 1 auto;
+    }
 }
 </style>
 </head>
