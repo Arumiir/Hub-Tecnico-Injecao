@@ -2,13 +2,16 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<!-- ADICIONADA: faz o navegador mobile usar a largura do dispositivo -->
-<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- VIEWPORT CORRETO (ESSENCIAL) -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 
 <title>Simulador de Produção</title>
 
 <style>
-/* box-sizing para cálculos de largura previsíveis + mantém user-select */
 *,
 *::before,
 *::after {
@@ -16,41 +19,44 @@
     user-select: none;
 }
 
+html {
+    font-size: 16px;
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 17px;
+    }
+}
+
 body {
     font-family: Arial, Helvetica, sans-serif;
     background: #000;
     color: #eaeaea;
     margin: 0;
-    display: flex;
-    justify-content: center; /* centraliza horizontalmente */
-    align-items: center;     /* centraliza verticalmente em telas grandes */
-    min-height: 100vh;       /* usar min-height para permitir scroll em telas pequenas */
-    padding: 20px;           /* evita que o container encoste na borda em mobile */
+    min-height: 100vh;
+    padding: 14px;
 }
 
-/* Tornar o container responsivo: largura fluida com máximo de 960px */
+/* CONTAINER MOBILE-FIRST */
 .container {
-    max-width: 960px;
-    width: 100%;                   /* ocupa a largura disponível */
+    width: 100%;
+    max-width: 520px; /* evita efeito “desktop miniatura” */
+    margin: 0 auto;
     background: #0b0b0b;
     border-radius: 12px;
-    padding: 30px;
+    padding: 20px;
     box-shadow: 0 0 25px rgba(0, 80, 255, 0.25);
 }
 
-/* restante do CSS inalterado, com pequenos ajustes para mobile abaixo */
 h2 {
     margin-top: 0;
     color: #ffffff;
+    text-align: center;
 }
 
-.slide {
-    display: none;
-}
-
-.slide.active {
-    display: block;
-}
+.slide { display: none; }
+.slide.active { display: block; }
 
 label {
     display: block;
@@ -60,7 +66,7 @@ label {
 
 input, select {
     width: 100%;
-    padding: 9px;
+    padding: 11px;
     margin-top: 5px;
     border-radius: 6px;
     border: none;
@@ -74,17 +80,16 @@ input::placeholder {
 }
 
 .buttons {
-    margin-top: 30px;
+    margin-top: 26px;
     display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: 12px;
 }
 
 button {
-    padding: 10px 26px;
+    flex: 1;
+    padding: 14px;
     font-size: 15px;
-    border-radius: 6px;
+    border-radius: 8px;
     border: none;
     cursor: pointer;
     background: #2f6bff;
@@ -111,18 +116,23 @@ button:disabled {
 /* RESULTADO */
 .resultado-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px 28px;
+    grid-template-columns: 1fr;
+    gap: 14px;
     margin-top: 20px;
     max-height: 60vh;
     overflow-y: auto;
-    padding-right: 10px;
+}
+
+@media (min-width: 480px) {
+    .resultado-grid {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 .caixa {
     background: #000;
-    padding: 12px 14px;
-    border-radius: 6px;
+    padding: 14px;
+    border-radius: 8px;
     border-left: 4px solid #2f6bff;
 }
 
@@ -145,29 +155,11 @@ button:disabled {
 }
 
 .status {
-    margin-top: 25px;
+    margin-top: 22px;
     font-size: 16px;
     font-weight: bold;
     color: #2f6bff;
-}
-
-/* Ajustes para telas pequenas (mobile) */
-@media (max-width: 600px) {
-    body {
-        align-items: flex-start; /* evita centralizar verticalmente em telas pequenas */
-    }
-    .container {
-        padding: 18px;
-    }
-    .resultado-grid {
-        grid-template-columns: 1fr; /* uma coluna no mobile */
-    }
-    .buttons {
-        justify-content: space-between;
-    }
-    button {
-        flex: 1 1 auto;
-    }
+    text-align: center;
 }
 </style>
 </head>
@@ -341,7 +333,8 @@ function calcular() {
         if (total >= hhmmParaMin(meta.value)) break;
     }
 
-    status.textContent = total >= hhmmParaMin(meta.value)
+    status.textContent =
+        total >= hhmmParaMin(meta.value)
         ? "Meta atingida ou superada"
         : "Meta não atingida";
 
