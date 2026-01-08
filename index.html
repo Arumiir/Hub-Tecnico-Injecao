@@ -33,8 +33,12 @@ body {
     position: relative;
 }
 
-/* HEADER */
+/* HEADER FIXO */
 .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     padding: 16px 20px;
     background: #ffffff;
     border-bottom: 1px solid #ddd;
@@ -42,6 +46,7 @@ body {
     justify-content: space-between;
     align-items: center;
     font-weight: 600;
+    z-index: 1000;
 }
 
 .header h1 {
@@ -64,7 +69,7 @@ body {
     display: none;
     flex-direction: column;
     width: 180px;
-    z-index: 100;
+    z-index: 1000;
 }
 
 .menu.active {
@@ -91,13 +96,14 @@ body {
     background: #f2f4f6;
 }
 
-/* CONTENT */
+/* CONTEÚDO AJUSTADO COM ESPAÇO PARA HEADER E NAVBAR */
 .content {
     flex: 1;
-    padding: 20px;
+    padding: 80px 20px 70px; /* top e bottom para header/navbar fixos */
     overflow-y: auto;
 }
 
+/* TELAS */
 .screen {
     display: none;
 }
@@ -166,11 +172,16 @@ body {
     margin-bottom: 10px;
 }
 
-/* NAVBAR INFERIOR */
+/* NAVBAR INFERIOR FIXA */
 .navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
     background: #ffffff;
     border-top: 1px solid #ddd;
+    z-index: 1000;
 }
 
 .navbar button {
@@ -195,7 +206,6 @@ body {
 .navbar button.active {
     color: #005bbb;
 }
-
 </style>
 </head>
 <body>
@@ -256,58 +266,11 @@ body {
             </div>
         </div>
 
-
-<!-- TELA REGULAGENS -->
-<div class="screen" id="regulagens">
-    <!-- Barra de pesquisa -->
-    <input type="text" id="produtoCode" class="search-input" placeholder="Digite o código do produto" oninput="buscarRegulagem()">
-
-    <!-- Resultados -->
-    <div id="regulagemResultados" style="margin-top:20px;"></div>
-</div>
-
-<script>
-const produtosSimulados = [
-    { codigo: "A001", nome: "Tênis Reebok Azul" },
-    { codigo: "B023", nome: "Chuteira Futsal" },
-    { codigo: "C112", nome: "Bota Industrial" },
-    { codigo: "D044", nome: "Sandália EPI" },
-    { codigo: "E078", nome: "Tênis Corrida Verde" }
-];
-
-function buscarRegulagem() {
-    const input = document.getElementById('produtoCode').value.trim().toLowerCase();
-    const container = document.getElementById('regulagemResultados');
-    container.innerHTML = "";
-
-    if (!input) return;
-
-    // Filtra produtos que contém o texto digitado no código ou nome
-    const resultados = produtosSimulados.filter(p => 
-        p.codigo.toLowerCase().includes(input) || 
-        p.nome.toLowerCase().includes(input)
-    );
-
-    if (resultados.length === 0) {
-        container.innerHTML = '<span style="color:#ff4c4c;">Nenhum produto encontrado.</span>';
-        return;
-    }
-
-    resultados.forEach(p => {
-        const card = document.createElement('div');
-        card.className = "card";
-        card.innerHTML = `<span>${p.codigo} - ${p.nome}</span><i class="fas fa-cogs"></i>`;
-
-        // Torna o card clicável para a tela futura de regulagem
-        card.onclick = () => {
-            window.location.href = './detalhesRegulagem.html?codigo=' + encodeURIComponent(p.codigo);
-        };
-
-        container.appendChild(card);
-    });
-}
-</script>
         <!-- TELA REGULAGENS -->
+        <div class="screen" id="regulagens">
+            <input type="text" id="produtoCode" class="search-input" placeholder="Digite o código do produto" oninput="buscarRegulagem()">
+            <div id="regulagemResultados" style="margin-top:20px;"></div>
+        </div>
 
     </div>
 
@@ -330,6 +293,14 @@ function buscarRegulagem() {
 </div>
 
 <script>
+const produtosSimulados = [
+    { codigo: "A001", nome: "Tênis Reebok Azul" },
+    { codigo: "B023", nome: "Chuteira Futsal" },
+    { codigo: "C112", nome: "Bota Industrial" },
+    { codigo: "D044", nome: "Sandália EPI" },
+    { codigo: "E078", nome: "Tênis Corrida Verde" }
+];
+
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -356,28 +327,30 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// FUNÇÃO DE REGULAGEM
 function buscarRegulagem() {
-    const codigo = document.getElementById('produtoCode').value.trim();
+    const input = document.getElementById('produtoCode').value.trim().toLowerCase();
     const container = document.getElementById('regulagemResultados');
     container.innerHTML = "";
 
-    if (!codigo) {
-        container.innerHTML = '<span style="color:#ff4c4c;">Informe o código do produto.</span>';
+    if (!input) return;
+
+    const resultados = produtosSimulados.filter(p => 
+        p.codigo.toLowerCase().includes(input) || 
+        p.nome.toLowerCase().includes(input)
+    );
+
+    if (resultados.length === 0) {
+        container.innerHTML = '<span style="color:#ff4c4c;">Nenhum produto encontrado.</span>';
         return;
     }
 
-    // Simulação de resultados (substituir por API ou DB real)
-    const resultadosSimulados = [
-        { maquina: "Máquina A1", regulagem: "Velocidade 120, Pressão 5" },
-        { maquina: "Máquina B2", regulagem: "Velocidade 100, Pressão 6" },
-        { maquina: "Máquina C3", regulagem: "Velocidade 110, Pressão 4" }
-    ];
-
-    resultadosSimulados.forEach(r => {
+    resultados.forEach(p => {
         const card = document.createElement('div');
         card.className = "card";
-        card.innerHTML = `<span>${r.maquina}: ${r.regulagem}</span><i class="fas fa-cogs"></i>`;
+        card.innerHTML = `<span>${p.codigo} - ${p.nome}</span><i class="fas fa-cogs"></i>`;
+        card.onclick = () => {
+            window.location.href = './detalhesRegulagem.html?codigo=' + encodeURIComponent(p.codigo);
+        };
         container.appendChild(card);
     });
 }
