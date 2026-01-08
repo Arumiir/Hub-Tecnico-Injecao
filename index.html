@@ -256,7 +256,7 @@ body {
                 <i class="fas fa-cogs"></i>
                 <span>Simulador de Produção</span>
             </div>
-            <div class="card" onclick="window.location.href='./srcGiros.html'">
+            <div class="card" onclick="window.location.href='./scrGiros.html'">
                 <i class="fas fa-sync-alt"></i>
                 <span>Calculadora de Giro</span>
             </div>
@@ -349,7 +349,7 @@ function buscarRegulagem() {
         card.className = "card";
         card.innerHTML = `<span>${p.codigo} - ${p.nome}</span><i class="fas fa-cogs"></i>`;
         card.onclick = () => {
-            window.location.href = './detalhesRegulagem.html?codigo=' + encodeURIComponent(p.codigo);
+            window.location.href = './scrRegulagens.html?codigo=' + encodeURIComponent(p.codigo);
         };
         container.appendChild(card);
     });
