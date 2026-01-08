@@ -2,111 +2,384 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>App de Produção</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Produção</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <style>
 * {
-    user-select: none;
     box-sizing: border-box;
+    user-select: none;
     margin: 0;
     padding: 0;
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #000;
-    color: #eaeaea;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f2f4f6;
+    color: #1e1e1e;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    padding: 20px;
 }
 
-.container {
+.app {
     width: 100%;
-    max-width: 480px; /* limita o container em telas grandes */
-    background: #0b0b0b;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 0 25px rgba(0, 80, 255, 0.25);
-    text-align: center;
+    max-width: 480px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 
-h2 {
-    color: #fff;
-    margin-bottom: 40px;
+/* HEADER */
+.header {
+    padding: 16px 20px;
+    background: #ffffff;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
 }
 
-button {
-    padding: 15px 30px;
+.header h1 {
     font-size: 18px;
-    border-radius: 6px;
-    border: none;
+}
+
+.hamburger {
+    font-size: 22px;
     cursor: pointer;
-    background: #0072CE; /* azul Reebok */
-    color: #fff;
-    font-weight: bold;
-    margin: 10px;
-    transition: background 0.3s;
 }
 
-button:hover {
-    background: #005bb5;
+/* MENU HAMBÚRGUER */
+.menu {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    display: none;
+    flex-direction: column;
+    width: 180px;
+    z-index: 100;
 }
 
-/* Slides */
-.slide {
+.menu.active {
+    display: flex;
+}
+
+.menu button {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    font-size: 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #333;
+    transition: background 0.2s;
+}
+
+.menu button i {
+    margin-right: 10px;
+}
+
+.menu button:hover {
+    background: #f2f4f6;
+}
+
+/* CONTENT */
+.content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.screen {
     display: none;
 }
 
-.slide.active {
+.screen.active {
     display: block;
 }
 
-/* Input padrão (para futuros simuladores) */
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 6px;
-    border: none;
-    font-size: 15px;
-    background: #111;
-    color: #fff;
+/* CARDS */
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
 }
 
-input::placeholder {
-    color: #777;
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.1);
 }
+
+.card i {
+    font-size: 28px;
+    color: #005bbb;
+}
+
+.card span {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* BOTÕES PRINCIPAIS */
+.action-btn {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #005bbb;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn i {
+    margin-right: 10px;
+}
+
+/* INPUT DE PESQUISA */
+.search-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* NAVBAR INFERIOR */
+.navbar {
+    display: flex;
+    background: #ffffff;
+    border-top: 1px solid #ddd;
+}
+
+.navbar button {
+    flex: 1;
+    padding: 14px 0;
+    border: none;
+    background: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.navbar button i {
+    font-size: 18px;
+    margin-bottom: 2px;
+}
+
+.navbar button.active {
+    color: #005bbb;
+}
+
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="app">
 
-    <!-- TELA INICIAL -->
-    <div class="slide active" id="telaInicial">
-        <h2>App Expandido</h2>
-        <button onclick="showSlide('telaCalculadoras')">Calculadoras</button>
-        <button onclick="alert('Regulagens clicado!')">Regulagens</button>
+    <!-- HEADER -->
+    <div class="header">
+        <h1>Painel de Produção</h1>
+        <i class="fas fa-bars hamburger" onclick="toggleMenu()"></i>
     </div>
 
-    <!-- TELA CALCULADORAS -->
-    <div class="slide" id="telaCalculadoras">
-        <h2>Calculadoras</h2>
-        <button onclick="window.location.href='./scrHoras.html'">Simulador de Produção</button>
-        <button onclick="window.location.href='./scrGiros.html'">Calculadora de Giro</button>
-<button onclick="window.location.href='./scrPesos.html'">Calculadora de Pesos</button>
-        <button onclick="showSlide('telaInicial')">Voltar</button>
+    <!-- MENU HAMBURGUER -->
+    <div class="menu" id="menu">
+        <button onclick="alert('Contato selecionado'); closeMenu()">
+            <i class="fas fa-envelope"></i> Contato
+        </button>
+        <button onclick="alert('Temas selecionado'); closeMenu()">
+            <i class="fas fa-palette"></i> Temas
+        </button>
+        <button onclick="alert('Sobre o App'); closeMenu()">
+            <i class="fas fa-info-circle"></i> Sobre
+        </button>
+    </div>
+
+    <!-- CONTEÚDO -->
+    <div class="content">
+
+        <!-- TELA INICIAL -->
+        <div class="screen active" id="home">
+            <div class="card">
+                <span>Última máquina atualizada: Máquina A1</span>
+                <i class="fas fa-cogs"></i>
+            </div>
+            <div class="card">
+                <span>Nova máquina adicionada: Máquina B2</span>
+                <i class="fas fa-plus-square"></i>
+            </div>
+            <div class="card">
+                <span>Última regulagem realizada: Máquina C3</span>
+                <i class="fas fa-sliders-h"></i>
+            </div>
+        </div>
+
+        <!-- TELA CALCULADORAS -->
+        <div class="screen" id="calculadoras">
+            <div class="card" onclick="window.location.href='./scrHoras.html'">
+                <i class="fas fa-cogs"></i>
+                <span>Simulador de Produção</span>
+            </div>
+            <div class="card" onclick="window.location.href='./srcGiros.html'">
+                <i class="fas fa-sync-alt"></i>
+                <span>Calculadora de Giro</span>
+            </div>
+            <div class="card" onclick="window.location.href='./scrPesos.html'">
+                <i class="fas fa-weight-hanging"></i>
+                <span>Calculadora de Pesos</span>
+            </div>
+        </div>
+
+
+<!-- TELA REGULAGENS -->
+<div class="screen" id="regulagens">
+    <!-- Barra de pesquisa -->
+    <input type="text" id="produtoCode" class="search-input" placeholder="Digite o código do produto" oninput="buscarRegulagem()">
+
+    <!-- Resultados -->
+    <div id="regulagemResultados" style="margin-top:20px;"></div>
+</div>
+
+<script>
+const produtosSimulados = [
+    { codigo: "A001", nome: "Tênis Reebok Azul" },
+    { codigo: "B023", nome: "Chuteira Futsal" },
+    { codigo: "C112", nome: "Bota Industrial" },
+    { codigo: "D044", nome: "Sandália EPI" },
+    { codigo: "E078", nome: "Tênis Corrida Verde" }
+];
+
+function buscarRegulagem() {
+    const input = document.getElementById('produtoCode').value.trim().toLowerCase();
+    const container = document.getElementById('regulagemResultados');
+    container.innerHTML = "";
+
+    if (!input) return;
+
+    // Filtra produtos que contém o texto digitado no código ou nome
+    const resultados = produtosSimulados.filter(p => 
+        p.codigo.toLowerCase().includes(input) || 
+        p.nome.toLowerCase().includes(input)
+    );
+
+    if (resultados.length === 0) {
+        container.innerHTML = '<span style="color:#ff4c4c;">Nenhum produto encontrado.</span>';
+        return;
+    }
+
+    resultados.forEach(p => {
+        const card = document.createElement('div');
+        card.className = "card";
+        card.innerHTML = `<span>${p.codigo} - ${p.nome}</span><i class="fas fa-cogs"></i>`;
+
+        // Torna o card clicável para a tela futura de regulagem
+        card.onclick = () => {
+            window.location.href = './detalhesRegulagem.html?codigo=' + encodeURIComponent(p.codigo);
+        };
+
+        container.appendChild(card);
+    });
+}
+</script>
+        <!-- TELA REGULAGENS -->
+
+    </div>
+
+    <!-- NAVBAR INFERIOR -->
+    <div class="navbar">
+        <button id="btnCalc" onclick="showScreen('calculadoras')">
+            <i class="fas fa-calculator"></i>
+            Calculadoras
+        </button>
+        <button id="btnHome" class="active" onclick="showScreen('home')">
+            <i class="fas fa-home"></i>
+            Home
+        </button>
+        <button id="btnReg" onclick="showScreen('regulagens')">
+            <i class="fas fa-sliders-h"></i>
+            Regulagens
+        </button>
     </div>
 
 </div>
 
 <script>
-function showSlide(id) {
-    document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('active'));
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+
+    document.querySelectorAll('.navbar button').forEach(b => b.classList.remove('active'));
+    if (id === 'home') btnHome.classList.add('active');
+    else if (id === 'calculadoras') btnCalc.classList.add('active');
+    else if (id === 'regulagens') btnReg.classList.add('active');
+}
+
+function toggleMenu() {
+    document.getElementById('menu').classList.toggle('active');
+}
+
+function closeMenu() {
+    document.getElementById('menu').classList.remove('active');
+}
+
+document.addEventListener('click', function(event) {
+    const menu = document.getElementById('menu');
+    const hamburger = document.querySelector('.hamburger');
+    if (!menu.contains(event.target) && !hamburger.contains(event.target)) {
+        menu.classList.remove('active');
+    }
+});
+
+// FUNÇÃO DE REGULAGEM
+function buscarRegulagem() {
+    const codigo = document.getElementById('produtoCode').value.trim();
+    const container = document.getElementById('regulagemResultados');
+    container.innerHTML = "";
+
+    if (!codigo) {
+        container.innerHTML = '<span style="color:#ff4c4c;">Informe o código do produto.</span>';
+        return;
+    }
+
+    // Simulação de resultados (substituir por API ou DB real)
+    const resultadosSimulados = [
+        { maquina: "Máquina A1", regulagem: "Velocidade 120, Pressão 5" },
+        { maquina: "Máquina B2", regulagem: "Velocidade 100, Pressão 6" },
+        { maquina: "Máquina C3", regulagem: "Velocidade 110, Pressão 4" }
+    ];
+
+    resultadosSimulados.forEach(r => {
+        const card = document.createElement('div');
+        card.className = "card";
+        card.innerHTML = `<span>${r.maquina}: ${r.regulagem}</span><i class="fas fa-cogs"></i>`;
+        container.appendChild(card);
+    });
 }
 </script>
 
