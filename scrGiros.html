@@ -2,236 +2,165 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-
-<!-- VIEWPORT CORRETO (CRÍTICO) -->
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-
 <title>Calculadora de Giro</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-* {
-    user-select: none;
-    box-sizing: border-box;
-}
-
-html {
-    font-size: 16px;
-}
-
-@media (max-width: 480px) {
-    html {
-        font-size: 17px;
-    }
-}
+* { box-sizing: border-box; user-select: none; margin:0; padding:0; }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #000;
-    color: #eaeaea;
-    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f2f4f6;
+    color: #1e1e1e;
     min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding:0;
 }
 
-/* CONTAINER MOBILE-FIRST */
-.container {
+.app {
     width: 100%;
-    max-width: 520px;
-    margin: 0 auto;
-    background: #0b0b0b;
+    max-width: 480px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* HEADER FIXO */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    font-weight: 600;
+}
+.header h1 { font-size: 18px; }
+.back-btn { font-size: 18px; cursor: pointer; }
+
+/* CONTEÚDO */
+.content {
+    flex: 1;
+    padding: 80px 20px 20px 20px; /* padding-top para header fixo */
+    overflow-y: auto;
+}
+
+/* CARDS */
+.card {
+    background: #fff;
     border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 0 25px rgba(0, 80, 255, 0.25);
+    margin-bottom: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
 }
 
-h2 {
-    margin-top: 0;
-    color: #fff;
-    text-align: center;
-}
-
+/* SLIDES */
 .slide { display: none; }
 .slide.active { display: block; }
 
-label {
-    display: block;
-    margin-top: 14px;
-    font-size: 14px;
-}
+label { display:block; margin-top:12px; font-size:14px; color:#1e1e1e; }
+input { width:100%; padding:12px; margin-top:5px; border-radius:8px; border:1px solid #ccc; font-size:15px; }
+input::placeholder { color:#777; }
 
-input {
-    width: 100%;
-    padding: 11px;
-    margin-top: 5px;
-    border-radius: 6px;
-    border: none;
-    font-size: 15px;
-    background: #111;
-    color: #fff;
-}
-
-input::placeholder {
-    color: #777;
-}
-
-.buttons {
-    margin-top: 26px;
-    display: flex;
-    gap: 14px;
-}
-
-.buttons.vertical {
-    flex-direction: column;
-}
+.buttons { display:flex; gap:12px; margin-top:20px; }
+.buttons.vertical { flex-direction:column; }
 
 button {
-    flex: 1;
-    padding: 14px;
-    font-size: 15px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    background: #2f6bff;
-    color: #fff;
-    font-weight: bold;
+    flex:1; padding:14px; font-size:15px; border-radius:8px; border:none; cursor:pointer;
+    background:#005bbb; color:#fff; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px;
 }
+button.secondary { background:#ddd; color:#1e1e1e; }
+button.danger { background:#7a0000; }
 
-button.secondary {
-    background: #333;
-}
+.erro { margin-top:12px; color:#ff4c4c; font-size:14px; font-weight:bold; }
 
-button.danger {
-    background: #7a0000;
-}
-
-.erro {
-    margin-top: 15px;
-    color: #ff4c4c;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-/* RESULTADO */
-.resultado-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
-    margin-top: 20px;
-    max-height: 60vh;
-    overflow-y: auto;
-    padding-right: 6px;
-}
-
-@media (min-width: 480px) {
-    .resultado-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
+/* RESULTADOS */
+.resultado-grid { display:grid; grid-template-columns:1fr; gap:14px; margin-top:20px; max-height:60vh; overflow-y:auto; padding-right:6px; }
+@media(min-width:480px) { .resultado-grid { grid-template-columns:1fr 1fr; } }
 
 .bloco {
-    background: #000;
-    padding: 14px;
-    border-radius: 8px;
-    border-left: 4px solid #2f6bff;
+    background:#fff; padding:14px; border-radius:8px; border-left:4px solid #005bbb; box-shadow:0 4px 12px rgba(0,0,0,0.05);
 }
+.bloco strong { display:block; margin-bottom:4px; font-size:15px; }
+.bloco em { font-style:italic; }
+.bloco span { opacity:0.6; font-style:italic; font-size:14px; }
 
-.bloco strong {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 15px;
-}
-
-.bloco em {
-    font-style: italic;
-}
-
-.bloco span {
-    opacity: 0.6;
-    font-style: italic;
-    font-size: 14px;
-}
-
-.status {
-    margin-top: 22px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #2f6bff;
-    text-align: center;
-}
+.status { margin-top:16px; font-size:16px; font-weight:bold; color:#005bbb; text-align:center; }
 </style>
 </head>
 
 <body>
-
-<div class="container">
-
-<!-- SLIDE 0 -->
-<div class="slide active">
-    <h2>Controle do Programa</h2>
-
-    <div class="buttons vertical">
-        <button onclick="irPara(1)">Adicionar número</button>
-        <button onclick="irPara(2)">Ver números</button>
+<div class="app">
+    <!-- HEADER -->
+    <div class="header">
+        <i class="fas fa-arrow-left back-btn" onclick="history.back()"></i>
+        <h1>Calculadora de Giro</h1>
+        <span></span>
     </div>
 
-    <div class="buttons">
-        <button onclick="calcular()">Calcular</button>
-        <button class="danger" onclick="resetar()">Resetar</button>
+    <div class="content">
+        <!-- SLIDE 0 -->
+        <div class="slide active card">
+            <h2>Controle do Programa</h2>
+            <div class="buttons vertical">
+                <button onclick="irPara(1)">Adicionar número</button>
+                <button onclick="irPara(2)">Ver números</button>
+            </div>
+            <div class="buttons">
+                <button onclick="calcular()">Calcular <i class="fas fa-calculator"></i></button>
+                <button class="danger" onclick="resetar()">Resetar <i class="fas fa-redo"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 1 -->
+        <div class="slide card">
+            <h2>Inserir Número</h2>
+            <label>Número</label>
+            <input id="numero" placeholder="Ex: 33/4">
+            <label>Quantidade de matrizes</label>
+            <input id="matrizes" type="number" placeholder="Ex: 2">
+            <label>Pares por caixa</label>
+            <input id="paresCaixa" type="number" placeholder="Ex: 6">
+            <label>Etiquetas completas</label>
+            <input id="etiquetas" type="number" placeholder="Ex: 3">
+            <label>Pares da última etiqueta</label>
+            <input id="ultima" type="number" placeholder="Ex: 2">
+            <div class="erro" id="erro1"></div>
+            <div class="buttons">
+                <button class="secondary" onclick="irPara(0)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <button onclick="salvar()">Salvar <i class="fas fa-save"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 2 -->
+        <div class="slide card">
+            <h2>Números Inseridos</h2>
+            <div id="lista" class="resultado-grid"></div>
+            <div class="buttons">
+                <button class="secondary" onclick="irPara(0)"><i class="fas fa-arrow-left"></i> Voltar</button>
+            </div>
+        </div>
+
+        <!-- SLIDE 3 -->
+        <div class="slide card">
+            <h2>Resultado</h2>
+            <div id="resultado" class="resultado-grid"></div>
+            <div id="status" class="status"></div>
+            <div class="buttons">
+                <button class="secondary" onclick="irPara(0)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <button onclick="location.reload()">Reiniciar <i class="fas fa-redo"></i></button>
+            </div>
+        </div>
     </div>
-</div>
-
-<!-- SLIDE 1 -->
-<div class="slide">
-    <h2>Inserir Número</h2>
-
-    <label>Número</label>
-    <input id="numero" placeholder="Ex: 33/4">
-
-    <label>Quantidade de matrizes</label>
-    <input id="matrizes" type="number" placeholder="Ex: 2">
-
-    <label>Pares por caixa</label>
-    <input id="paresCaixa" type="number" placeholder="Ex: 6">
-
-    <label>Etiquetas completas</label>
-    <input id="etiquetas" type="number" placeholder="Ex: 3">
-
-    <label>Pares da última etiqueta</label>
-    <input id="ultima" type="number" placeholder="Ex: 2">
-
-    <div class="erro" id="erro1"></div>
-
-    <div class="buttons">
-        <button class="secondary" onclick="irPara(0)">Voltar</button>
-        <button onclick="salvar()">Salvar</button>
-    </div>
-</div>
-
-<!-- SLIDE 2 -->
-<div class="slide">
-    <h2>Números Inseridos</h2>
-    <div id="lista" class="resultado-grid"></div>
-
-    <div class="buttons">
-        <button class="secondary" onclick="irPara(0)">Voltar</button>
-    </div>
-</div>
-
-<!-- SLIDE 3 -->
-<div class="slide">
-    <h2>Resultado</h2>
-
-    <div id="resultado" class="resultado-grid"></div>
-    <div id="status" class="status"></div>
-
-    <div class="buttons">
-        <button class="secondary" onclick="irPara(0)">Voltar</button>
-        <button onclick="location.reload()">Reiniciar</button>
-    </div>
-</div>
-
 </div>
 
 <script>
@@ -250,9 +179,7 @@ function salvar() {
         erro1.textContent = "Preencha todos os campos.";
         return;
     }
-
     erro1.textContent = "";
-
     dados.push({
         numero: numero.value,
         matrizes: +matrizes.value,
@@ -260,7 +187,6 @@ function salvar() {
         etiquetas: +etiquetas.value,
         ultima: +ultima.value
     });
-
     numero.value = matrizes.value = paresCaixa.value = etiquetas.value = ultima.value = "";
     irPara(0);
 }
@@ -276,13 +202,10 @@ function calcular() {
     let numeroMaior = "";
 
     dados.forEach(d => {
-        const totalPares = (d.paresCaixa * d.etiquetas) + d.ultima;
-        const giros = Math.ceil(totalPares / d.matrizes);
+        const totalPares = (d.paresCaixa*d.etiquetas)+d.ultima;
+        const giros = Math.ceil(totalPares/d.matrizes);
 
-        if (giros > maior) {
-            maior = giros;
-            numeroMaior = d.numero;
-        }
+        if (giros > maior) { maior = giros; numeroMaior = d.numero; }
 
         resultado.innerHTML += `
             <div class="bloco">
@@ -298,15 +221,11 @@ function calcular() {
 }
 
 function resetar() {
-    if (confirm("Deseja apagar todos os dados?")) {
-        location.reload();
-    }
+    if (confirm("Deseja apagar todos os dados?")) location.reload();
 }
 
 function atualizarLista() {
-    lista.innerHTML = dados.map(d =>
-        `<div class="bloco"><strong>N° ${d.numero}</strong></div>`
-    ).join("");
+    lista.innerHTML = dados.map(d => `<div class="bloco"><strong>N° ${d.numero}</strong></div>`).join("");
 }
 
 setInterval(atualizarLista, 300);
