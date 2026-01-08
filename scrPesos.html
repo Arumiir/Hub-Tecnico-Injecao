@@ -2,212 +2,165 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Calculadora de Ajuste – 2 Injetores</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-* {
-    box-sizing: border-box;
-    user-select: none;
-}
+* { box-sizing: border-box; user-select: none; margin:0; padding:0; }
 
-<!--body {
-    margin: 0;
-    background: #000;
-    color: #eee;
-    font-family: Arial, Helvetica, sans-serif;
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f2f4f6;
+    color: #1e1e1e;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-}
--->
-
-body {
-    margin: 0;
-    background: #000;
-    color: #eee;
-    font-family: Arial, Helvetica, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* 👈 AQUI */
-    padding: 20px;
+    padding:0;
 }
 
-.container {
+.app {
     width: 100%;
-    max-width: 900px;
-    background: #0b0b0b;
+    max-width: 480px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* HEADER FIXO */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    font-weight: 600;
+}
+.header h1 { font-size: 18px; }
+.back-btn { font-size: 18px; cursor: pointer; }
+
+/* CONTEÚDO */
+.content {
+    flex: 1;
+    padding: 80px 20px 20px 20px; /* padding-top para header fixo */
+    overflow-y: auto;
+}
+
+/* CARDS */
+.card {
+    background: #fff;
     border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 0 25px rgba(0,80,255,.25);
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
 }
 
-h2 {
-    margin-top: 0;
-    color: #fff;
-}
-
+/* SLIDES */
 .slide { display: none; }
 .slide.active { display: block; }
 
-label {
-    display: block;
-    margin-top: 14px;
-    font-size: 14px;
-}
+label { display:block; margin-top:12px; font-size:14px; color:#1e1e1e; }
+input, select { width:100%; padding:12px; margin-top:5px; border-radius:8px; border:1px solid #ccc; font-size:15px; }
 
-input, select {
-    width: 100%;
-    margin-top: 6px;
-    padding: 9px;
-    border-radius: 6px;
-    border: none;
-    background: #111;
-    color: #fff;
-    font-size: 15px;
-}
-
-.buttons {
-    margin-top: 28px;
-    display: flex;
-    gap: 12px;
-}
-
-.buttons.vertical {
-    flex-direction: column;
-}
-
-.buttons.horizontal {
-    justify-content: space-between;
-}
-
-.buttons.horizontal button {
-    width: 50%;
-}
+.buttons { display:flex; gap:12px; margin-top:20px; }
+.buttons.vertical { flex-direction:column; }
+.buttons.horizontal { justify-content:space-between; }
+.buttons.horizontal button { width:48%; }
 
 button {
-    padding: 12px;
-    font-size: 15px;
-    font-weight: bold;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    background: #2f6bff;
-    color: #fff;
+    padding:14px; font-size:15px; font-weight:600; border:none; border-radius:8px; cursor:pointer;
+    background:#005bbb; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px;
 }
+button.secondary { background:#ddd; color:#1e1e1e; }
+button.danger { background:#7a0000; }
 
-button.secondary { background: #333; }
-button.danger { background: #7a0000; }
+.erro { margin-top:12px; color:#ff4c4c; font-weight:bold; font-size:14px; }
 
-.erro {
-    margin-top: 12px;
-    color: #ff4c4c;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.resultado-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px 30px;
-    margin-top: 20px;
-}
+/* RESULTADOS */
+.resultado-grid { display:grid; grid-template-columns:1fr; gap:14px; margin-top:20px; max-height:60vh; overflow-y:auto; padding-right:6px; }
+@media(min-width:480px) { .resultado-grid { grid-template-columns:1fr 1fr; } }
 
 .bloco {
-    background: #000;
-    padding: 14px;
-    border-radius: 6px;
-    border-left: 4px solid #2f6bff;
+    background:#fff; padding:14px; border-radius:8px; border-left:4px solid #005bbb; box-shadow:0 4px 12px rgba(0,0,0,0.05);
 }
+.bloco strong { display:block; margin-bottom:4px; font-size:15px; }
+.injetor { margin-top:4px; font-style:italic; }
 
-.bloco strong {
-    display: block;
-    margin-bottom: 6px;
-}
-
-.injetor {
-    margin-top: 6px;
-    font-style: italic;
-}
-
-@media (max-width:600px){
-    .resultado-grid { grid-template-columns: 1fr; }
-}
 </style>
 </head>
 
 <body>
-
-<div class="container">
-
-<!-- SLIDE 0 -->
-<div class="slide active">
-    <h2>Controle de Pesos</h2>
-
-    <div class="buttons vertical">
-        <button onclick="irPara(1)">Adicionar número</button>
-        <button onclick="irPara(2)">Ver números</button>
+<div class="app">
+    <!-- HEADER -->
+    <div class="header">
+        <i class="fas fa-arrow-left back-btn" onclick="history.back()"></i>
+        <h1>Calculadora de Ajuste</h1>
+        <span></span>
     </div>
 
-    <div class="buttons horizontal">
-        <button onclick="calcular()">Calcular</button>
-        <button class="danger" onclick="resetar()">Resetar</button>
+    <div class="content">
+        <!-- SLIDE 0 -->
+        <div class="slide active card">
+            <h2>Controle de Pesos</h2>
+            <div class="buttons vertical">
+                <button onclick="irPara(1)">Adicionar número</button>
+                <button onclick="irPara(2)">Ver números</button>
+            </div>
+            <div class="buttons horizontal">
+                <button onclick="calcular()">Calcular <i class="fas fa-calculator"></i></button>
+                <button class="danger" onclick="resetar()">Resetar <i class="fas fa-redo"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 1 -->
+        <div class="slide card">
+            <h2>Inserção de Dados</h2>
+            <label>Número</label>
+            <input id="numero" placeholder="Ex: 33/4">
+            <label>Peso padrão por injetor (g)</label>
+            <input id="pesoPadrao" placeholder="Ex: 125">
+            <label>Ajustar qual injetor?</label>
+            <select id="ajuste" onchange="renderInjetores()">
+                <option value="">Selecione</option>
+                <option value="1">Somente Injetor 1</option>
+                <option value="2">Somente Injetor 2</option>
+                <option value="ambos">Ambos</option>
+            </select>
+            <div id="camposInjetores"></div>
+            <div class="erro" id="erro"></div>
+            <div class="buttons horizontal">
+                <button class="secondary" onclick="irPara(0)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <button onclick="salvar()">Salvar <i class="fas fa-save"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 2 -->
+        <div class="slide card">
+            <h2>Números Inseridos</h2>
+            <div id="lista" class="resultado-grid"></div>
+            <div class="buttons">
+                <button class="secondary" onclick="irPara(0)"><i class="fas fa-arrow-left"></i> Voltar</button>
+            </div>
+        </div>
+
+        <!-- SLIDE 3 -->
+        <div class="slide card">
+            <h2>Resultado</h2>
+            <div id="resultado" class="resultado-grid"></div>
+            <div class="buttons horizontal">
+                <button class="secondary" onclick="irPara(0)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <button onclick="location.reload()">Reiniciar <i class="fas fa-redo"></i></button>
+            </div>
+        </div>
     </div>
-</div>
-
-<!-- SLIDE 1 -->
-<div class="slide">
-    <h2>Inserção de Dados</h2>
-
-    <label>Número</label>
-    <input id="numero" placeholder="Ex: 33/4">
-
-    <label>Peso padrão por injetor (g)</label>
-    <input id="pesoPadrao" placeholder="Ex: 125">
-
-    <label>Ajustar qual injetor?</label>
-    <select id="ajuste" onchange="renderInjetores()">
-        <option value="">Selecione</option>
-        <option value="1">Somente Injetor 1</option>
-        <option value="2">Somente Injetor 2</option>
-        <option value="ambos">Ambos</option>
-    </select>
-
-    <div id="camposInjetores"></div>
-
-    <div class="erro" id="erro"></div>
-
-    <div class="buttons horizontal">
-        <button class="secondary" onclick="irPara(0)">Voltar</button>
-        <button onclick="salvar()">Salvar</button>
-    </div>
-</div>
-
-<!-- SLIDE 2 -->
-<div class="slide">
-    <h2>Números Inseridos</h2>
-    <div id="lista"></div>
-
-    <div class="buttons">
-        <button class="secondary" onclick="irPara(0)">Voltar</button>
-    </div>
-</div>
-
-<!-- SLIDE 3 -->
-<div class="slide">
-    <h2>Resultado</h2>
-    <div id="resultado" class="resultado-grid"></div>
-
-    <div class="buttons horizontal">
-        <button class="secondary" onclick="irPara(0)">Voltar</button>
-        <button onclick="location.reload()">Reiniciar</button>
-    </div>
-</div>
-
 </div>
 
 <script>
@@ -222,14 +175,13 @@ function irPara(n){
 }
 
 function renderInjetores(){
-    const sel = ajuste.value;
     camposInjetores.innerHTML = "";
+    const sel = ajuste.value;
 
     function bloco(i){
         return `
         <label>Injetor ${i} – Peso real (g)</label>
         <input class="pesoReal" data-i="${i}" placeholder="Ex: 132">
-
         <label>Injetor ${i} – Carga atual</label>
         <input class="cargaAtual" data-i="${i}" placeholder="Ex: 80">
         `;
@@ -242,7 +194,6 @@ function renderInjetores(){
 
 function salvar(){
     erro.textContent = "";
-
     if(!numero.value || !pesoPadrao.value || !ajuste.value){
         erro.textContent = "Preencha todos os campos.";
         return;
@@ -250,7 +201,6 @@ function salvar(){
 
     const pesos = document.querySelectorAll(".pesoReal");
     const cargas = document.querySelectorAll(".cargaAtual");
-
     for(let i=0;i<pesos.length;i++){
         if(!pesos[i].value || !cargas[i].value){
             erro.textContent = "Preencha todos os dados dos injetores.";
@@ -276,25 +226,15 @@ function salvar(){
 }
 
 function calcular(){
-    if(dados.length === 0){
-        alert("Nenhum número inserido.");
-        return;
-    }
-
+    if(dados.length===0){ alert("Nenhum número inserido."); return; }
     resultado.innerHTML = "";
 
-    dados.forEach(d => {
-        let html = `
-        <div class="bloco">
-            <strong>N° ${d.numero}</strong>
-            <em>Peso padrão: ${d.pesoPadrao} g</em>
-        `;
-
-        d.injetores.forEach(inj => {
-            const cargaIdeal = Math.round((inj.carga * d.pesoPadrao) / inj.pesoReal);
+    dados.forEach(d=>{
+        let html = `<div class="bloco"><strong>N° ${d.numero}</strong><em>Peso padrão: ${d.pesoPadrao} g</em>`;
+        d.injetores.forEach(inj=>{
+            const cargaIdeal = Math.round((inj.carga*d.pesoPadrao)/inj.pesoReal);
             html += `<div class="injetor">Injetor ${inj.id} → ${cargaIdeal}</div>`;
         });
-
         html += `</div>`;
         resultado.innerHTML += html;
     });
@@ -302,14 +242,10 @@ function calcular(){
     irPara(3);
 }
 
-function resetar(){
-    if(confirm("Apagar todos os dados?")) location.reload();
-}
+function resetar(){ if(confirm("Apagar todos os dados?")) location.reload(); }
 
 setInterval(()=>{
-    lista.innerHTML = dados.map(d =>
-        `<div class="bloco"><strong>N° ${d.numero}</strong></div>`
-    ).join("");
+    lista.innerHTML = dados.map(d => `<div class="bloco"><strong>N° ${d.numero}</strong></div>`).join("");
 },300);
 </script>
 
