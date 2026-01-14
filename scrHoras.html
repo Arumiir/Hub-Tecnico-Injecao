@@ -16,6 +16,8 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
+    align-items: center;
+    padding: 0;
 }
 
 .app {
@@ -24,8 +26,10 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
+/* HEADER FIXO */
 .header {
     position: fixed;
     top: 0;
@@ -38,66 +42,92 @@ body {
     align-items: center;
     justify-content: space-between;
     z-index: 100;
+    font-weight: 600;
 }
 
+.header h1 { font-size: 18px; }
+
+.back-btn {
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* CONTEÚDO */
 .content {
     flex: 1;
-    padding: 80px 20px 20px;
+    padding: 80px 20px 20px 20px; /* padding-top para header fixo */
     overflow-y: auto;
 }
 
+/* CARDS */
 .card {
-    background: #fff;
+    background: #ffffff;
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 16px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.05);
 }
 
+/* SLIDES */
 .slide { display: none; }
 .slide.active { display: block; }
 
-label { display: block; margin-top: 12px; font-size: 14px; }
+label { display: block; margin-top: 12px; font-size: 14px; color: #1e1e1e; }
 input, select {
     width: 100%;
     padding: 12px;
     margin-top: 5px;
     border-radius: 8px;
     border: 1px solid #ccc;
+    font-size: 15px;
 }
 
-.buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-}
+input::placeholder { color: #777; }
 
+.buttons { display: flex; gap: 12px; margin-top: 20px; }
 button {
     flex: 1;
     padding: 14px;
+    font-size: 15px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
     background: #005bbb;
     color: #fff;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
-
 button.secondary {
     background: #ddd;
     color: #1e1e1e;
+}
+button:disabled {
+    background: #eee;
+    color: #aaa;
 }
 
 .erro {
     margin-top: 12px;
     color: #ff4c4c;
+    font-size: 14px;
     font-weight: bold;
 }
 
+/* RESULTADOS */
 .resultado-grid {
     display: grid;
+    grid-template-columns: 1fr;
     gap: 14px;
     margin-top: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+@media (min-width: 480px) {
+    .resultado-grid { grid-template-columns: 1fr 1fr; }
 }
 
 .caixa {
@@ -105,161 +135,147 @@ button.secondary {
     padding: 14px;
     border-radius: 8px;
     border-left: 4px solid #005bbb;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
+.caixa strong { display: block; margin-bottom: 4px; }
+.caixa .tempo-total { font-style: italic; font-size: 15px; }
+.caixa .tempo-programa { font-style: italic; opacity: 0.6; margin-left: 6px; font-size: 14px; }
 
-.status {
-    margin-top: 16px;
-    font-weight: bold;
-    text-align: center;
-    color: #005bbb;
-}
+.status { margin-top: 16px; font-size: 16px; font-weight: bold; color: #005bbb; text-align: center; }
+
 </style>
 </head>
 
 <body>
 <div class="app">
+    <!-- HEADER -->
+    <div class="header">
+        <i class="fas fa-arrow-left back-btn" onclick="history.back()"></i>
+        <h1>Simulador de Produção</h1>
+        <span></span>
+    </div>
 
-<div class="header">
-    <i class="fas fa-arrow-left" onclick="history.back()"></i>
-    <strong>Simulador de Produção</strong>
-    <span></span>
-</div>
+    <div class="content">
+        <!-- SLIDE 1 -->
+        <div class="slide active">
+            <div class="card">
+                <h2>Parâmetros do Processo</h2>
+                <label>Padrão hora carga</label>
+                <input id="padraoHora" placeholder="147">
+                <label>Estágios da máquina</label>
+                <select id="estagios">
+                    <option value="">Selecione</option>
+                    <option value="12">12 estágios</option>
+                    <option value="18">18 estágios</option>
+                </select>
+                <label>Quantidade de matrizes</label>
+                <input id="matrizes" placeholder="1">
+                <div class="erro" id="erro1"></div>
+                <div class="buttons">
+                    <span></span>
+                    <button onclick="validarSlide1()">Próximo <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
 
-<div class="content">
+        <!-- SLIDE 2 -->
+        <div class="slide">
+            <div class="card">
+                <h2>Configuração das Caixas</h2>
+                <label>Pares por caixa</label>
+                <input id="paresCaixa" placeholder="6">
+                <label>Quantidade de etiquetas</label>
+                <input id="etiquetas" placeholder="10">
+                <label>Pares da última etiqueta</label>
+                <input id="paresUltima" placeholder="2">
+                <div class="erro" id="erro2"></div>
+                <div class="buttons">
+                    <button class="secondary" onclick="prev()"><i class="fas fa-arrow-left"></i> Voltar</button>
+                    <button onclick="validarSlide2()">Próximo <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
 
-<div class="slide active">
-<div class="card">
-<h2>Parâmetros</h2>
-<label>Padrão hora carga</label>
-<input id="padraoHora" placeholder="146">
-<label>Estágios</label>
-<select id="estagios">
-<option value="">Selecione</option>
-<option value="12">12</option>
-<option value="18">18</option>
-</select>
-<label>Matrizes</label>
-<input id="matrizes" placeholder="1">
-<div class="erro" id="erro1"></div>
-<div class="buttons">
-<button onclick="validarSlide1()">Próximo</button>
-</div>
-</div>
-</div>
+        <!-- SLIDE 3 -->
+        <div class="slide">
+            <div class="card">
+                <h2>Meta</h2>
+                <label>Horas já produzidas (HH:MM) — opcional</label>
+                <input id="produzido" placeholder="02:34">
+                <label>Meta (HH:MM)</label>
+                <input id="meta" placeholder="08:42">
+                <div class="erro" id="erro3"></div>
+                <div class="buttons">
+                    <button class="secondary" onclick="prev()"><i class="fas fa-arrow-left"></i> Voltar</button>
+                    <button onclick="validarSlide3()">Calcular <i class="fas fa-calculator"></i></button>
+                </div>
+            </div>
+        </div>
 
-<div class="slide">
-<div class="card">
-<h2>Caixas</h2>
-<label>Pares por caixa</label>
-<input id="paresCaixa" placeholder="17">
-<label>Etiquetas</label>
-<input id="etiquetas" placeholder="12">
-<label>Pares última</label>
-<input id="paresUltima" placeholder="11">
-<div class="erro" id="erro2"></div>
-<div class="buttons">
-<button class="secondary" onclick="prev()">Voltar</button>
-<button onclick="validarSlide2()">Próximo</button>
-</div>
-</div>
-</div>
-
-<div class="slide">
-<div class="card">
-<h2>Meta</h2>
-<label>Produzido (HH:MM)</label>
-<input id="produzido" placeholder="06:35">
-<label>Meta (HH:MM)</label>
-<input id="meta" placeholder="08:50">
-<div class="erro" id="erro3"></div>
-<div class="buttons">
-<button class="secondary" onclick="prev()">Voltar</button>
-<button onclick="validarSlide3()">Calcular</button>
-</div>
-</div>
-</div>
-
-<div class="slide">
-<div class="card">
-<h2>Resultado</h2>
-<div id="resultado" class="resultado-grid"></div>
-<div id="status" class="status"></div>
-<div class="buttons">
-<button class="secondary" onclick="prev()">Voltar</button>
-<button onclick="location.reload()">Reiniciar</button>
-</div>
-</div>
-</div>
-
-</div>
+        <!-- SLIDE 4 -->
+        <div class="slide">
+            <div class="card">
+                <h2>Resultado</h2>
+                <div id="resultado" class="resultado-grid"></div>
+                <div id="status" class="status"></div>
+                <div class="buttons">
+                    <button class="secondary" onclick="prev()"><i class="fas fa-arrow-left"></i> Voltar</button>
+                    <button onclick="location.reload()">Reiniciar <i class="fas fa-redo"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
 let slideAtual = 0;
 const slides = document.querySelectorAll(".slide");
 
-function next(){slides[slideAtual].classList.remove("active");slideAtual++;slides[slideAtual].classList.add("active");}
-function prev(){slides[slideAtual].classList.remove("active");slideAtual--;slides[slideAtual].classList.add("active");}
+function next() { slides[slideAtual].classList.remove("active"); slideAtual++; slides[slideAtual].classList.add("active"); }
+function prev() { slides[slideAtual].classList.remove("active"); slideAtual--; slides[slideAtual].classList.add("active"); }
 
-function validarSlide1(){
-if(!padraoHora.value||!estagios.value||!matrizes.value){erro1.textContent="Preencha tudo";return;}
-erro1.textContent="";next();
-}
-function validarSlide2(){
-if(!paresCaixa.value||!etiquetas.value||!paresUltima.value){erro2.textContent="Preencha tudo";return;}
-erro2.textContent="";next();
-}
-function validarSlide3(){
-if(!meta.value){erro3.textContent="Informe a meta";return;}
-erro3.textContent="";calcular();
+function validarSlide1() {
+    if (!padraoHora.value || !estagios.value || !matrizes.value) { erro1.textContent = "Preencha todos os campos para avançar."; return; }
+    erro1.textContent = ""; next();
 }
 
-function hhmmParaMin(v){if(!v)return 0;let[t,m]=v.split(":").map(Number);return t*60+m;}
-function minParaHHMM(m){let h=Math.floor(m/60);let mm=Math.round(m%60);return`${String(h).padStart(2,"0")}:${String(mm).padStart(2,"0")}`;}
-
-function calcular(){
-const prodHora=(padraoHora.value/estagios.value)*matrizes.value;
-const tempoPar=60/prodHora;
-
-const inicio=hhmmParaMin(produzido.value);
-const alvo=hhmmParaMin(meta.value);
-
-let caixas=[];
-for(let i=1;i<=+etiquetas.value;i++){
-let pares=(i==etiquetas.value)?+paresUltima.value:+paresCaixa.value;
-caixas.push({i,tempo:pares*tempoPar});
+function validarSlide2() {
+    if (!paresCaixa.value || !etiquetas.value || !paresUltima.value) { erro2.textContent = "Todos os campos são obrigatórios."; return; }
+    erro2.textContent = ""; next();
 }
 
-let melhor=null;
-let soma=0;
-
-for(let i=0;i<caixas.length;i++){
-soma+=caixas[i].tempo;
-let final=inicio+soma;
-let diff=Math.abs(final-alvo);
-
-if(!melhor ||
-(final>=alvo && diff<melhor.diff) ||
-(final<alvo && melhor.final<alvo && diff<melhor.diff)){
-melhor={qtd:i+1,final,diff};
-}
+function validarSlide3() {
+    if (!meta.value) { erro3.textContent = "Informe a meta para calcular."; return; }
+    erro3.textContent = ""; calcular();
 }
 
-resultado.innerHTML="";
-let total=inicio;
-for(let i=0;i<melhor.qtd;i++){
-total+=caixas[i].tempo;
-resultado.innerHTML+=`
-<div class="caixa">
-<strong>Caixa ${i+1}</strong>
-<span>${minParaHHMM(total)}</span>
-</div>`;
-}
+function hhmmParaMin(h) { if (!h) return 0; let [hh, mm] = h.split(":").map(Number); return hh*60 + mm; }
+function minParaHHMM(m) { let h = Math.floor(m/60); let min = Math.round(m%60); return `${String(h).padStart(2,"0")}:${String(min).padStart(2,"0")}`; }
 
-status.textContent=`Resultado mais próximo da meta (${minParaHHMM(melhor.final)})`;
-next();
+function calcular() {
+    const prodHora = (padraoHora.value / estagios.value) * matrizes.value;
+    const tempoPar = 60 / prodHora;
+
+    let total = hhmmParaMin(produzido.value);
+    let acumulado = 0;
+    resultado.innerHTML = "";
+
+    for (let i=1;i<=etiquetas.value;i++){
+        let pares = (i==etiquetas.value)? paresUltima.value: paresCaixa.value;
+        let tempo = pares * tempoPar;
+        acumulado += tempo;
+        total += tempo;
+
+        const box = document.createElement("div");
+        box.className = "caixa";
+        box.innerHTML = `<strong>Caixa ${i}:</strong><div><span class="tempo-total">${minParaHHMM(total)}</span>${produzido.value?`<span class="tempo-programa">(${minParaHHMM(acumulado)})</span>`:""}</div>`;
+        resultado.appendChild(box);
+        if(total>=hhmmParaMin(meta.value)) break;
+    }
+
+    status.textContent = total>=hhmmParaMin(meta.value)? "Meta atingida ou superada":"Meta não atingida";
+    next();
 }
 </script>
-
 </body>
 </html>
