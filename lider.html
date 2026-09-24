@@ -3,8 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#F2F2F7">
-
 <title>Controle de Produção — Líder</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,26 +11,15 @@
 :root{
     --bg:#f2f2f7;
     --card:#ffffff;
-    --text:#1c1c1e;
-    --muted:#8e8e93;
+    --text:#111111;
+    --muted:#6e6e73;
     --line:#e5e5ea;
-
     --blue:#007aff;
-    --blue-soft:#eaf3ff;
-
     --green:#34c759;
-    --green-soft:#e9f8ed;
-
-    --yellow:#ffcc00;
-    --yellow-soft:#fff8d9;
-
     --red:#ff3b30;
-    --red-soft:#ffebe9;
-
-    --danger:#ff3b30;
-
-    --shadow:0 2px 12px rgba(0,0,0,.045);
-    --radius:18px;
+    --yellow:#ffcc00;
+    --shadow:0 8px 30px rgba(0,0,0,.06);
+    --radius:20px;
 }
 
 *{
@@ -41,24 +28,14 @@
 }
 
 html{
-    background:var(--bg);
+    scroll-behavior:smooth;
 }
 
 body{
     margin:0;
     background:var(--bg);
     color:var(--text);
-
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "SF Pro Display",
-        "SF Pro Text",
-        "Helvetica Neue",
-        Arial,
-        sans-serif;
-
-    -webkit-font-smoothing:antialiased;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
 }
 
 button,
@@ -72,150 +49,109 @@ button{
     cursor:pointer;
 }
 
-button:disabled{
-    opacity:.55;
-    cursor:default;
-}
-
 .hidden{
     display:none !important;
 }
 
-.container{
-    width:min(100%,760px);
-    margin:0 auto;
-
-    padding:
-        max(14px,env(safe-area-inset-top))
-        16px
-        calc(28px + env(safe-area-inset-bottom));
-}
+/* HEADER */
 
 .header{
     position:sticky;
     top:0;
     z-index:20;
-
-    margin:
-        calc(-1 * max(14px,env(safe-area-inset-top)))
-        -16px
-        18px;
-
     padding:
-        calc(16px + max(14px,env(safe-area-inset-top)))
+        calc(14px + env(safe-area-inset-top))
         18px
-        16px;
-
+        14px;
     background:rgba(242,242,247,.88);
-
-    backdrop-filter:blur(22px);
-    -webkit-backdrop-filter:blur(22px);
-
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
     border-bottom:1px solid rgba(0,0,0,.06);
 }
 
-.header-top{
+.header-inner{
+    max-width:760px;
+    margin:auto;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:14px;
 }
 
-.header-brand{
-    min-width:0;
+.brand-title{
+    font-size:18px;
+    font-weight:800;
+    letter-spacing:-.4px;
 }
 
-.header h1{
-    margin:0;
-
-    font-size:21px;
-    line-height:1.15;
-    font-weight:750;
-    letter-spacing:-.45px;
-}
-
-.header-subtitle{
-    margin:5px 0 0;
-
+.brand-subtitle{
+    margin-top:2px;
     color:var(--muted);
-
-    font-size:14px;
-    font-weight:500;
+    font-size:13px;
 }
 
-.user-name{
-    margin-top:14px;
-
-    font-size:14px;
-    font-weight:650;
-
-    color:var(--text);
-}
-
-.header-actions{
+.user-badge{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:#111;
+    color:white;
     display:flex;
     align-items:center;
-    gap:7px;
-}
-
-.header-button{
-    flex:none;
-
-    border:0;
-
-    background:rgba(255,255,255,.8);
-
-    color:var(--blue);
-
-    border-radius:12px;
-
-    padding:9px 12px;
-
+    justify-content:center;
     font-size:13px;
-    font-weight:650;
-
-    box-shadow:0 1px 4px rgba(0,0,0,.04);
+    font-weight:700;
+    flex-shrink:0;
 }
 
-.logout{
-    flex:none;
+/* MAIN */
 
-    border:0;
-
-    background:rgba(255,255,255,.8);
-
-    color:var(--blue);
-
-    border-radius:12px;
-
-    padding:9px 13px;
-
-    font-size:14px;
-    font-weight:600;
-
-    box-shadow:0 1px 4px rgba(0,0,0,.04);
+main{
+    width:min(760px,100%);
+    margin:auto;
+    padding:
+        22px
+        16px
+        calc(32px + env(safe-area-inset-bottom));
 }
 
-.controls{
+/* LEADER */
+
+.leader-block{
+    margin-bottom:20px;
+}
+
+.eyebrow{
+    font-size:12px;
+    font-weight:700;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+}
+
+.leader-name{
+    margin-top:4px;
+    font-size:25px;
+    line-height:1.15;
+    font-weight:800;
+    letter-spacing:-.7px;
+}
+
+/* CONTEXT */
+
+.context-card{
     background:var(--card);
-
     border-radius:var(--radius);
-
     padding:18px;
-
-    margin-bottom:14px;
-
     box-shadow:var(--shadow);
+    margin-bottom:18px;
 }
 
 .context-grid{
     display:grid;
-
     grid-template-columns:1fr 1fr;
-
     gap:12px;
-
-    margin-top:0;
+    margin-top:18px;
 }
 
 .context-date{
@@ -223,722 +159,480 @@ button:disabled{
 }
 
 .field{
-    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
 }
 
 .field label{
-    display:block;
-
-    margin:0 0 7px 2px;
-
-    color:var(--muted);
-
     font-size:12px;
-    font-weight:650;
+    color:var(--muted);
+    font-weight:700;
 }
 
 input,
 select,
 textarea{
     width:100%;
-
     border:1px solid var(--line);
-
-    border-radius:13px;
-
-    padding:12px 13px;
-
-    background:#fff;
-
+    background:#f8f8fa;
     color:var(--text);
-
+    border-radius:14px;
     outline:none;
-
-    transition:
-        border-color .15s ease,
-        box-shadow .15s ease,
-        background .15s ease;
+    transition:.18s ease;
 }
 
 input,
 select{
-    min-height:46px;
-}
-
-textarea{
-    resize:vertical;
-
-    line-height:1.4;
+    min-height:48px;
+    padding:0 13px;
 }
 
 input:focus,
 select:focus,
 textarea:focus{
     border-color:rgba(0,122,255,.45);
-
-    box-shadow:
-        0 0 0 3px rgba(0,122,255,.10);
+    box-shadow:0 0 0 4px rgba(0,122,255,.10);
+    background:white;
 }
+
+/* ACCESS */
+
+.access-row{
+    margin-top:14px;
+}
+
+.access-btn{
+    width:100%;
+    min-height:44px;
+    border:0;
+    border-radius:14px;
+    background:#e9e9ee;
+    color:#111;
+    font-weight:700;
+}
+
+/* SECTION */
 
 .section-title{
     display:flex;
-    align-items:center;
+    align-items:end;
     justify-content:space-between;
-
-    margin:18px 2px 10px;
+    gap:12px;
+    margin:24px 2px 12px;
 }
 
 .section-title h2{
     margin:0;
-
-    font-size:16px;
-    font-weight:750;
-
-    letter-spacing:-.2px;
+    font-size:20px;
+    letter-spacing:-.4px;
 }
 
-.section-title span{
+.section-title p{
+    margin:0;
     color:var(--muted);
-
-    font-size:12px;
-    font-weight:600;
+    font-size:13px;
 }
+
+/* MACHINE GRID */
 
 .machine-grid{
     display:grid;
-
-    grid-template-columns:
-        repeat(4,minmax(0,1fr));
-
-    gap:9px;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
 }
 
-.machine-button{
-    position:relative;
-
-    min-height:58px;
-
-    border:1px solid var(--line);
-
-    border-radius:15px;
-
-    background:#fff;
-
-    color:var(--text);
-
-    font-size:15px;
-    font-weight:700;
-
-    box-shadow:
-        0 1px 4px rgba(0,0,0,.025);
-
-    transition:
-        transform .12s ease,
-        background .15s ease,
-        border-color .15s ease;
-}
-
-.machine-button:active{
-    transform:scale(.97);
-}
-
-.machine-button.saved{
-    background:var(--green-soft);
-
-    border-color:rgba(52,199,89,.25);
-
-    color:#248a3d;
-}
-
-.machine-button.saved::after{
-    content:"✓";
-
-    position:absolute;
-
-    top:5px;
-    right:7px;
-
-    font-size:11px;
+.machine-btn{
+    min-height:64px;
+    border:0;
+    border-radius:17px;
+    background:white;
+    color:#111;
+    box-shadow:0 4px 18px rgba(0,0,0,.055);
     font-weight:800;
-
-    color:var(--green);
+    font-size:16px;
+    transition:.16s ease;
+    position:relative;
 }
+
+.machine-btn:active{
+    transform:scale(.96);
+}
+
+.machine-btn.saved{
+    background:#e9f9ed;
+    color:#16803a;
+    box-shadow:inset 0 0 0 1px rgba(52,199,89,.22);
+}
+
+.machine-btn.saved::after{
+    content:"✓";
+    position:absolute;
+    top:6px;
+    right:8px;
+    font-size:12px;
+    font-weight:900;
+}
+
+/* MACHINE SCREEN */
 
 .machine-screen{
-    margin-top:14px;
+    animation:slideIn .2s ease;
 }
 
-.machine-card{
-    background:var(--card);
+@keyframes slideIn{
+    from{
+        opacity:0;
+        transform:translateY(8px);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
 
+.machine-top{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+}
+
+.back-btn{
+    width:44px;
+    height:44px;
+    border:0;
+    border-radius:14px;
+    background:white;
+    box-shadow:0 4px 18px rgba(0,0,0,.06);
+    font-size:25px;
+    line-height:1;
+}
+
+.machine-heading{
+    flex:1;
+}
+
+.machine-heading .small{
+    color:var(--muted);
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+}
+
+.machine-heading h2{
+    margin:2px 0 0;
+    font-size:25px;
+    letter-spacing:-.6px;
+}
+
+/* FORM CARDS */
+
+.form-card{
+    background:white;
     border-radius:var(--radius);
-
     padding:18px;
-
+    margin-bottom:14px;
     box-shadow:var(--shadow);
 }
 
-.machine-screen-header{
-    display:flex;
-
-    align-items:center;
-    justify-content:space-between;
-
-    gap:12px;
-
-    margin-bottom:17px;
-}
-
-.machine-screen-title{
-    display:flex;
-
-    align-items:center;
-
-    gap:9px;
-
-    font-size:20px;
-    font-weight:750;
-
-    letter-spacing:-.35px;
-}
-
-.machine-screen-title::before{
-    content:"";
-
-    width:9px;
-    height:9px;
-
-    border-radius:50%;
-
-    background:var(--blue);
-
-    box-shadow:
-        0 0 0 4px var(--blue-soft);
-}
-
-.back-button{
-    border:0;
-
-    background:#f2f2f7;
-
-    color:var(--blue);
-
-    border-radius:12px;
-
-    padding:9px 12px;
-
-    font-size:13px;
-    font-weight:650;
+.form-card h3{
+    margin:0 0 14px;
+    font-size:17px;
+    letter-spacing:-.2px;
 }
 
 .hours-grid{
     display:grid;
-
     grid-template-columns:1fr 1fr;
-
-    gap:10px;
+    gap:12px;
 }
 
-.total-box{
-    grid-column:1 / -1;
-
+.hours-total{
+    margin-top:12px;
+    padding:14px;
     border-radius:14px;
-
-    padding:12px 14px;
-
+    background:#f5f5f7;
     display:flex;
-
     align-items:center;
     justify-content:space-between;
-
-    min-height:58px;
-
-    transition:.15s ease;
+    gap:10px;
 }
 
-.total-box.status-green{
-    background:var(--green-soft);
-
-    color:#248a3d;
-}
-
-.total-box.status-yellow{
-    background:var(--yellow-soft);
-
-    color:#9a7900;
-}
-
-.total-box.status-red{
-    background:var(--red-soft);
-
-    color:#c72e25;
-}
-
-.total-label{
-    font-size:12px;
-    font-weight:650;
-}
-
-.total-value{
-    font-size:19px;
-    font-weight:750;
-
-    letter-spacing:-.3px;
-}
-
-.section-label{
-    display:block;
-
-    margin:17px 0 7px 2px;
-
+.hours-total span:first-child{
     color:var(--muted);
-
-    font-size:12px;
-    font-weight:650;
+    font-size:13px;
+    font-weight:600;
 }
 
-.occurrences-header{
-    display:flex;
+.hours-total strong{
+    font-size:18px;
+}
 
+/* STATUS */
+
+.performance-status{
+    margin-top:10px;
+    min-height:8px;
+    border-radius:99px;
+    background:#e5e5ea;
+    transition:.2s ease;
+}
+
+.performance-status.status-red{
+    background:var(--red);
+}
+
+.performance-status.status-yellow{
+    background:var(--yellow);
+}
+
+.performance-status.status-green{
+    background:var(--green);
+}
+
+/* OCCURRENCES */
+
+.occurrences-list{
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+    margin-bottom:12px;
+}
+
+.occurrence-item{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
     align-items:center;
-    justify-content:space-between;
-
     gap:10px;
-
-    margin-top:19px;
-}
-
-.occurrences-header .section-label{
-    margin:0;
-}
-
-.add-occurrence{
-    border:0;
-
-    background:var(--blue-soft);
-
-    color:var(--blue);
-
-    border-radius:11px;
-
-    padding:8px 11px;
-
-    font-size:12px;
-    font-weight:700;
-}
-
-.occurrence-list{
-    margin-top:9px;
-}
-
-.occurrence{
-    display:flex;
-
-    align-items:flex-start;
-
-    justify-content:space-between;
-
-    gap:10px;
-
     padding:12px;
-
-    margin-bottom:8px;
-
-    background:#f7f7f9;
-
     border:1px solid var(--line);
-
-    border-radius:13px;
-}
-
-.occurrence-content{
-    min-width:0;
+    border-radius:14px;
+    background:#fafafa;
 }
 
 .occurrence-type{
-    font-size:12px;
-
-    font-weight:750;
-
-    color:var(--text);
+    padding:6px 9px;
+    border-radius:9px;
+    background:#eeeeF3;
+    font-size:11px;
+    font-weight:800;
+    white-space:nowrap;
 }
 
 .occurrence-description{
-    margin-top:4px;
-
-    font-size:13px;
-
-    line-height:1.4;
-
-    color:#48484a;
-
-    word-break:break-word;
+    font-size:14px;
+    line-height:1.3;
+    overflow-wrap:anywhere;
 }
 
 .occurrence-actions{
     display:flex;
-
-    flex:none;
-
     gap:5px;
 }
 
-.occurrence-action{
+.icon-btn{
+    width:32px;
+    height:32px;
     border:0;
-
-    background:#fff;
-
-    color:var(--blue);
-
     border-radius:9px;
-
-    padding:7px 9px;
-
-    font-size:11px;
-    font-weight:650;
+    background:#ededf2;
+    font-size:14px;
 }
 
-.occurrence-action.delete{
-    color:var(--danger);
+.icon-btn.delete{
+    color:var(--red);
 }
+
+.add-occurrence{
+    width:100%;
+    min-height:46px;
+    border:1px dashed #b8b8bf;
+    border-radius:14px;
+    background:#fafafa;
+    font-weight:700;
+    color:#333;
+}
+
+/* OCCURRENCE EDITOR */
 
 .occurrence-editor{
-    margin-top:9px;
-
-    padding:13px;
-
-    background:#f7f7f9;
-
-    border:1px solid var(--line);
-
-    border-radius:14px;
+    margin-top:12px;
+    padding:14px;
+    background:#f5f5f7;
+    border-radius:15px;
 }
 
 .occurrence-editor-grid{
     display:grid;
-
     grid-template-columns:1fr;
-
-    gap:9px;
+    gap:10px;
 }
 
-.occurrence-editor-actions{
-    display:grid;
-
-    grid-template-columns:1fr 1fr;
-
-    gap:8px;
-
-    margin-top:9px;
-}
-
-.occurrence-save{
-    border:0;
-
-    background:var(--blue);
-
-    color:#fff;
-
-    border-radius:11px;
-
-    min-height:43px;
-
-    font-weight:700;
-}
-
-.occurrence-cancel{
-    border:0;
-
-    background:#e5e5ea;
-
-    color:var(--text);
-
-    border-radius:11px;
-
-    min-height:43px;
-
-    font-weight:650;
-}
-
-.empty-occurrences{
-    padding:12px;
-
-    background:#f7f7f9;
-
-    border-radius:12px;
-
-    color:var(--muted);
-
-    font-size:13px;
-}
-
-.observation{
-    min-height:90px;
-}
-
-.machine-actions{
-    display:grid;
-
-    grid-template-columns:1fr 1fr;
-
-    gap:9px;
-
-    margin-top:18px;
-}
-
-.save-machine{
-    min-height:48px;
-
-    border:0;
-
-    background:var(--green);
-
-    color:#fff;
-
-    border-radius:13px;
-
-    padding:11px 15px;
-
-    font-weight:700;
-
-    box-shadow:
-        0 2px 6px rgba(52,199,89,.18);
-}
-
-.delete-machine{
-    min-height:48px;
-
-    border:0;
-
-    background:var(--red-soft);
-
-    color:var(--danger);
-
-    border-radius:13px;
-
-    padding:11px 15px;
-
-    font-weight:650;
-}
-
-.closing-card{
-    background:var(--card);
-
-    border-radius:var(--radius);
-
-    padding:18px;
-
-    margin-top:15px;
-
-    box-shadow:var(--shadow);
-}
-
-.closing-card h2{
-    margin:0 0 4px;
-
-    font-size:18px;
-    font-weight:750;
-
-    letter-spacing:-.2px;
-}
-
-.closing-subtitle{
-    margin:0 0 13px;
-
-    color:var(--muted);
-
-    font-size:13px;
-}
-
-.closing-text{
-    min-height:250px;
-
-    resize:vertical;
-
-    background:#f7f7f9;
-
-    border-color:var(--line);
-
-    font-family:
-        ui-monospace,
-        SFMono-Regular,
-        Menlo,
-        Monaco,
-        Consolas,
-        monospace;
-
-    font-size:13px;
-
-    line-height:1.55;
-}
-
-.copy-btn{
-    width:100%;
-
-    min-height:46px;
-
-    margin-top:10px;
-
-    border:0;
-
-    background:var(--blue);
-
-    color:#fff;
-
-    border-radius:13px;
-
-    padding:11px 15px;
-
-    font-weight:700;
-}
-
-.loading,
-.empty{
-    background:var(--card);
-
-    border-radius:var(--radius);
-
-    padding:32px 20px;
-
-    text-align:center;
-
-    color:var(--muted);
-
-    box-shadow:var(--shadow);
-
-    font-size:14px;
-}
-
-.loading{
-    min-height:100px;
-
+.editor-actions{
     display:flex;
-
-    align-items:center;
-    justify-content:center;
+    gap:8px;
+    margin-top:10px;
 }
+
+.editor-actions button{
+    flex:1;
+    min-height:44px;
+    border:0;
+    border-radius:13px;
+    font-weight:700;
+}
+
+.cancel-btn{
+    background:#e5e5ea;
+}
+
+.confirm-btn{
+    background:#007aff;
+    color:white;
+}
+
+/* OBSERVATION */
+
+textarea{
+    min-height:110px;
+    padding:13px;
+    resize:vertical;
+    line-height:1.4;
+}
+
+/* SAVE */
+
+.save-btn{
+    width:100%;
+    min-height:54px;
+    border:0;
+    border-radius:17px;
+    background:var(--green);
+    color:white;
+    font-size:16px;
+    font-weight:800;
+    box-shadow:0 7px 20px rgba(52,199,89,.22);
+}
+
+.save-btn:active{
+    transform:scale(.98);
+}
+
+.delete-machine-btn{
+    width:100%;
+    min-height:46px;
+    border:0;
+    border-radius:15px;
+    background:#ffeceb;
+    color:var(--red);
+    font-weight:700;
+    margin-top:10px;
+}
+
+/* TOAST */
 
 .toast{
     position:fixed;
-
     left:50%;
-
-    bottom:
-        calc(20px + env(safe-area-inset-bottom));
-
-    transform:
-        translate(-50%,10px);
-
-    width:max-content;
-
-    max-width:calc(100% - 32px);
-
-    background:rgba(28,28,30,.94);
-
-    color:#fff;
-
-    padding:11px 16px;
-
+    bottom:calc(22px + env(safe-area-inset-bottom));
+    transform:translate(-50%,20px);
+    z-index:100;
+    padding:12px 17px;
     border-radius:14px;
-
-    font-size:13px;
-    font-weight:600;
-
+    background:rgba(20,20,20,.92);
+    color:white;
+    font-size:14px;
+    font-weight:700;
     opacity:0;
-
     pointer-events:none;
-
-    transition:
-        opacity .2s ease,
-        transform .2s ease;
-
-    z-index:1000;
-
-    box-shadow:
-        0 5px 20px rgba(0,0,0,.18);
+    transition:.2s ease;
+    max-width:calc(100% - 32px);
+    text-align:center;
 }
 
 .toast.show{
     opacity:1;
-
-    transform:
-        translate(-50%,0);
+    transform:translate(-50%,0);
 }
 
-@media(max-width:520px){
+/* LOADING */
 
-    .container{
-        width:100%;
+.loading{
+    padding:30px 10px;
+    text-align:center;
+    color:var(--muted);
+    font-size:14px;
+}
 
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:80;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    background:rgba(0,0,0,.35);
+    padding:16px;
+}
+
+.modal-card{
+    width:min(520px,100%);
+    background:white;
+    border-radius:24px;
+    padding:20px;
+    box-shadow:0 20px 60px rgba(0,0,0,.22);
+}
+
+.modal-card h3{
+    margin:0 0 15px;
+    font-size:20px;
+}
+
+.modal-actions{
+    display:flex;
+    gap:8px;
+    margin-top:15px;
+}
+
+.modal-actions button{
+    flex:1;
+    min-height:46px;
+    border:0;
+    border-radius:14px;
+    font-weight:700;
+}
+
+.modal-cancel{
+    background:#e5e5ea;
+}
+
+.modal-save{
+    background:#007aff;
+    color:white;
+}
+
+/* SMALL DEVICES */
+
+@media(max-width:380px){
+    main{
         padding-left:12px;
         padding-right:12px;
     }
 
-    .header{
-        margin-left:-12px;
-        margin-right:-12px;
-
-        padding-left:16px;
-        padding-right:16px;
-    }
-
-    .header h1{
-        font-size:20px;
-    }
-
-    .header-actions{
-        gap:4px;
-    }
-
-    .header-button{
-        padding:8px 9px;
-    }
-
-    .logout{
-        padding:8px 10px;
-    }
-
-    .controls{
-        padding:15px;
-    }
-
-    .context-grid{
-        grid-template-columns:1fr 1fr;
-
-        gap:9px;
-    }
-
     .machine-grid{
-        grid-template-columns:
-            repeat(4,minmax(0,1fr));
-
         gap:8px;
     }
 
-    .machine-button{
-        min-height:54px;
-
-        font-size:14px;
+    .machine-btn{
+        min-height:58px;
     }
 
-    .machine-card{
-        padding:16px;
-    }
-}
-
-@media(max-width:360px){
-
-    .header h1{
-        font-size:18px;
-    }
-
-    .machine-grid{
-        grid-template-columns:
-            repeat(3,minmax(0,1fr));
-    }
-
-    .machine-actions{
-        grid-template-columns:1fr;
+    .context-card,
+    .form-card{
+        padding:15px;
     }
 }
 </style>
@@ -946,114 +640,57 @@ textarea:focus{
 
 <body>
 
-<div class="container">
-
-    <header class="header">
-
-        <div class="header-top">
-
-            <div class="header-brand">
-
-                <h1>
-                    CONTROLE DE PRODUÇÃO
-                </h1>
-
-                <p class="header-subtitle">
-                    Setor de Injeção · Líder
-                </p>
-
-            </div>
-
-            <div class="header-actions">
-
-                <button
-                    id="acessosButton"
-                    class="header-button hidden"
-                    onclick="abrirAcessos()">
-                    Acessos
-                </button>
-
-                <button
-                    class="logout"
-                    onclick="logout()">
-                    Sair
-                </button>
-
-            </div>
-
+<header class="header">
+    <div class="header-inner">
+        <div>
+            <div class="brand-title">CONTROLE DE PRODUÇÃO</div>
+            <div class="brand-subtitle">Setor de Injeção</div>
         </div>
 
-        <div
-            id="userName"
-            class="user-name">
-        </div>
+        <div id="userInitials" class="user-badge">--</div>
+    </div>
+</header>
 
-    </header>
+<main>
 
-    <section class="controls">
+    <section class="leader-block">
+        <div class="eyebrow">Líder</div>
+        <div id="leaderName" class="leader-name">Carregando...</div>
+    </section>
+
+    <section class="context-card">
 
         <div class="context-grid">
 
             <div class="field context-date">
-
-                <label for="data">
-                    Data
-                </label>
-
-                <input
-                    type="date"
-                    id="data">
-
+                <label for="date">Data</label>
+                <input type="date" id="date">
             </div>
 
             <div class="field">
-
-                <label for="shift">
-                    Turno
-                </label>
-
+                <label for="shift">Turno</label>
                 <select id="shift">
-
-                    <option value="1º turno">
-                        1º turno
-                    </option>
-
-                    <option value="2º turno">
-                        2º turno
-                    </option>
-
-                    <option value="3º turno">
-                        3º turno
-                    </option>
-
+                    <option value="1º turno">1º turno</option>
+                    <option value="2º turno">2º turno</option>
+                    <option value="3º turno">3º turno</option>
                 </select>
-
             </div>
 
             <div class="field">
-
-                <label for="sector">
-                    Setor
-                </label>
-
+                <label for="sector">Setor</label>
                 <select id="sector">
-
-                    <option value="A">
-                        A
-                    </option>
-
-                    <option value="B">
-                        B
-                    </option>
-
-                    <option value="C">
-                        C
-                    </option>
-
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
                 </select>
-
             </div>
 
+        </div>
+
+        <div id="accessRow" class="access-row hidden">
+            <button class="access-btn" onclick="abrirAcessos()">
+                Acessos
+            </button>
         </div>
 
     </section>
@@ -1061,2270 +698,1684 @@ textarea:focus{
     <section id="machineListSection">
 
         <div class="section-title">
-
-            <h2>
-                Máquinas
-            </h2>
-
-            <span id="machineRange">
-                M01–M29
-            </span>
-
+            <div>
+                <h2>Máquinas</h2>
+                <p>Selecione uma máquina para apontar.</p>
+            </div>
         </div>
 
-        <div
-            id="machineGrid"
-            class="machine-grid">
-        </div>
+        <div id="machineGrid" class="machine-grid"></div>
 
     </section>
 
-    <section
-        id="machineScreen"
-        class="machine-screen hidden">
+    <section id="machineScreen" class="machine-screen hidden">
 
-        <div class="machine-card">
+        <div class="machine-top">
 
-            <div class="machine-screen-header">
+            <button class="back-btn" onclick="fecharTelaMaquina()" aria-label="Voltar">
+                ‹
+            </button>
 
-                <div
-                    id="machineScreenTitle"
-                    class="machine-screen-title">
-                    M01
-                </div>
-
-                <button
-                    class="back-button"
-                    onclick="voltarMaquinas()">
-                    Voltar
-                </button>
-
+            <div class="machine-heading">
+                <div class="small">Apontamento</div>
+                <h2 id="machineTitle">M01</h2>
             </div>
+
+        </div>
+
+        <div class="form-card">
+
+            <h3>Horas</h3>
 
             <div class="hours-grid">
 
                 <div class="field">
-
-                    <label for="horaBoa">
-                        Hora boa
-                    </label>
-
+                    <label for="horaBoa">Hora boa</label>
                     <input
                         type="text"
                         id="horaBoa"
-                        inputmode="decimal"
-                        placeholder="Ex.: 07:41">
-
+                        inputmode="numeric"
+                        placeholder="00:00"
+                        maxlength="5"
+                    >
                 </div>
 
                 <div class="field">
-
-                    <label for="reposicao">
-                        Reposição
-                    </label>
-
+                    <label for="reposicao">Reposição</label>
                     <input
                         type="text"
                         id="reposicao"
-                        inputmode="decimal"
-                        placeholder="Ex.: 00:40">
-
-                </div>
-
-                <div
-                    id="totalBox"
-                    class="total-box status-red">
-
-                    <div class="total-label">
-                        Total baixado
-                    </div>
-
-                    <div
-                        id="totalValue"
-                        class="total-value">
-                        00:00
-                    </div>
-
+                        inputmode="numeric"
+                        placeholder="00:00"
+                        maxlength="5"
+                    >
                 </div>
 
             </div>
 
-            <label
-                class="section-label"
-                for="saldo">
-                Saldo
-            </label>
-
-            <input
-                type="text"
-                id="saldo"
-                inputmode="decimal"
-                placeholder="Ex.: 05:12">
-
-            <div class="occurrences-header">
-
-                <label class="section-label">
-                    Ocorrências
-                </label>
-
-                <button
-                    class="add-occurrence"
-                    onclick="abrirEditorOcorrencia()">
-                    + Adicionar ocorrência
-                </button>
-
+            <div class="hours-total">
+                <span>Total baixado</span>
+                <strong id="totalBaixado">00:00</strong>
             </div>
 
-            <div
-                id="occurrenceEditor"
-                class="occurrence-editor hidden">
+            <div id="performanceStatus" class="performance-status"></div>
+
+        </div>
+
+        <div class="form-card">
+
+            <h3>Saldo</h3>
+
+            <div class="field">
+                <label for="saldo">Tem saldo?</label>
+
+                <select id="saldo">
+                    <option value="">Não informado</option>
+                    <option value="00:00">Não</option>
+                    <option value="__CUSTOM__">Sim</option>
+                </select>
+            </div>
+
+            <div id="saldoInputWrapper" class="field hidden" style="margin-top:12px;">
+                <label for="saldoValue">Saldo</label>
+                <input
+                    type="text"
+                    id="saldoValue"
+                    inputmode="numeric"
+                    placeholder="00:00"
+                    maxlength="5"
+                >
+            </div>
+
+        </div>
+
+        <div class="form-card">
+
+            <h3>Ocorrências</h3>
+
+            <div id="occurrencesList" class="occurrences-list"></div>
+
+            <button
+                id="addOccurrenceBtn"
+                class="add-occurrence"
+                onclick="abrirEditorOcorrencia()"
+            >
+                + Adicionar ocorrência
+            </button>
+
+            <div id="occurrenceEditor" class="occurrence-editor hidden">
 
                 <div class="occurrence-editor-grid">
 
                     <div class="field">
+                        <label for="occurrenceType">Tipo</label>
 
-                        <label for="occurrenceCategory">
-                            Categoria
-                        </label>
-
-                        <select id="occurrenceCategory">
-
-                            <option value="Mecânico">
-                                Mecânico
-                            </option>
-
-                            <option value="Elétrico">
-                                Elétrico
-                            </option>
-
-                            <option value="Matriz">
-                                Matriz
-                            </option>
-
-                            <option value="Material">
-                                Material
-                            </option>
-
-                            <option value="Processo">
-                                Processo
-                            </option>
-
-                            <option value="Parada de máquina">
-                                Parada de máquina
-                            </option>
-
-                            <option value="Setup">
-                                Setup
-                            </option>
-
-                            <option value="Outro">
-                                Outro
-                            </option>
-
+                        <select id="occurrenceType">
+                            <option value="Mecânico">Mecânico</option>
+                            <option value="Elétrico">Elétrico</option>
+                            <option value="Matriz">Matriz</option>
+                            <option value="Material">Material</option>
+                            <option value="Processo">Processo</option>
+                            <option value="Parada de máquina">Parada de máquina</option>
+                            <option value="Setup">Setup</option>
+                            <option value="Outro">Outro</option>
                         </select>
-
                     </div>
 
                     <div class="field">
-
-                        <label for="occurrenceDescription">
-                            Descrição
-                        </label>
+                        <label for="occurrenceDescription">Descrição</label>
 
                         <textarea
                             id="occurrenceDescription"
-                            rows="3"
-                            placeholder="Descreva a ocorrência">
-                        </textarea>
-
+                            placeholder="Descreva a ocorrência..."
+                            style="min-height:90px;"
+                        ></textarea>
                     </div>
 
                 </div>
 
-                <div class="occurrence-editor-actions">
+                <div class="editor-actions">
 
                     <button
-                        class="occurrence-cancel"
-                        onclick="fecharEditorOcorrencia()">
+                        class="cancel-btn"
+                        onclick="cancelarEditorOcorrencia()"
+                    >
                         Cancelar
                     </button>
 
                     <button
-                        class="occurrence-save"
-                        onclick="adicionarOcorrenciaLocal()">
-                        Adicionar
+                        class="confirm-btn"
+                        onclick="salvarOcorrenciaLocal()"
+                    >
+                        Salvar ocorrência
                     </button>
 
                 </div>
-
-            </div>
-
-            <div
-                id="occurrenceList"
-                class="occurrence-list">
-            </div>
-
-            <label
-                class="section-label"
-                for="observacao">
-                Observação
-            </label>
-
-            <textarea
-                id="observacao"
-                class="observation"
-                rows="4"
-                placeholder="Observação geral da máquina">
-            </textarea>
-
-            <div class="machine-actions">
-
-                <button
-                    id="saveMachineButton"
-                    class="save-machine"
-                    onclick="salvarMaquina()">
-                    Salvar máquina
-                </button>
-
-                <button
-                    id="deleteMachineButton"
-                    class="delete-machine"
-                    onclick="excluirMaquina()">
-                    Excluir apontamento
-                </button>
 
             </div>
 
         </div>
 
-    </section>
+        <div class="form-card">
 
-    <section
-        id="closingCard"
-        class="closing-card">
+            <h3>Observação geral</h3>
 
-        <h2>
-            Fechamento do turno
-        </h2>
+            <textarea
+                id="observation"
+                placeholder="Observação opcional..."
+            ></textarea>
 
-        <p class="closing-subtitle">
-            Texto pronto para copiar e enviar.
-        </p>
-
-        <textarea
-            id="closingText"
-            class="closing-text"
-            readonly>
-        </textarea>
+        </div>
 
         <button
-            class="copy-btn"
-            onclick="copiarFechamento()">
-            Copiar fechamento
+            id="saveMachineBtn"
+            class="save-btn"
+            onclick="salvarMaquina()"
+        >
+            Salvar máquina
+        </button>
+
+        <button
+            id="deleteMachineBtn"
+            class="delete-machine-btn hidden"
+            onclick="excluirMaquina()"
+        >
+            Excluir apontamento
         </button>
 
     </section>
 
-</div>
+</main>
 
-<div
-    id="toast"
-    class="toast">
+<div id="toast" class="toast"></div>
+
+<div id="confirmModal" class="modal hidden">
+
+    <div class="modal-card">
+
+        <h3 id="confirmTitle">Confirmar</h3>
+
+        <div id="confirmMessage" style="color:#6e6e73;line-height:1.45;">
+            Deseja continuar?
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                class="modal-cancel"
+                onclick="fecharConfirmacao()"
+            >
+                Cancelar
+            </button>
+
+            <button
+                id="confirmActionBtn"
+                class="modal-save"
+            >
+                Confirmar
+            </button>
+
+        </div>
+
+    </div>
+
 </div>
 
 <script>
+/* =========================================================
+   SUPABASE
+========================================================= */
 
-const SUPABASE_URL =
-    "https://icajmncojvidhrqlbevq.supabase.co";
+const SUPABASE_URL = "https://icajmncojvidhrqlbevq.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
 
 const supabaseClient =
-    supabase.createClient(
+    window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
     );
 
 
-const shiftTargets = {
+/* =========================================================
+   ESTADO
+========================================================= */
 
-    "1º turno":
-        8 * 60 + 48,
+let currentUser = null;
+let currentProfile = null;
 
-    "2º turno":
-        8 * 60 + 36,
+let machineAtual = null;
 
-    "3º turno":
-        6 * 60 + 36
-
-};
-
-
-const sectorMachines = {
-
-    A:{
-        start:1,
-        end:29
-    },
-
-    B:{
-        start:30,
-        end:51
-    },
-
-    C:{
-        start:52,
-        end:85
-    }
-
-};
-
-
-let session = null;
-
-let perfil = null;
-
-let turnoAtual = null;
-
-let maquinaAtual = null;
+let turnIdAtual = null;
 
 let apontamentoAtual = null;
 
-let ocorrenciasLocais = [];
+let ocorrencias = [];
 
-let dadosApontamentos = [];
+let occurrenceEditingIndex = null;
+
+let confirmCallback = null;
 
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
+/* =========================================================
+   CONFIGURAÇÃO
+========================================================= */
 
-        definirDataHoje();
+const sectorMachines = {
+    A: {
+        start: 1,
+        end: 29
+    },
 
-        document
-            .getElementById("shift")
-            .addEventListener(
-                "change",
-                contextoAlterado
-            );
+    B: {
+        start: 30,
+        end: 51
+    },
 
-        document
-            .getElementById("sector")
-            .addEventListener(
-                "change",
-                contextoAlterado
-            );
-
-        document
-            .getElementById("data")
-            .addEventListener(
-                "change",
-                contextoAlterado
-            );
-
-        document
-            .getElementById("horaBoa")
-            .addEventListener(
-                "input",
-                atualizarTotal
-            );
-
-        document
-            .getElementById("reposicao")
-            .addEventListener(
-                "input",
-                atualizarTotal
-            );
-
-        await verificarAcesso();
-
+    C: {
+        start: 52,
+        end: 85
     }
-);
+};
 
 
-function definirDataHoje(){
+const shiftTargets = {
+    "1º turno": 8 * 60 + 48,
+    "2º turno": 8 * 60 + 36,
+    "3º turno": 6 * 60 + 36
+};
 
-    const hoje =
-        new Date();
 
-    const ano =
-        hoje.getFullYear();
+/* =========================================================
+   ELEMENTOS
+========================================================= */
 
-    const mes =
-        String(
-            hoje.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
+const dateInput =
+    document.getElementById("date");
 
-    const dia =
-        String(
-            hoje.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
+const shiftInput =
+    document.getElementById("shift");
 
-    document.getElementById(
-        "data"
-    ).value =
-        `${ano}-${mes}-${dia}`;
+const sectorInput =
+    document.getElementById("sector");
 
+const machineGrid =
+    document.getElementById("machineGrid");
+
+const machineListSection =
+    document.getElementById("machineListSection");
+
+const machineScreen =
+    document.getElementById("machineScreen");
+
+const machineTitle =
+    document.getElementById("machineTitle");
+
+const horaBoaInput =
+    document.getElementById("horaBoa");
+
+const reposicaoInput =
+    document.getElementById("reposicao");
+
+const totalBaixadoElement =
+    document.getElementById("totalBaixado");
+
+const performanceStatus =
+    document.getElementById("performanceStatus");
+
+const saldoInput =
+    document.getElementById("saldo");
+
+const saldoInputWrapper =
+    document.getElementById("saldoInputWrapper");
+
+const saldoValueInput =
+    document.getElementById("saldoValue");
+
+const occurrencesList =
+    document.getElementById("occurrencesList");
+
+const occurrenceEditor =
+    document.getElementById("occurrenceEditor");
+
+const occurrenceType =
+    document.getElementById("occurrenceType");
+
+const occurrenceDescription =
+    document.getElementById("occurrenceDescription");
+
+const observationInput =
+    document.getElementById("observation");
+
+const deleteMachineBtn =
+    document.getElementById("deleteMachineBtn");
+
+
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
+
+function pad(value){
+    return String(value).padStart(2,"0");
 }
 
 
-async function verificarAcesso(){
+function machineCode(number){
+    return `M${pad(number)}`;
+}
 
-    const {
-        data:{
-            session:currentSession
-        }
-    } =
-        await supabaseClient
-            .auth
-            .getSession();
 
-    if(
-        !currentSession
-    ){
+function getInitials(name){
 
-        window.location.href =
-            "index.html";
-
-        return;
+    if(!name){
+        return "--";
     }
 
-    session =
-        currentSession;
+    const parts =
+        name
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
 
+    if(parts.length === 1){
+        return parts[0]
+            .substring(0,2)
+            .toUpperCase();
+    }
+
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
+}
+
+
+function showToast(message){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(showToast.timer);
+
+    showToast.timer =
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 2400);
+}
+
+
+function normalizeMachine(value){
+
+    if(!value){
+        return "";
+    }
+
+    const text =
+        String(value)
+            .trim()
+            .toUpperCase();
+
+    if(/^M\d+$/.test(text)){
+        return text;
+    }
+
+    if(/^\d+$/.test(text)){
+        return machineCode(Number(text));
+    }
+
+    return text;
+}
+
+
+/* =========================================================
+   HORAS
+========================================================= */
+
+function timeToMinutes(value){
+
+    if(value === null || value === undefined){
+        return 0;
+    }
+
+    const text =
+        String(value).trim();
+
+    if(!text){
+        return 0;
+    }
+
+    const match =
+        text.match(/^(\d{1,3}):([0-5]\d)$/);
+
+    if(!match){
+        return 0;
+    }
+
+    return (
+        Number(match[1]) * 60 +
+        Number(match[2])
+    );
+}
+
+
+function minutesToTime(total){
+
+    total =
+        Math.max(
+            0,
+            Math.round(Number(total) || 0)
+        );
+
+    const hours =
+        Math.floor(total / 60);
+
+    const minutes =
+        total % 60;
+
+    return `${pad(hours)}:${pad(minutes)}`;
+}
+
+
+function normalizeTimeInput(value){
+
+    let text =
+        String(value || "")
+            .replace(/\D/g,"")
+            .slice(0,4);
+
+    if(!text){
+        return "";
+    }
+
+    if(text.length <= 2){
+        return text;
+    }
+
+    const hours =
+        text.slice(0,-2);
+
+    const minutes =
+        text.slice(-2);
+
+    return `${hours}:${minutes}`;
+}
+
+
+function formatTimeField(input){
+
+    const formatted =
+        normalizeTimeInput(input.value);
+
+    input.value = formatted;
+}
+
+
+function calculateTotal(){
+
+    const good =
+        timeToMinutes(horaBoaInput.value);
+
+    const replacement =
+        timeToMinutes(reposicaoInput.value);
+
+    return good + replacement;
+}
+
+
+function updateTotal(){
+
+    const total =
+        calculateTotal();
+
+    totalBaixadoElement.textContent =
+        minutesToTime(total);
+
+    performanceStatus.className =
+        "performance-status " +
+        getStatusClass(total);
+}
+
+
+function getStatusClass(totalMinutes){
+
+    const shift =
+        shiftInput.value;
+
+    const target =
+        shiftTargets[shift];
+
+    if(totalMinutes >= target){
+        return "status-green";
+    }
+
+    if(totalMinutes >= target - 48){
+        return "status-yellow";
+    }
+
+    return "status-red";
+}
+
+
+/* =========================================================
+   SUPABASE — PERFIL
+========================================================= */
+
+async function carregarPerfil(){
 
     const {
-        data:usuario,
+        data,
         error
-    } =
-        await supabaseClient
-            .from("usuarios")
-            .select("*")
-            .eq(
-                "id",
-                session.user.id
-            )
-            .eq(
-                "ativo",
-                true
-            )
-            .single();
+    } = await supabaseClient
+        .from("usuarios")
+        .select(
+            "id,nome,usuario,perfil,ativo,admin"
+        )
+        .eq("id", currentUser.id)
+        .maybeSingle();
 
-
-    if(
-        error ||
-        !usuario
-    ){
-
-        alert(
-            "Usuário sem cadastro no sistema."
-        );
-
-        await supabaseClient
-            .auth
-            .signOut();
-
-        window.location.href =
-            "index.html";
-
-        return;
+    if(error){
+        throw error;
     }
 
-
     if(
-        usuario.perfil !== "lider"
+        !data ||
+        !data.ativo ||
+        data.perfil !== "lider"
     ){
-
-        if(
-            usuario.perfil === "supervisor"
-        ){
-
-            window.location.href =
-                "supervisor.html";
-
-            return;
-        }
-
-        alert(
-            "Acesso restrito ao líder."
-        );
-
-        await supabaseClient
-            .auth
-            .signOut();
-
-        window.location.href =
-            "index.html";
-
-        return;
+        window.location.href = "index.html";
+        return false;
     }
 
+    currentProfile = data;
 
-    perfil =
-        usuario;
+    document.getElementById("leaderName")
+        .textContent = data.nome;
 
+    document.getElementById("userInitials")
+        .textContent = getInitials(data.nome);
 
-    document.getElementById(
-        "userName"
-    ).textContent =
-        usuario.nome;
-
-
-    if(
-        usuario.admin === true
-    ){
-
+    if(data.admin === true){
         document
-            .getElementById(
-                "acessosButton"
-            )
-            .classList.remove(
-                "hidden"
-            );
-
+            .getElementById("accessRow")
+            .classList.remove("hidden");
     }
 
-
-    renderMachineGrid();
-
-    await carregarDados();
-
+    return true;
 }
 
 
-async function contextoAlterado(){
+/* =========================================================
+   ACESSOS
+========================================================= */
 
-    fecharTelaMaquina();
-
-    renderMachineGrid();
-
-    await carregarDados();
-
+function abrirAcessos(){
+    window.location.href = "acessos.html";
 }
 
 
-function renderMachineGrid(){
+/* =========================================================
+   TURNOS
+========================================================= */
+
+async function carregarTurno(){
+
+    if(!currentUser){
+        return null;
+    }
+
+    const data =
+        dateInput.value;
+
+    const turno =
+        shiftInput.value;
 
     const setor =
-        document.getElementById(
-            "sector"
-        ).value;
+        sectorInput.value;
 
+    const {
+        data: turnos,
+        error
+    } = await supabaseClient
+        .from("turnos")
+        .select("*")
+        .eq("data", data)
+        .eq("turno", turno)
+        .eq("setor", setor)
+        .eq("lider_id", currentUser.id)
+        .limit(1);
 
-    const range =
-        sectorMachines[
-            setor
-        ];
-
-
-    document.getElementById(
-        "machineRange"
-    ).textContent =
-        `M${String(
-            range.start
-        ).padStart(2,"0")}–M${String(
-            range.end
-        ).padStart(2,"0")}`;
-
-
-    const grid =
-        document.getElementById(
-            "machineGrid"
-        );
-
-
-    grid.innerHTML = "";
-
-
-    for(
-        let numero =
-            range.start;
-
-        numero <=
-            range.end;
-
-        numero++
-    ){
-
-        const button =
-            document.createElement(
-                "button"
-            );
-
-
-        button.type =
-            "button";
-
-
-        button.className =
-            "machine-button";
-
-
-        const possui =
-            dadosApontamentos.some(
-                item =>
-                    Number(
-                        item.maquina
-                    ) ===
-                    numero
-            );
-
-
-        if(
-            possui
-        ){
-
-            button.classList.add(
-                "saved"
-            );
-
-        }
-
-
-        button.textContent =
-            formatMachine(
-                numero
-            );
-
-
-        button.addEventListener(
-            "click",
-            () =>
-                abrirMaquina(
-                    numero
-                )
-        );
-
-
-        grid.appendChild(
-            button
-        );
-
+    if(error){
+        throw error;
     }
 
+    if(turnos && turnos.length){
+        return turnos[0];
+    }
+
+    return null;
 }
 
+
+/* =========================================================
+   CARREGAMENTO DOS DADOS
+========================================================= */
 
 async function carregarDados(){
 
-    const data =
-        document.getElementById(
-            "data"
-        ).value;
+    machineAtual = null;
+    apontamentoAtual = null;
+    ocorrencias = [];
 
+    fecharTelaMaquina();
+
+    renderMachineGrid([]);
 
     const turno =
-        document.getElementById(
-            "shift"
-        ).value;
+        await carregarTurno();
 
+    if(!turno){
+        turnIdAtual = null;
+        renderMachineGrid([]);
+        return;
+    }
 
-    const setor =
-        document.getElementById(
-            "sector"
-        ).value;
-
-
-    dadosApontamentos = [];
-
+    turnIdAtual = turno.id;
 
     const {
-        data:turnos,
+        data,
         error
-    } =
-        await supabaseClient
-            .from("turnos")
-            .select(`
+    } = await supabaseClient
+        .from("apontamentos")
+        .select(`
+            *,
+            ocorrencias (
                 id,
-                data,
-                turno,
-                setor,
-                lider_id
-            `)
-            .eq(
-                "data",
-                data
+                tipo,
+                descricao,
+                criado_em
             )
-            .eq(
-                "turno",
-                turno
-            )
-            .eq(
-                "setor",
-                setor
-            )
-            .eq(
-                "lider_id",
-                session.user.id
-            );
-
+        `)
+        .eq("turno_id", turno.id);
 
     if(error){
-
-        console.error(
-            "Erro ao carregar turnos:",
-            error
-        );
-
-
-        mostrarErroSupabase(
-            "Erro ao carregar os dados",
-            error
-        );
-
-
-        renderMachineGrid();
-
-        atualizarFechamento();
-
-        return;
+        throw error;
     }
 
-
-    if(
-        !turnos ||
-        !turnos.length
-    ){
-
-        turnoAtual = null;
-
-        renderMachineGrid();
-
-        atualizarFechamento();
-
-        return;
-    }
-
-
-    turnoAtual =
-        turnos[0];
-
-
-    const turnoIds =
-        turnos.map(
-            item =>
-                item.id
-        );
-
-
-    const {
-        data:apontamentos,
-        error:apontamentosError
-    } =
-        await supabaseClient
-            .from("apontamentos")
-            .select(`
-                id,
-                turno_id,
-                maquina,
-                hora_boa,
-                reposicao,
-                total_baixado,
-                saldo,
-                observacao,
-                ocorrencias (
-                    id,
-                    apontamento_id,
-                    categoria,
-                    descricao
-                )
-            `)
-            .in(
-                "turno_id",
-                turnoIds
-            );
-
-
-    if(
-        apontamentosError
-    ){
-
-        console.error(
-            "Erro ao carregar apontamentos:",
-            apontamentosError
-        );
-
-
-        mostrarErroSupabase(
-            "Erro ao carregar apontamentos",
-            apontamentosError
-        );
-
-
-        renderMachineGrid();
-
-        atualizarFechamento();
-
-        return;
-    }
-
-
-    dadosApontamentos =
-        (apontamentos || [])
-            .map(
-                item => ({
-                    ...item,
-                    maquina:
-                        normalizarMaquina(
-                            item.maquina
-                        )
-                })
-            )
-            .filter(
-                item =>
-                    item.maquina !== null
-            );
-
-
-    renderMachineGrid();
-
-    atualizarFechamento();
-
+    renderMachineGrid(data || []);
 }
 
 
-async function abrirMaquina(
-    numero
-){
+/* =========================================================
+   GRID
+========================================================= */
 
-    maquinaAtual =
-        Number(
-            numero
-        );
+function renderMachineGrid(records){
 
+    machineGrid.innerHTML = "";
 
-    const existente =
-        dadosApontamentos.find(
-            item =>
-                Number(
-                    item.maquina
-                ) ===
-                maquinaAtual
-        );
+    const setor =
+        sectorInput.value;
 
+    const range =
+        sectorMachines[setor];
 
-    apontamentoAtual =
-        existente ||
-        null;
+    const map =
+        new Map();
 
+    (records || []).forEach(record => {
 
-    if(
-        existente
+        const code =
+            normalizeMachine(record.maquina);
+
+        if(code){
+            map.set(code, record);
+        }
+    });
+
+    for(
+        let number = range.start;
+        number <= range.end;
+        number++
     ){
 
-        preencherFormulario(
-            existente
+        const code =
+            machineCode(number);
+
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+        button.className = "machine-btn";
+        button.textContent = code;
+
+        if(map.has(code)){
+            button.classList.add("saved");
+        }
+
+        button.addEventListener(
+            "click",
+            () => abrirMaquina(code, map.get(code) || null)
         );
 
-    }else{
-
-        limparFormulario();
-
+        machineGrid.appendChild(button);
     }
+}
 
 
-    document.getElementById(
-        "machineScreenTitle"
-    ).textContent =
-        formatMachine(
-            maquinaAtual
-        );
+/* =========================================================
+   ABRIR MÁQUINA
+========================================================= */
 
+function abrirMaquina(machine, record = null){
 
-    document
-        .getElementById(
-            "machineListSection"
-        )
-        .classList.add(
-            "hidden"
-        );
+    machineAtual =
+        normalizeMachine(machine);
 
+    apontamentoAtual =
+        record || null;
 
-    document
-        .getElementById(
-            "closingCard"
-        )
-        .classList.add(
-            "hidden"
-        );
+    ocorrencias =
+        record && Array.isArray(record.ocorrencias)
+            ? record.ocorrencias.map(item => ({
+                id: item.id ?? null,
+                tipo: item.tipo || "Outro",
+                descricao: item.descricao || ""
+            }))
+            : [];
 
+    machineTitle.textContent =
+        machineAtual;
 
-    document
-        .getElementById(
-            "machineScreen"
-        )
-        .classList.remove(
-            "hidden"
-        );
+    machineListSection.classList.add("hidden");
 
+    machineScreen.classList.remove("hidden");
+
+    occurrenceEditor.classList.add("hidden");
+
+    occurrenceEditingIndex = null;
+
+    carregarFormulario(record);
 
     window.scrollTo({
         top:0,
         behavior:"smooth"
     });
-
-}
-
-
-function preencherFormulario(
-    item
-){
-
-    document.getElementById(
-        "horaBoa"
-    ).value =
-        formatMinutes(
-            item.hora_boa
-        );
-
-
-    document.getElementById(
-        "reposicao"
-    ).value =
-        formatMinutes(
-            item.reposicao
-        );
-
-
-    document.getElementById(
-        "saldo"
-    ).value =
-        formatMinutes(
-            item.saldo
-        );
-
-
-    document.getElementById(
-        "observacao"
-    ).value =
-        item.observacao ||
-        "";
-
-
-    ocorrenciasLocais =
-        Array.isArray(
-            item.ocorrencias
-        )
-        ?
-        item.ocorrencias.map(
-            oc => ({
-                id:oc.id,
-                apontamento_id:
-                    oc.apontamento_id,
-                categoria:
-                    oc.categoria,
-                descricao:
-                    oc.descricao
-            })
-        )
-        :
-        [];
-
-
-    fecharEditorOcorrencia();
-
-    renderOcorrencias();
-
-    atualizarTotal();
-
-}
-
-
-function limparFormulario(){
-
-    document.getElementById(
-        "horaBoa"
-    ).value =
-        "";
-
-
-    document.getElementById(
-        "reposicao"
-    ).value =
-        "";
-
-
-    document.getElementById(
-        "saldo"
-    ).value =
-        "";
-
-
-    document.getElementById(
-        "observacao"
-    ).value =
-        "";
-
-
-    ocorrenciasLocais = [];
-
-    apontamentoAtual = null;
-
-    fecharEditorOcorrencia();
-
-    renderOcorrencias();
-
-    atualizarTotal();
-
-}
-
-
-function atualizarTotal(){
-
-    const horaBoa =
-        parseTime(
-            document.getElementById(
-                "horaBoa"
-            ).value
-        );
-
-
-    const reposicao =
-        parseTime(
-            document.getElementById(
-                "reposicao"
-            ).value
-        );
-
-
-    const total =
-        horaBoa +
-        reposicao;
-
-
-    document.getElementById(
-        "totalValue"
-    ).textContent =
-        formatMinutes(
-            total
-        );
-
-
-    const box =
-        document.getElementById(
-            "totalBox"
-        );
-
-
-    box.classList.remove(
-        "status-green",
-        "status-yellow",
-        "status-red"
-    );
-
-
-    box.classList.add(
-        getStatusClass(
-            total
-        )
-    );
-
-}
-
-
-function abrirEditorOcorrencia(){
-
-    document
-        .getElementById(
-            "occurrenceEditor"
-        )
-        .classList.remove(
-            "hidden"
-        );
-
-
-    document.getElementById(
-        "occurrenceDescription"
-    ).value =
-        "";
-
-
-    document.getElementById(
-        "occurrenceCategory"
-    ).value =
-        "Mecânico";
-
-
-    setTimeout(
-        () => {
-
-            document
-                .getElementById(
-                    "occurrenceDescription"
-                )
-                .focus();
-
-        },
-        50
-    );
-
-}
-
-
-function fecharEditorOcorrencia(){
-
-    document
-        .getElementById(
-            "occurrenceEditor"
-        )
-        .classList.add(
-            "hidden"
-        );
-
-}
-
-
-function adicionarOcorrenciaLocal(){
-
-    const categoria =
-        document.getElementById(
-            "occurrenceCategory"
-        ).value;
-
-
-    const descricao =
-        document.getElementById(
-            "occurrenceDescription"
-        ).value.trim();
-
-
-    if(
-        !descricao
-    ){
-
-        mostrarToast(
-            "Descreva a ocorrência."
-        );
-
-        return;
-    }
-
-
-    ocorrenciasLocais.push({
-
-        id:null,
-
-        apontamento_id:
-            apontamentoAtual?.id ||
-            null,
-
-        categoria:
-            categoria,
-
-        descricao:
-            descricao
-
-    });
-
-
-    fecharEditorOcorrencia();
-
-    renderOcorrencias();
-
-}
-
-
-function renderOcorrencias(){
-
-    const container =
-        document.getElementById(
-            "occurrenceList"
-        );
-
-
-    if(
-        !ocorrenciasLocais.length
-    ){
-
-        container.innerHTML = `
-
-            <div class="empty-occurrences">
-                Nenhuma ocorrência adicionada.
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML = "";
-
-
-    ocorrenciasLocais.forEach(
-        (
-            ocorrencia,
-            index
-        ) => {
-
-            const item =
-                document.createElement(
-                    "div"
-                );
-
-
-            item.className =
-                "occurrence";
-
-
-            item.innerHTML = `
-
-                <div class="occurrence-content">
-
-                    <div class="occurrence-type">
-                        ${escapeHtml(
-                            ocorrencia.categoria
-                        )}
-                    </div>
-
-                    <div class="occurrence-description">
-                        ${escapeHtml(
-                            ocorrencia.descricao
-                        )}
-                    </div>
-
-                </div>
-
-                <div class="occurrence-actions">
-
-                    <button
-                        class="occurrence-action delete"
-                        onclick="removerOcorrenciaLocal(${index})">
-                        Excluir
-                    </button>
-
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                item
-            );
-
-        }
-    );
-
-}
-
-
-function removerOcorrenciaLocal(
-    index
-){
-
-    ocorrenciasLocais.splice(
-        index,
-        1
-    );
-
-
-    renderOcorrencias();
-
 }
 
 
 /* =========================================================
-   SALVAR MÁQUINA
-   Agora utiliza a RPC transacional:
-   salvar_apontamento_lider
+   FECHAR MÁQUINA
+========================================================= */
+
+function fecharTelaMaquina(){
+
+    machineScreen.classList.add("hidden");
+
+    machineListSection.classList.remove("hidden");
+
+    machineAtual = null;
+
+    apontamentoAtual = null;
+
+    occurrenceEditingIndex = null;
+
+    occurrenceEditor.classList.add("hidden");
+}
+
+
+/* =========================================================
+   FORMULÁRIO
+========================================================= */
+
+function carregarFormulario(record){
+
+    if(!record){
+
+        horaBoaInput.value = "";
+
+        reposicaoInput.value = "";
+
+        saldoInput.value = "";
+
+        saldoValueInput.value = "";
+
+        saldoInputWrapper.classList.add("hidden");
+
+        observationInput.value = "";
+
+        deleteMachineBtn.classList.add("hidden");
+
+    }else{
+
+        horaBoaInput.value =
+            record.hora_boa
+                ? minutesToTime(
+                    timeToMinutes(record.hora_boa)
+                )
+                : "";
+
+        reposicaoInput.value =
+            record.reposicao
+                ? minutesToTime(
+                    timeToMinutes(record.reposicao)
+                )
+                : "";
+
+        if(record.saldo){
+
+            saldoInput.value =
+                "__CUSTOM__";
+
+            saldoValueInput.value =
+                minutesToTime(
+                    timeToMinutes(record.saldo)
+                );
+
+            saldoInputWrapper.classList.remove("hidden");
+
+        }else{
+
+            saldoInput.value =
+                "00:00";
+
+            saldoValueInput.value = "";
+
+            saldoInputWrapper.classList.add("hidden");
+        }
+
+        observationInput.value =
+            record.observacao || "";
+
+        deleteMachineBtn.classList.remove("hidden");
+    }
+
+    updateTotal();
+
+    renderOccurrences();
+}
+
+
+/* =========================================================
+   SALDO
+========================================================= */
+
+saldoInput.addEventListener(
+    "change",
+    () => {
+
+        if(saldoInput.value === "__CUSTOM__"){
+
+            saldoInputWrapper
+                .classList.remove("hidden");
+
+        }else{
+
+            saldoInputWrapper
+                .classList.add("hidden");
+
+            saldoValueInput.value = "";
+        }
+    }
+);
+
+
+/* =========================================================
+   INPUT DE HORAS
+========================================================= */
+
+horaBoaInput.addEventListener(
+    "input",
+    () => {
+        horaBoaInput.value =
+            normalizeTimeInput(horaBoaInput.value);
+
+        updateTotal();
+    }
+);
+
+reposicaoInput.addEventListener(
+    "input",
+    () => {
+        reposicaoInput.value =
+            normalizeTimeInput(reposicaoInput.value);
+
+        updateTotal();
+    }
+);
+
+saldoValueInput.addEventListener(
+    "input",
+    () => {
+        saldoValueInput.value =
+            normalizeTimeInput(
+                saldoValueInput.value
+            );
+    }
+);
+
+
+/* =========================================================
+   OCORRÊNCIAS
+========================================================= */
+
+function abrirEditorOcorrencia(index = null){
+
+    occurrenceEditingIndex =
+        index;
+
+    if(index === null){
+
+        occurrenceType.value =
+            "Mecânico";
+
+        occurrenceDescription.value =
+            "";
+
+    }else{
+
+        const item =
+            ocorrencias[index];
+
+        occurrenceType.value =
+            item.tipo || "Outro";
+
+        occurrenceDescription.value =
+            item.descricao || "";
+    }
+
+    occurrenceEditor.classList.remove("hidden");
+
+    occurrenceDescription.focus();
+}
+
+
+function cancelarEditorOcorrencia(){
+
+    occurrenceEditingIndex = null;
+
+    occurrenceEditor.classList.add("hidden");
+
+    occurrenceType.value =
+        "Mecânico";
+
+    occurrenceDescription.value =
+        "";
+}
+
+
+function salvarOcorrenciaLocal(){
+
+    const tipo =
+        occurrenceType.value;
+
+    const descricao =
+        occurrenceDescription.value.trim();
+
+    if(!descricao){
+
+        showToast(
+            "Informe a descrição da ocorrência."
+        );
+
+        occurrenceDescription.focus();
+
+        return;
+    }
+
+    const item = {
+        id:null,
+        tipo,
+        descricao
+    };
+
+    if(
+        occurrenceEditingIndex === null
+    ){
+
+        ocorrencias.push(item);
+
+    }else{
+
+        const old =
+            ocorrencias[
+                occurrenceEditingIndex
+            ];
+
+        ocorrencias[
+            occurrenceEditingIndex
+        ] = {
+            id:old.id || null,
+            tipo,
+            descricao
+        };
+    }
+
+    cancelarEditorOcorrencia();
+
+    renderOccurrences();
+}
+
+
+function editarOcorrencia(index){
+    abrirEditorOcorrencia(index);
+}
+
+
+function removerOcorrencia(index){
+
+    const item =
+        ocorrencias[index];
+
+    confirmar(
+        "Excluir ocorrência?",
+        "Esta ocorrência será removida do apontamento quando você salvar a máquina.",
+        () => {
+
+            ocorrencias.splice(index,1);
+
+            renderOccurrences();
+        }
+    );
+}
+
+
+function renderOccurrences(){
+
+    occurrencesList.innerHTML = "";
+
+    if(!ocorrencias.length){
+
+        const empty =
+            document.createElement("div");
+
+        empty.style.color =
+            "#6e6e73";
+
+        empty.style.fontSize =
+            "13px";
+
+        empty.style.padding =
+            "5px 2px 2px";
+
+        empty.textContent =
+            "Nenhuma ocorrência adicionada.";
+
+        occurrencesList.appendChild(empty);
+
+        return;
+    }
+
+    ocorrencias.forEach(
+        (item,index) => {
+
+            const row =
+                document.createElement("div");
+
+            row.className =
+                "occurrence-item";
+
+            const type =
+                document.createElement("div");
+
+            type.className =
+                "occurrence-type";
+
+            type.textContent =
+                item.tipo || "Outro";
+
+            const description =
+                document.createElement("div");
+
+            description.className =
+                "occurrence-description";
+
+            description.textContent =
+                item.descricao || "";
+
+            const actions =
+                document.createElement("div");
+
+            actions.className =
+                "occurrence-actions";
+
+            const edit =
+                document.createElement("button");
+
+            edit.type = "button";
+            edit.className = "icon-btn";
+            edit.textContent = "✎";
+
+            edit.addEventListener(
+                "click",
+                () => editarOcorrencia(index)
+            );
+
+            const remove =
+                document.createElement("button");
+
+            remove.type = "button";
+            remove.className =
+                "icon-btn delete";
+
+            remove.textContent =
+                "×";
+
+            remove.addEventListener(
+                "click",
+                () => removerOcorrencia(index)
+            );
+
+            actions.appendChild(edit);
+            actions.appendChild(remove);
+
+            row.appendChild(type);
+            row.appendChild(description);
+            row.appendChild(actions);
+
+            occurrencesList.appendChild(row);
+        }
+    );
+}
+
+
+/* =========================================================
+   SALVAR
 ========================================================= */
 
 async function salvarMaquina(){
 
-    if(!maquinaAtual){
+    if(!currentUser){
 
-        mostrarToast(
-            "Selecione uma máquina."
+        showToast(
+            "Sessão expirada."
         );
 
         return;
     }
 
+    if(!turnIdAtual){
 
-    const button =
-        document.getElementById(
-            "saveMachineButton"
+        showToast(
+            "Não foi possível localizar o turno."
         );
 
+        return;
+    }
 
-    const data =
-        document.getElementById(
-            "data"
-        ).value;
+    if(!machineAtual){
 
+        showToast(
+            "Nenhuma máquina selecionada."
+        );
 
-    const turno =
-        document.getElementById(
-            "shift"
-        ).value;
-
-
-    const setor =
-        document.getElementById(
-            "sector"
-        ).value;
-
+        return;
+    }
 
     const horaBoa =
-        parseTime(
-            document.getElementById(
-                "horaBoa"
-            ).value
+        timeToMinutes(
+            horaBoaInput.value
         );
-
 
     const reposicao =
-        parseTime(
-            document.getElementById(
-                "reposicao"
-            ).value
+        timeToMinutes(
+            reposicaoInput.value
         );
-
 
     const total =
-        horaBoa +
-        reposicao;
+        horaBoa + reposicao;
 
+    let saldo = null;
 
-    const saldoTexto =
-        document.getElementById(
-            "saldo"
-        ).value.trim();
+    if(
+        saldoInput.value === "__CUSTOM__"
+    ){
 
+        const saldoMinutes =
+            timeToMinutes(
+                saldoValueInput.value
+            );
 
-    const saldo =
-        saldoTexto
-            ? parseTime(
-                saldoTexto
-            )
-            : 0;
-
+        saldo =
+            minutesToTime(
+                saldoMinutes
+            );
+    }
 
     const observacao =
+        observationInput.value.trim();
+
+    const saveButton =
         document.getElementById(
-            "observacao"
-        ).value.trim();
-
-
-    const ocorrencias =
-        ocorrenciasLocais.map(
-            ocorrencia => ({
-                categoria:
-                    ocorrencia.categoria,
-
-                descricao:
-                    ocorrencia.descricao
-            })
+            "saveMachineBtn"
         );
 
+    saveButton.disabled = true;
 
-    button.disabled =
-        true;
-
-
-    button.textContent =
+    saveButton.textContent =
         "Salvando...";
-
 
     try{
 
+        /*
+         * A RPC centraliza a criação/atualização
+         * do apontamento e das ocorrências.
+         */
+
         const {
-            data:apontamentoId,
+            data,
             error
-        } =
-            await supabaseClient
-                .rpc(
-                    "salvar_apontamento_lider",
-                    {
-                        p_data:
-                            data,
+        } = await supabaseClient
+            .rpc(
+                "salvar_apontamento_lider",
+                {
+                    p_data:
+                        dateInput.value,
 
-                        p_turno:
-                            turno,
+                    p_turno:
+                        shiftInput.value,
 
-                        p_setor:
-                            setor,
+                    p_setor:
+                        sectorInput.value,
 
-                        p_maquina:
-                            maquinaAtual,
+                    p_maquina:
+                        machineAtual,
 
-                        p_hora_boa:
-                            horaBoa,
+                    p_hora_boa:
+                        minutesToTime(
+                            horaBoa
+                        ),
 
-                        p_reposicao:
-                            reposicao,
+                    p_reposicao:
+                        minutesToTime(
+                            reposicao
+                        ),
 
-                        p_total_baixado:
-                            total,
+                    p_total_baixado:
+                        minutesToTime(
+                            total
+                        ),
 
-                        p_saldo:
-                            saldo,
+                    p_saldo:
+                        saldo,
 
-                        p_observacao:
-                            observacao ||
-                            null,
+                    p_observacao:
+                        observacao || null,
 
-                        p_ocorrencias:
-                            ocorrencias
-                    }
-                );
+                    p_ocorrencias:
+                        ocorrencias.map(
+                            item => ({
+                                tipo:
+                                    item.tipo,
 
-
-        if(error){
-
-            console.error(
-                "ERRO RPC SALVAR:",
-                error
+                                descricao:
+                                    item.descricao
+                            })
+                        )
+                }
             );
 
+        if(error){
             throw error;
-
         }
 
-
-        console.log(
-            "Apontamento salvo:",
-            apontamentoId
+        showToast(
+            `${machineAtual} salvo ✓`
         );
-
-
-        mostrarToast(
-            `${formatMachine(
-                maquinaAtual
-            )} salvo ✓`
-        );
-
 
         await carregarDados();
 
-
-        fecharTelaMaquina();
-
+        /*
+         * Volta automaticamente para
+         * a grade após salvar.
+         */
 
     }catch(error){
 
         console.error(
-            "ERRO AO SALVAR MÁQUINA:",
+            "Erro ao salvar:",
             error
         );
 
-
-        mostrarErroSupabase(
-            "Não foi possível salvar",
+        mostrarErro(
+            "Não foi possível salvar.",
             error
         );
-
 
     }finally{
 
-        button.disabled =
-            false;
+        saveButton.disabled = false;
 
-
-        button.textContent =
+        saveButton.textContent =
             "Salvar máquina";
-
     }
-
 }
 
 
 /* =========================================================
-   EXCLUIR APONTAMENTO
+   EXCLUIR MÁQUINA
 ========================================================= */
 
 async function excluirMaquina(){
 
-    if(
-        !apontamentoAtual ||
-        !apontamentoAtual.id
-    ){
-
-        mostrarToast(
-            "Não existe apontamento para excluir."
-        );
-
+    if(!apontamentoAtual){
         return;
     }
 
+    confirmar(
+        "Excluir apontamento?",
+        `O apontamento da ${machineAtual} será excluído.`,
+        async () => {
 
-    const confirmar =
-        confirm(
-            `Excluir o apontamento da ${formatMachine(
-                maquinaAtual
-            )}?`
-        );
+            try{
 
+                /*
+                 * Remove as ocorrências primeiro.
+                 */
 
-    if(
-        !confirmar
-    ){
+                const {
+                    error:
+                        occurrenceError
+                } = await supabaseClient
+                    .from("ocorrencias")
+                    .delete()
+                    .eq(
+                        "apontamento_id",
+                        apontamentoAtual.id
+                    );
 
-        return;
-    }
+                if(occurrenceError){
+                    throw occurrenceError;
+                }
 
+                const {
+                    error
+                } = await supabaseClient
+                    .from("apontamentos")
+                    .delete()
+                    .eq(
+                        "id",
+                        apontamentoAtual.id
+                    );
 
-    const button =
-        document.getElementById(
-            "deleteMachineButton"
-        );
+                if(error){
+                    throw error;
+                }
 
-
-    button.disabled =
-        true;
-
-
-    button.textContent =
-        "Excluindo...";
-
-
-    try{
-
-        const {
-            error:occurrenceError
-        } =
-            await supabaseClient
-                .from("ocorrencias")
-                .delete()
-                .eq(
-                    "apontamento_id",
-                    apontamentoAtual.id
+                showToast(
+                    `${machineAtual} excluído ✓`
                 );
 
+                await carregarDados();
 
-        if(
-            occurrenceError
-        ){
+            }catch(error){
 
-            throw occurrenceError;
-
-        }
-
-
-        const {
-            error:apontamentoError
-        } =
-            await supabaseClient
-                .from("apontamentos")
-                .delete()
-                .eq(
-                    "id",
-                    apontamentoAtual.id
+                console.error(
+                    "Erro ao excluir:",
+                    error
                 );
 
-
-        if(
-            apontamentoError
-        ){
-
-            throw apontamentoError;
-
+                mostrarErro(
+                    "Não foi possível excluir.",
+                    error
+                );
+            }
         }
-
-
-        mostrarToast(
-            `${formatMachine(
-                maquinaAtual
-            )} excluído ✓`
-        );
-
-
-        await carregarDados();
-
-        fecharTelaMaquina();
-
-
-    }catch(error){
-
-        console.error(
-            "Erro ao excluir:",
-            error
-        );
-
-
-        mostrarErroSupabase(
-            "Não foi possível excluir",
-            error
-        );
-
-    }finally{
-
-        button.disabled =
-            false;
-
-
-        button.textContent =
-            "Excluir apontamento";
-
-    }
-
-}
-
-
-function voltarMaquinas(){
-
-    fecharTelaMaquina();
-
-}
-
-
-function fecharTelaMaquina(){
-
-    maquinaAtual =
-        null;
-
-    apontamentoAtual =
-        null;
-
-
-    document
-        .getElementById(
-            "machineScreen"
-        )
-        .classList.add(
-            "hidden"
-        );
-
-
-    document
-        .getElementById(
-            "machineListSection"
-        )
-        .classList.remove(
-            "hidden"
-        );
-
-
-    document
-        .getElementById(
-            "closingCard"
-        )
-        .classList.remove(
-            "hidden"
-        );
-
-
-    renderMachineGrid();
-
-    atualizarFechamento();
-
-}
-
-
-function atualizarFechamento(){
-
-    const setor =
-        document.getElementById(
-            "sector"
-        ).value;
-
-
-    const linhas = [];
-
-
-    linhas.push(
-        `Horas baixadas setor ${setor}`
     );
+}
 
 
-    linhas.push("");
+/* =========================================================
+   CONFIRMAÇÃO
+========================================================= */
 
-
-    if(
-        dadosApontamentos.length
-    ){
-
-        const ordenados =
-            [...dadosApontamentos]
-                .sort(
-                    (a,b) =>
-                        Number(a.maquina) -
-                        Number(b.maquina)
-                );
-
-
-        for(
-            const item of ordenados
-        ){
-
-            const maquina =
-                formatMachine(
-                    item.maquina
-                );
-
-
-            const total =
-                formatMinutes(
-                    item.total_baixado
-                );
-
-
-            let linha =
-                `${maquina} - ${total}`;
-
-
-            if(
-                item.saldo !== null &&
-                item.saldo !== undefined &&
-                Number(item.saldo) !== 0
-            ){
-
-                linha +=
-                    ` (Saldo - ${formatMinutes(
-                        item.saldo
-                    )})`;
-
-            }
-
-
-            if(
-                item.observacao
-            ){
-
-                linha +=
-                    ` — ${item.observacao}`;
-
-            }
-
-
-            linhas.push(
-                linha
-            );
-
-        }
-
-    }
-
+function confirmar(
+    title,
+    message,
+    callback
+){
 
     document.getElementById(
-        "closingText"
-    ).value =
-        linhas.join(
-            "\n"
-        );
+        "confirmTitle"
+    ).textContent = title;
 
-}
+    document.getElementById(
+        "confirmMessage"
+    ).textContent = message;
 
+    confirmCallback = callback;
 
-async function copiarFechamento(){
+    document
+        .getElementById("confirmModal")
+        .classList.remove("hidden");
 
-    const texto =
-        document.getElementById(
-            "closingText"
-        ).value;
+    document.getElementById(
+        "confirmActionBtn"
+    ).onclick = async () => {
 
+        const action =
+            confirmCallback;
 
-    try{
+        fecharConfirmacao();
 
-        await navigator.clipboard.writeText(
-            texto
-        );
-
-
-        mostrarToast(
-            "Fechamento copiado ✓"
-        );
-
-
-    }catch(error){
-
-        console.error(
-            error
-        );
-
-
-        mostrarToast(
-            "Não foi possível copiar."
-        );
-
-    }
-
-}
-
-
-function getStatusClass(
-    totalMinutes
-){
-
-    const turno =
-        document.getElementById(
-            "shift"
-        ).value;
-
-
-    const target =
-        shiftTargets[
-            turno
-        ];
-
-
-    if(
-        totalMinutes >=
-        target
-    ){
-
-        return "status-green";
-
-    }
-
-
-    if(
-        totalMinutes >=
-        target - 48
-    ){
-
-        return "status-yellow";
-
-    }
-
-
-    return "status-red";
-
-}
-
-
-function parseTime(
-    value
-){
-
-    if(
-        value === null ||
-        value === undefined ||
-        value === ""
-    ){
-
-        return 0;
-
-    }
-
-
-    value =
-        String(
-            value
-        )
-        .trim()
-        .replace(
-            ",",
-            ":"
-        );
-
-
-    if(
-        /^\d{3,4}$/.test(
-            value
-        )
-    ){
-
-        if(
-            value.length === 3
-        ){
-
-            const horas =
-                Number(
-                    value.slice(
-                        0,
-                        1
-                    )
-                );
-
-
-            const minutos =
-                Number(
-                    value.slice(
-                        1
-                    )
-                );
-
-
-            return (
-                horas * 60 +
-                minutos
-            );
-
+        if(action){
+            await action();
         }
-
-
-        if(
-            value.length === 4
-        ){
-
-            const horas =
-                Number(
-                    value.slice(
-                        0,
-                        2
-                    )
-                );
-
-
-            const minutos =
-                Number(
-                    value.slice(
-                        2
-                    )
-                );
-
-
-            return (
-                horas * 60 +
-                minutos
-            );
-
-        }
-
-    }
-
-
-    if(
-        value.includes(":")
-    ){
-
-        const parts =
-            value.split(":");
-
-
-        const horas =
-            Number(
-                parts[0]
-            ) || 0;
-
-
-        const minutos =
-            Number(
-                parts[1]
-            ) || 0;
-
-
-        return (
-            horas * 60 +
-            minutos
-        );
-
-    }
-
-
-    const numero =
-        Number(
-            value
-        );
-
-
-    return Number.isFinite(
-        numero
-    )
-        ? numero
-        : 0;
-
+    };
 }
 
 
-function formatMinutes(
-    minutes
-){
+function fecharConfirmacao(){
 
-    minutes =
-        Number(
-            minutes
-        ) || 0;
+    document
+        .getElementById("confirmModal")
+        .classList.add("hidden");
 
-
-    const negativo =
-        minutes < 0;
-
-
-    minutes =
-        Math.abs(
-            minutes
-        );
-
-
-    const horas =
-        Math.floor(
-            minutes / 60
-        );
-
-
-    const mins =
-        minutes % 60;
-
-
-    const resultado =
-        `${String(
-            horas
-        ).padStart(
-            2,
-            "0"
-        )}:${String(
-            mins
-        ).padStart(
-            2,
-            "0"
-        )}`;
-
-
-    return negativo
-        ? `-${resultado}`
-        : resultado;
-
+    confirmCallback = null;
 }
 
 
-function normalizarMaquina(
-    valor
-){
+/* =========================================================
+   ERROS
+========================================================= */
 
-    if(
-        valor === null ||
-        valor === undefined ||
-        valor === ""
-    ){
-
-        return null;
-
-    }
-
-
-    let texto =
-        String(
-            valor
-        )
-        .trim()
-        .toUpperCase();
-
-
-    texto =
-        texto.replace(
-            /^M/,
-            ""
-        );
-
-
-    const numero =
-        Number(
-            texto
-        );
-
-
-    if(
-        !Number.isInteger(
-            numero
-        ) ||
-        numero <= 0
-    ){
-
-        return null;
-
-    }
-
-
-    return numero;
-
-}
-
-
-function formatMachine(
-    valor
-){
-
-    const numero =
-        normalizarMaquina(
-            valor
-        );
-
-
-    if(
-        numero === null
-    ){
-
-        return "M--";
-
-    }
-
-
-    return `M${String(
-        numero
-    ).padStart(
-        2,
-        "0"
-    )}`;
-
-}
-
-
-function mostrarErroSupabase(
+function mostrarErro(
     titulo,
     error
 ){
 
-    const mensagem =
+    let message =
         error?.message ||
         "Erro desconhecido.";
 
+    if(error?.details){
+        message +=
+            ` ${error.details}`;
+    }
 
-    const detalhe =
-        error?.details ||
-        "";
+    if(error?.hint){
+        message +=
+            ` ${error.hint}`;
+    }
+
+    showToast(
+        `${titulo} ${message}`
+    );
+}
 
 
-    const hint =
-        error?.hint ||
-        "";
+/* =========================================================
+   FILTROS
+========================================================= */
+
+dateInput.addEventListener(
+    "change",
+    async () => {
+
+        try{
+            await carregarDados();
+        }catch(error){
+
+            console.error(error);
+
+            mostrarErro(
+                "Erro ao carregar os dados.",
+                error
+            );
+        }
+    }
+);
 
 
-    const codigo =
-        error?.code ||
-        "";
+shiftInput.addEventListener(
+    "change",
+    async () => {
+
+        try{
+            await carregarDados();
+        }catch(error){
+
+            console.error(error);
+
+            mostrarErro(
+                "Erro ao carregar os dados.",
+                error
+            );
+        }
+    }
+);
 
 
-    console.error(
-        titulo,
-        {
-            message:mensagem,
-            details:detalhe,
-            hint:hint,
-            code:codigo
+sectorInput.addEventListener(
+    "change",
+    async () => {
+
+        try{
+            await carregarDados();
+        }catch(error){
+
+            console.error(error);
+
+            mostrarErro(
+                "Erro ao carregar os dados.",
+                error
+            );
+        }
+    }
+);
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+async function init(){
+
+    try{
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .auth
+            .getSession();
+
+        if(error){
+            throw error;
+        }
+
+        if(!data.session){
+
+            window.location.href =
+                "index.html";
+
+            return;
+        }
+
+        currentUser =
+            data.session.user;
+
+        /*
+         * Data atual local.
+         */
+
+        const now =
+            new Date();
+
+        const year =
+            now.getFullYear();
+
+        const month =
+            pad(now.getMonth() + 1);
+
+        const day =
+            pad(now.getDate());
+
+        dateInput.value =
+            `${year}-${month}-${day}`;
+
+        /*
+         * Perfil.
+         */
+
+        const profileOk =
+            await carregarPerfil();
+
+        if(!profileOk){
+            return;
+        }
+
+        /*
+         * Grade inicial.
+         */
+
+        await carregarDados();
+
+    }catch(error){
+
+        console.error(
+            "Erro na inicialização:",
+            error
+        );
+
+        mostrarErro(
+            "Não foi possível carregar o sistema.",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   AUTENTICAÇÃO
+========================================================= */
+
+supabaseClient
+    .auth
+    .onAuthStateChange(
+        (event, session) => {
+
+            if(
+                event === "SIGNED_OUT" ||
+                !session
+            ){
+
+                window.location.href =
+                    "index.html";
+            }
         }
     );
 
 
-    let texto =
-        mensagem;
+/* =========================================================
+   START
+========================================================= */
 
-
-    if(
-        detalhe &&
-        detalhe !== mensagem
-    ){
-
-        texto +=
-            ` — ${detalhe}`;
-
-    }
-
-
-    if(
-        hint
-    ){
-
-        texto +=
-            ` — ${hint}`;
-
-    }
-
-
-    mostrarToast(
-        texto
-    );
-
-}
-
-
-function escapeHtml(
-    value
-){
-
-    if(
-        value === null ||
-        value === undefined
-    ){
-
-        return "";
-
-    }
-
-
-    return String(
-        value
-    )
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-    .replace(
-        /</g,
-        "&lt;"
-    )
-    .replace(
-        />/g,
-        "&gt;"
-    )
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-    .replace(
-        /'/g,
-        "&#039;"
-    );
-
-}
-
-
-function mostrarToast(
-    texto
-){
-
-    const toast =
-        document.getElementById(
-            "toast"
-        );
-
-
-    toast.textContent =
-        texto;
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        window.toastTimer
-    );
-
-
-    window.toastTimer =
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            3500
-        );
-
-}
-
-
-function abrirAcessos(){
-
-    window.location.href =
-        "acessos.html";
-
-}
-
-
-async function logout(){
-
-    await supabaseClient
-        .auth
-        .signOut();
-
-
-    window.location.href =
-        "index.html";
-
-}
+init();
 
 </script>
 

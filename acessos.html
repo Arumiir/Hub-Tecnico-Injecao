@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
@@ -58,6 +59,7 @@
                 14px;
 
             background:rgba(242,242,247,.88);
+
             backdrop-filter:blur(18px);
             -webkit-backdrop-filter:blur(18px);
 
@@ -117,6 +119,7 @@
             width:100%;
             max-width:760px;
             margin:auto;
+
             padding:
                 20px
                 18px
@@ -126,6 +129,7 @@
         .summary{
             background:#fff;
             border-radius:22px;
+
             padding:18px;
             margin-bottom:15px;
 
@@ -137,6 +141,7 @@
             display:flex;
             align-items:center;
             justify-content:space-between;
+
             gap:15px;
         }
 
@@ -161,12 +166,17 @@
             border:0;
             background:#f2f2f7;
             color:var(--blue);
+
             height:40px;
+
             padding:0 14px;
+
             border-radius:12px;
+
             font-family:inherit;
             font-size:14px;
             font-weight:600;
+
             cursor:pointer;
         }
 
@@ -176,9 +186,13 @@
 
         .message{
             display:none;
+
             border-radius:14px;
+
             padding:12px 13px;
+
             margin-bottom:14px;
+
             font-size:14px;
             line-height:1.4;
         }
@@ -200,7 +214,9 @@
         .empty{
             background:#fff;
             border-radius:22px;
+
             padding:35px 20px;
+
             text-align:center;
 
             box-shadow:
@@ -226,6 +242,7 @@
         .request{
             background:#fff;
             border-radius:22px;
+
             padding:18px;
             margin-bottom:13px;
 
@@ -237,7 +254,9 @@
             display:flex;
             align-items:flex-start;
             justify-content:space-between;
+
             gap:12px;
+
             margin-bottom:15px;
         }
 
@@ -255,7 +274,9 @@
 
         .badge{
             flex:0 0 auto;
+
             padding:6px 9px;
+
             border-radius:9px;
 
             background:#edf5ff;
@@ -263,6 +284,7 @@
 
             font-size:11px;
             font-weight:700;
+
             text-transform:uppercase;
             letter-spacing:.3px;
         }
@@ -270,6 +292,7 @@
         .details{
             border-top:1px solid var(--border);
             border-bottom:1px solid var(--border);
+
             padding:13px 0;
             margin-bottom:14px;
         }
@@ -277,7 +300,9 @@
         .detail{
             display:flex;
             justify-content:space-between;
+
             gap:15px;
+
             font-size:14px;
             padding:5px 0;
         }
@@ -294,7 +319,9 @@
 
         .note{
             background:#f8f8fa;
+
             border-radius:13px;
+
             padding:12px;
             margin-bottom:14px;
 
@@ -304,23 +331,29 @@
 
         .note strong{
             display:block;
+
             margin-bottom:4px;
+
             font-size:12px;
             color:#555;
         }
 
         .actions{
             display:grid;
+
             grid-template-columns:1fr 1fr;
+
             gap:10px;
         }
 
         .action{
             height:47px;
+
             border:0;
             border-radius:13px;
 
             font-family:inherit;
+
             font-size:15px;
             font-weight:600;
 
@@ -380,8 +413,9 @@
         </div>
 
         <button
+            id="backButton"
             class="back"
-            onclick="window.location.href='supervisor.html'"
+            onclick="voltar()"
             aria-label="Voltar"
         >
             ‹
@@ -396,8 +430,8 @@
 
     <div
         id="message"
-        class="message"
-    ></div>
+        class="message">
+    </div>
 
 
     <section class="summary">
@@ -418,19 +452,18 @@
 
             <div
                 id="count"
-                class="summary-number"
-            >
+                class="summary-number">
                 0
             </div>
 
         </div>
 
+
         <button
             id="refreshButton"
             class="refresh"
             style="margin-top:14px;"
-            onclick="loadRequests()"
-        >
+            onclick="loadRequests()">
             Atualizar
         </button>
 
@@ -444,531 +477,728 @@
 
 <script>
 
-    const SUPABASE_URL =
-        "https://icajmncojvidhrqlbevq.supabase.co";
+const SUPABASE_URL =
+    "https://icajmncojvidhrqlbevq.supabase.co";
 
-    const SUPABASE_KEY =
-        "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
+const SUPABASE_KEY =
+    "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
 
 
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+let currentUser = null;
+
+let currentProfile = null;
+
+let returnPage = "index.html";
+
+
+function showMessage(
+    text,
+    type
+){
+
+    const element =
+        document.getElementById(
+            "message"
+        );
+
+    element.textContent =
+        text;
+
+    element.className =
+        "message show " + type;
+
+}
+
+
+function clearMessage(){
+
+    const element =
+        document.getElementById(
+            "message"
+        );
+
+    element.className =
+        "message";
+
+    element.textContent =
+        "";
+
+}
+
+
+async function checkAdmin(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+
+    const currentSession =
+        data?.session;
+
+
+    if(
+        error ||
+        !currentSession
+    ){
+
+        window.location.href =
+            "index.html";
+
+        return false;
+
+    }
+
+
+    currentUser =
+        currentSession.user;
+
+
+    const {
+        data:profile,
+        error:profileError
+    } =
+        await supabaseClient
+            .from("usuarios")
+            .select(
+                "nome, usuario, perfil, ativo, admin"
+            )
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .maybeSingle();
+
+
+    if(
+        profileError
+    ){
+
+        console.error(
+            "Erro ao verificar perfil:",
+            profileError
+        );
+
+        window.location.href =
+            "index.html";
+
+        return false;
+
+    }
+
+
+    if(
+        !profile ||
+        !profile.ativo ||
+        profile.admin !== true
+    ){
+
+        window.location.href =
+            "index.html";
+
+        return false;
+
+    }
+
+
+    currentProfile =
+        profile;
+
+
+    /*
+        Define automaticamente para onde
+        o administrador deve voltar.
+
+        Almir:
+        perfil = lider
+        admin = true
+
+        Outro administrador supervisor:
+        perfil = supervisor
+        admin = true
+    */
+
+    if(
+        profile.perfil === "lider"
+    ){
+
+        returnPage =
+            "lider.html";
+
+    }else if(
+        profile.perfil === "supervisor"
+    ){
+
+        returnPage =
+            "supervisor.html";
+
+    }else{
+
+        returnPage =
+            "index.html";
+
+    }
+
+
+    return true;
+
+}
+
+
+function voltar(){
+
+    window.location.href =
+        returnPage;
+
+}
+
+
+async function loadRequests(){
+
+    clearMessage();
+
+
+    const button =
+        document.getElementById(
+            "refreshButton"
         );
 
 
-    let currentUser = null;
+    button.disabled =
+        true;
+
+    button.textContent =
+        "Atualizando...";
 
 
-    function showMessage(text,type){
-
-        const element =
-            document.getElementById("message");
-
-        element.textContent = text;
-
-        element.className =
-            "message show " + type;
-
-    }
-
-
-    function clearMessage(){
-
-        const element =
-            document.getElementById("message");
-
-        element.className = "message";
-
-        element.textContent = "";
-
-    }
-
-
-    async function checkAdmin(){
+    try{
 
         const {
             data,
             error
         } =
-            await supabaseClient.auth.getSession();
-
-
-        const session =
-            data?.session;
-
-
-        if(error || !session){
-
-            window.location.href =
-                "index.html";
-
-            return false;
-
-        }
-
-
-        currentUser =
-            session.user;
-
-
-        const {
-            data: profile,
-            error: profileError
-        } =
             await supabaseClient
-                .from("usuarios")
-                .select("nome, usuario, perfil, ativo, admin")
-                .eq("id", currentUser.id)
-                .single();
-
-
-        if(
-            profileError ||
-            !profile ||
-            !profile.ativo ||
-            !profile.admin
-        ){
-
-            window.location.href =
-                "index.html";
-
-            return false;
-
-        }
-
-
-        return true;
-
-    }
-
-
-    async function loadRequests(){
-
-        clearMessage();
-
-
-        const button =
-            document.getElementById(
-                "refreshButton"
-            );
-
-        button.disabled = true;
-        button.textContent = "Atualizando...";
-
-
-        try{
-
-            const {
-                data,
-                error
-            } =
-                await supabaseClient.rpc(
+                .rpc(
                     "listar_solicitacoes_pendentes"
                 );
 
 
-            if(error){
+        if(error){
 
-                throw error;
-
-            }
-
-
-            const requests =
-                data || [];
-
-
-            document
-                .getElementById("count")
-                .textContent =
-                requests.length;
-
-
-            renderRequests(requests);
-
-
-        }catch(error){
-
-            console.error(error);
-
-            showMessage(
-                error.message ||
-                "Não foi possível carregar as solicitações.",
-                "error"
-            );
-
-        }finally{
-
-            button.disabled = false;
-            button.textContent = "Atualizar";
-
-        }
-
-    }
-
-
-    function renderRequests(requests){
-
-        const content =
-            document.getElementById("content");
-
-
-        if(!requests.length){
-
-            content.innerHTML = `
-                <section class="empty">
-
-                    <div class="empty-icon">
-                        ✓
-                    </div>
-
-                    <h2>
-                        Tudo em dia
-                    </h2>
-
-                    <p>
-                        Não existem solicitações de acesso aguardando aprovação.
-                    </p>
-
-                </section>
-            `;
-
-            return;
+            throw error;
 
         }
 
 
-        content.innerHTML =
-            requests.map(request => {
-
-                const perfil =
-                    request.perfil_solicitado === "supervisor"
-                        ? "Supervisor"
-                        : "Líder";
+        const requests =
+            data || [];
 
 
-                const data =
-                    request.criado_em
-                        ? new Date(
-                            request.criado_em
-                        ).toLocaleString(
-                            "pt-BR",
-                            {
-                                dateStyle:"short",
-                                timeStyle:"short"
-                            }
-                        )
-                        : "-";
+        document
+            .getElementById("count")
+            .textContent =
+            requests.length;
 
 
-                const mensagem =
-                    request.mensagem
-                        ? `
-                            <div class="note">
-                                <strong>Mensagem</strong>
-                                ${escapeHtml(request.mensagem)}
-                            </div>
-                        `
-                        : "";
-
-
-                return `
-                    <article
-                        class="request"
-                        id="request-${request.id}"
-                    >
-
-                        <div class="request-head">
-
-                            <div>
-
-                                <div class="name">
-                                    ${escapeHtml(request.nome)}
-                                </div>
-
-                                <div class="username">
-                                    @${escapeHtml(request.usuario)}
-                                </div>
-
-                            </div>
-
-                            <div class="badge">
-                                ${perfil}
-                            </div>
-
-                        </div>
-
-
-                        <div class="details">
-
-                            <div class="detail">
-
-                                <span class="detail-label">
-                                    E-mail
-                                </span>
-
-                                <span class="detail-value">
-                                    ${escapeHtml(request.email)}
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail">
-
-                                <span class="detail-label">
-                                    Solicitado em
-                                </span>
-
-                                <span class="detail-value">
-                                    ${data}
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        ${mensagem}
-
-
-                        <div class="actions">
-
-                            <button
-                                class="action approve"
-                                onclick="approveRequest(${request.id}, this)"
-                            >
-                                Aprovar
-                            </button>
-
-                            <button
-                                class="action reject"
-                                onclick="rejectRequest(${request.id}, this)"
-                            >
-                                Recusar
-                            </button>
-
-                        </div>
-
-                    </article>
-                `;
-
-            }).join("");
-
-    }
-
-
-    async function approveRequest(id, button){
-
-        const confirmed =
-            confirm(
-                "Aprovar este usuário?\n\n" +
-                "Depois da aprovação, ele poderá entrar no sistema."
-            );
-
-
-        if(!confirmed){
-
-            return;
-
-        }
-
-
-        const card =
-            document.getElementById(
-                "request-" + id
-            );
-
-
-        const buttons =
-            card.querySelectorAll(
-                ".action"
-            );
-
-
-        buttons.forEach(
-            item => item.disabled = true
+        renderRequests(
+            requests
         );
 
 
+    }catch(error){
+
+        console.error(
+            "Erro ao carregar solicitações:",
+            error
+        );
+
+
+        showMessage(
+            error.message ||
+            "Não foi possível carregar as solicitações.",
+            "error"
+        );
+
+
+    }finally{
+
+        button.disabled =
+            false;
+
         button.textContent =
-            "Aprovando...";
+            "Atualizar";
+
+    }
+
+}
 
 
-        try{
+function renderRequests(
+    requests
+){
 
-            const {
-                error
-            } =
-                await supabaseClient.rpc(
+    const content =
+        document.getElementById(
+            "content"
+        );
+
+
+    if(
+        !requests.length
+    ){
+
+        content.innerHTML = `
+            <section class="empty">
+
+                <div class="empty-icon">
+                    ✓
+                </div>
+
+                <h2>
+                    Tudo em dia
+                </h2>
+
+                <p>
+                    Não existem solicitações de acesso aguardando aprovação.
+                </p>
+
+            </section>
+        `;
+
+        return;
+
+    }
+
+
+    content.innerHTML =
+        requests
+            .map(
+                request => {
+
+                    const perfil =
+                        request.perfil_solicitado ===
+                        "supervisor"
+                            ? "Supervisor"
+                            : "Líder";
+
+
+                    const data =
+                        request.criado_em
+                            ? new Date(
+                                request.criado_em
+                            ).toLocaleString(
+                                "pt-BR",
+                                {
+                                    dateStyle:"short",
+                                    timeStyle:"short"
+                                }
+                            )
+                            : "-";
+
+
+                    const mensagem =
+                        request.mensagem
+                            ? `
+                                <div class="note">
+
+                                    <strong>
+                                        Mensagem
+                                    </strong>
+
+                                    ${escapeHtml(
+                                        request.mensagem
+                                    )}
+
+                                </div>
+                            `
+                            : "";
+
+
+                    return `
+                        <article
+                            class="request"
+                            id="request-${request.id}"
+                        >
+
+                            <div class="request-head">
+
+                                <div>
+
+                                    <div class="name">
+                                        ${escapeHtml(
+                                            request.nome
+                                        )}
+                                    </div>
+
+                                    <div class="username">
+                                        @${escapeHtml(
+                                            request.usuario
+                                        )}
+                                    </div>
+
+                                </div>
+
+                                <div class="badge">
+                                    ${perfil}
+                                </div>
+
+                            </div>
+
+
+                            <div class="details">
+
+                                <div class="detail">
+
+                                    <span class="detail-label">
+                                        E-mail
+                                    </span>
+
+                                    <span class="detail-value">
+                                        ${escapeHtml(
+                                            request.email
+                                        )}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="detail">
+
+                                    <span class="detail-label">
+                                        Solicitado em
+                                    </span>
+
+                                    <span class="detail-value">
+                                        ${data}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            ${mensagem}
+
+
+                            <div class="actions">
+
+                                <button
+                                    class="action approve"
+                                    onclick="approveRequest(${Number(
+                                        request.id
+                                    )}, this)"
+                                >
+                                    Aprovar
+                                </button>
+
+                                <button
+                                    class="action reject"
+                                    onclick="rejectRequest(${Number(
+                                        request.id
+                                    )}, this)"
+                                >
+                                    Recusar
+                                </button>
+
+                            </div>
+
+                        </article>
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+async function approveRequest(
+    id,
+    button
+){
+
+    const confirmed =
+        confirm(
+            "Aprovar este usuário?\n\n" +
+            "Depois da aprovação, ele poderá entrar no sistema."
+        );
+
+
+    if(
+        !confirmed
+    ){
+
+        return;
+
+    }
+
+
+    const card =
+        document.getElementById(
+            "request-" + id
+        );
+
+
+    if(
+        !card
+    ){
+
+        return;
+
+    }
+
+
+    const buttons =
+        card.querySelectorAll(
+            ".action"
+        );
+
+
+    buttons.forEach(
+        item =>
+            item.disabled = true
+    );
+
+
+    button.textContent =
+        "Aprovando...";
+
+
+    try{
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .rpc(
                     "aprovar_solicitacao_acesso",
                     {
-                        p_solicitacao_id:id
+                        p_solicitacao_id:
+                            id
                     }
                 );
 
 
-            if(error){
+        if(error){
 
-                throw error;
-
-            }
-
-
-            showMessage(
-                "Usuário aprovado com sucesso.",
-                "success"
-            );
-
-
-            await loadRequests();
-
-
-        }catch(error){
-
-            console.error(error);
-
-            showMessage(
-                error.message ||
-                "Não foi possível aprovar o usuário.",
-                "error"
-            );
-
-
-            buttons.forEach(
-                item => item.disabled = false
-            );
-
-            button.textContent =
-                "Aprovar";
-
-        }
-
-    }
-
-
-    async function rejectRequest(id, button){
-
-        const confirmed =
-            confirm(
-                "Recusar este cadastro?\n\n" +
-                "O usuário permanecerá sem acesso ao sistema."
-            );
-
-
-        if(!confirmed){
-
-            return;
+            throw error;
 
         }
 
 
-        const card =
-            document.getElementById(
-                "request-" + id
-            );
-
-
-        const buttons =
-            card.querySelectorAll(
-                ".action"
-            );
-
-
-        buttons.forEach(
-            item => item.disabled = true
+        showMessage(
+            "Usuário aprovado com sucesso.",
+            "success"
         );
-
-
-        button.textContent =
-            "Recusando...";
-
-
-        try{
-
-            const {
-                error
-            } =
-                await supabaseClient.rpc(
-                    "recusar_solicitacao_acesso",
-                    {
-                        p_solicitacao_id:id
-                    }
-                );
-
-
-            if(error){
-
-                throw error;
-
-            }
-
-
-            showMessage(
-                "Cadastro recusado.",
-                "success"
-            );
-
-
-            await loadRequests();
-
-
-        }catch(error){
-
-            console.error(error);
-
-            showMessage(
-                error.message ||
-                "Não foi possível recusar o cadastro.",
-                "error"
-            );
-
-
-            buttons.forEach(
-                item => item.disabled = false
-            );
-
-            button.textContent =
-                "Recusar";
-
-        }
-
-    }
-
-
-    function escapeHtml(value){
-
-        return String(value ?? "")
-            .replace(/&/g,"&amp;")
-            .replace(/</g,"&lt;")
-            .replace(/>/g,"&gt;")
-            .replace(/"/g,"&quot;")
-            .replace(/'/g,"&#039;");
-
-    }
-
-
-    async function init(){
-
-        const isAdmin =
-            await checkAdmin();
-
-
-        if(!isAdmin){
-
-            return;
-
-        }
 
 
         await loadRequests();
 
+
+    }catch(error){
+
+        console.error(
+            "Erro ao aprovar:",
+            error
+        );
+
+
+        showMessage(
+            error.message ||
+            "Não foi possível aprovar o usuário.",
+            "error"
+        );
+
+
+        buttons.forEach(
+            item =>
+                item.disabled = false
+        );
+
+
+        button.textContent =
+            "Aprovar";
+
+    }
+
+}
+
+
+async function rejectRequest(
+    id,
+    button
+){
+
+    const confirmed =
+        confirm(
+            "Recusar este cadastro?\n\n" +
+            "O usuário permanecerá sem acesso ao sistema."
+        );
+
+
+    if(
+        !confirmed
+    ){
+
+        return;
+
     }
 
 
-    init();
+    const card =
+        document.getElementById(
+            "request-" + id
+        );
+
+
+    if(
+        !card
+    ){
+
+        return;
+
+    }
+
+
+    const buttons =
+        card.querySelectorAll(
+            ".action"
+        );
+
+
+    buttons.forEach(
+        item =>
+            item.disabled = true
+    );
+
+
+    button.textContent =
+        "Recusando...";
+
+
+    try{
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .rpc(
+                    "recusar_solicitacao_acesso",
+                    {
+                        p_solicitacao_id:
+                            id
+                    }
+                );
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        showMessage(
+            "Cadastro recusado.",
+            "success"
+        );
+
+
+        await loadRequests();
+
+
+    }catch(error){
+
+        console.error(
+            "Erro ao recusar:",
+            error
+        );
+
+
+        showMessage(
+            error.message ||
+            "Não foi possível recusar o cadastro.",
+            "error"
+        );
+
+
+        buttons.forEach(
+            item =>
+                item.disabled = false
+        );
+
+
+        button.textContent =
+            "Recusar";
+
+    }
+
+}
+
+
+function escapeHtml(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+async function init(){
+
+    const isAdmin =
+        await checkAdmin();
+
+
+    if(
+        !isAdmin
+    ){
+
+        return;
+
+    }
+
+
+    await loadRequests();
+
+}
+
+
+init();
 
 </script>
 
