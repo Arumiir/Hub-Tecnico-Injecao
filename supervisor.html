@@ -2,43 +2,60 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F2F2F7">
 <title>Controle de Produção — Supervisor</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root{
-    --bg:#f4f5f7;
+    --bg:#f2f2f7;
     --card:#ffffff;
-    --border:#dfe3e8;
-    --text:#20242a;
-    --muted:#69727d;
+    --text:#1c1c1e;
+    --muted:#8e8e93;
+    --line:#e5e5ea;
 
-    --green:#198754;
-    --green-bg:#e8f5ee;
+    --blue:#007aff;
+    --blue-soft:#eaf3ff;
 
-    --yellow:#d89b00;
-    --yellow-bg:#fff6d9;
+    --green:#34c759;
+    --green-soft:#e9f8ed;
 
-    --red:#d64545;
-    --red-bg:#fdeaea;
+    --yellow:#ffcc00;
+    --yellow-soft:#fff8d9;
 
-    --blue:#2563eb;
-    --blue-bg:#eaf1ff;
+    --red:#ff3b30;
+    --red-soft:#ffebe9;
 
-    --danger:#c62828;
+    --danger:#ff3b30;
+
+    --shadow:0 2px 12px rgba(0,0,0,.045);
+    --radius:18px;
 }
 
 *{
     box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html{
+    background:var(--bg);
 }
 
 body{
     margin:0;
     background:var(--bg);
     color:var(--text);
-    font-family:Arial,Helvetica,sans-serif;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "SF Pro Text",
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+    -webkit-font-smoothing:antialiased;
 }
 
 button,
@@ -52,355 +69,591 @@ button{
     cursor:pointer;
 }
 
-.container{
-    width:min(100%,900px);
-    margin:auto;
-    padding:16px;
-}
-
-/* HEADER */
-
-.header{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:18px;
-    margin-bottom:14px;
-}
-
-.header h1{
-    margin:0;
-    font-size:21px;
-}
-
-.header p{
-    margin:5px 0 0;
-    color:var(--muted);
-    font-size:14px;
-}
-
-.header-top{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    align-items:flex-start;
-}
-
-.logout{
-    border:1px solid var(--border);
-    background:white;
-    border-radius:8px;
-    padding:8px 11px;
-    font-size:13px;
-}
-
-/* CONTROLES */
-
-.controls{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:14px;
-    margin-bottom:14px;
-}
-
-.control-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-
-.field label{
-    display:block;
-    font-size:12px;
-    font-weight:bold;
-    margin-bottom:5px;
-    color:var(--muted);
-}
-
-input,
-select,
-textarea{
-    width:100%;
-    border:1px solid var(--border);
-    border-radius:9px;
-    padding:10px;
-    background:#fff;
-    color:var(--text);
-    outline:none;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-    border-color:var(--blue);
-}
-
-/* ABAS */
-
-.tabs{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-bottom:14px;
-}
-
-.tab{
-    border:1px solid var(--border);
-    background:white;
-    padding:11px;
-    border-radius:9px;
-    font-weight:bold;
-}
-
-.tab.active{
-    background:var(--text);
-    color:white;
-    border-color:var(--text);
-}
-
-/* CARDS */
-
-.machine-card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:15px;
-    margin-bottom:12px;
-}
-
-.machine-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    margin-bottom:13px;
-}
-
-.machine-title{
-    font-size:18px;
-    font-weight:bold;
-}
-
-.leader-name{
-    font-size:12px;
-    color:var(--muted);
-    text-align:right;
-}
-
-.hours-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:8px;
-}
-
-.total-box{
-    border-radius:9px;
-    padding:10px;
-    font-weight:bold;
-}
-
-.total-box.status-green{
-    background:var(--green-bg);
-    color:var(--green);
-}
-
-.total-box.status-yellow{
-    background:var(--yellow-bg);
-    color:var(--yellow);
-}
-
-.total-box.status-red{
-    background:var(--red-bg);
-    color:var(--red);
-}
-
-.total-label{
-    font-size:11px;
-    margin-bottom:4px;
-}
-
-.total-value{
-    font-size:17px;
-}
-
-.section-label{
-    display:block;
-    font-size:12px;
-    color:var(--muted);
-    font-weight:bold;
-    margin:13px 0 5px;
-}
-
-.save-row{
-    display:flex;
-    gap:8px;
-    margin-top:12px;
-}
-
-.save-btn{
-    flex:1;
-    border:0;
-    background:var(--green);
-    color:white;
-    border-radius:9px;
-    padding:11px;
-    font-weight:bold;
-}
-
-.reset-btn{
-    border:1px solid var(--border);
-    background:white;
-    border-radius:9px;
-    padding:11px 14px;
-}
-
-/* FECHAMENTO */
-
-.closing-card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:15px;
-    margin-top:14px;
-}
-
-.closing-card h2{
-    margin:0 0 12px;
-    font-size:17px;
-}
-
-.closing-text{
-    min-height:250px;
-    resize:vertical;
-    font-family:monospace;
-    font-size:13px;
-    line-height:1.5;
-}
-
-.primary-btn{
-    width:100%;
-    margin-top:10px;
-    border:0;
-    background:var(--blue);
-    color:white;
-    border-radius:9px;
-    padding:12px;
-    font-weight:bold;
-}
-
-.copy-btn{
-    width:100%;
-    margin-top:9px;
-    border:1px solid var(--border);
-    background:white;
-    color:var(--text);
-    border-radius:9px;
-    padding:11px;
-    font-weight:bold;
-}
-
-/* DRIVE */
-
-.drive-card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:15px;
-    margin-bottom:12px;
-}
-
-.drive-title{
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:10px;
-}
-
-.problem{
-    padding:8px 0;
-    border-bottom:1px solid #edf0f2;
-    font-size:14px;
-    line-height:1.4;
-}
-
-.problem:last-child{
-    border-bottom:0;
-}
-
-.problem-category{
-    font-weight:bold;
-}
-
-.no-problems{
-    color:var(--muted);
-    font-size:13px;
-    margin-bottom:10px;
-}
-
-/* TOAST */
-
-.toast{
-    position:fixed;
-    left:50%;
-    bottom:20px;
-    transform:translateX(-50%);
-    background:#20242a;
-    color:white;
-    padding:11px 15px;
-    border-radius:9px;
-    font-size:13px;
-    opacity:0;
-    pointer-events:none;
-    transition:.2s;
-    z-index:1000;
-}
-
-.toast.show{
-    opacity:1;
-}
-
-/* LOADING / EMPTY */
-
-.loading,
-.empty{
-    background:white;
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:25px;
-    text-align:center;
-    color:var(--muted);
+button:disabled{
+    opacity:.55;
+    cursor:default;
 }
 
 .hidden{
     display:none !important;
 }
 
-/* MOBILE */
+/* =========================
+   APP
+========================= */
 
-@media(max-width:600px){
+.container{
+    width:min(100%, 760px);
+    margin:0 auto;
+    padding:
+        max(14px, env(safe-area-inset-top))
+        16px
+        calc(28px + env(safe-area-inset-bottom));
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+    position:sticky;
+    top:0;
+    z-index:20;
+
+    margin:
+        calc(-1 * max(14px, env(safe-area-inset-top)))
+        -16px
+        18px;
+
+    padding:
+        calc(16px + max(14px, env(safe-area-inset-top)))
+        18px
+        16px;
+
+    background:rgba(242,242,247,.88);
+    backdrop-filter:blur(22px);
+    -webkit-backdrop-filter:blur(22px);
+
+    border-bottom:1px solid rgba(0,0,0,.06);
+}
+
+.header-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+}
+
+.header-brand{
+    min-width:0;
+}
+
+.header h1{
+    margin:0;
+    font-size:21px;
+    line-height:1.15;
+    font-weight:750;
+    letter-spacing:-.45px;
+}
+
+.header-subtitle{
+    margin:5px 0 0;
+    color:var(--muted);
+    font-size:14px;
+    font-weight:500;
+}
+
+.user-name{
+    margin-top:14px;
+    font-size:14px;
+    font-weight:650;
+    color:var(--text);
+}
+
+.logout{
+    flex:none;
+    border:0;
+    background:rgba(255,255,255,.8);
+    color:var(--blue);
+    border-radius:12px;
+    padding:9px 13px;
+    font-size:14px;
+    font-weight:600;
+    box-shadow:0 1px 4px rgba(0,0,0,.04);
+}
+
+/* =========================
+   CONTEXTO
+========================= */
+
+.controls{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:14px;
+    box-shadow:var(--shadow);
+}
+
+.control-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.field{
+    min-width:0;
+}
+
+.field label{
+    display:block;
+    margin:0 0 7px 2px;
+    color:var(--muted);
+    font-size:12px;
+    font-weight:650;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:13px;
+    padding:12px 13px;
+    background:#fff;
+    color:var(--text);
+    outline:none;
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease,
+        background .15s ease;
+}
+
+input,
+select{
+    min-height:46px;
+}
+
+textarea{
+    resize:vertical;
+    line-height:1.4;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:rgba(0,122,255,.45);
+    box-shadow:0 0 0 3px rgba(0,122,255,.10);
+}
+
+/* =========================
+   TABS
+========================= */
+
+.tabs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:5px;
+
+    padding:4px;
+    margin-bottom:16px;
+
+    background:#e5e5ea;
+    border-radius:14px;
+}
+
+.tab{
+    border:0;
+    background:transparent;
+    color:#6d6d72;
+    padding:10px 12px;
+    border-radius:11px;
+    font-size:14px;
+    font-weight:650;
+    transition:.18s ease;
+}
+
+.tab.active{
+    background:#fff;
+    color:var(--text);
+    box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+
+/* =========================
+   CARDS DE MÁQUINA
+========================= */
+
+.machine-card{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:13px;
+    box-shadow:var(--shadow);
+}
+
+.machine-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:16px;
+}
+
+.machine-title{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-size:19px;
+    font-weight:750;
+    letter-spacing:-.3px;
+}
+
+.machine-title::before{
+    content:"";
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--blue);
+    box-shadow:0 0 0 4px var(--blue-soft);
+}
+
+.leader-name{
+    color:var(--muted);
+    font-size:12px;
+    font-weight:500;
+    text-align:right;
+}
+
+/* =========================
+   HORAS
+========================= */
+
+.hours-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.total-box{
+    grid-column:1 / -1;
+    border-radius:14px;
+    padding:12px 14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    min-height:58px;
+    transition:.15s ease;
+}
+
+.total-box.status-green{
+    background:var(--green-soft);
+    color:#248a3d;
+}
+
+.total-box.status-yellow{
+    background:var(--yellow-soft);
+    color:#9a7900;
+}
+
+.total-box.status-red{
+    background:var(--red-soft);
+    color:#c72e25;
+}
+
+.total-label{
+    font-size:12px;
+    font-weight:650;
+}
+
+.total-value{
+    font-size:19px;
+    font-weight:750;
+    letter-spacing:-.3px;
+}
+
+.section-label{
+    display:block;
+    margin:17px 0 7px 2px;
+    color:var(--muted);
+    font-size:12px;
+    font-weight:650;
+}
+
+.save-row{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:9px;
+    margin-top:14px;
+}
+
+.save-btn{
+    min-height:46px;
+    border:0;
+    background:var(--green);
+    color:#fff;
+    border-radius:13px;
+    padding:11px 15px;
+    font-weight:700;
+    box-shadow:0 2px 6px rgba(52,199,89,.18);
+}
+
+.reset-btn{
+    min-height:46px;
+    border:0;
+    background:#f2f2f7;
+    color:var(--blue);
+    border-radius:13px;
+    padding:11px 15px;
+    font-weight:650;
+}
+
+/* =========================
+   OBSERVAÇÃO DO LÍDER
+========================= */
+
+.leader-observation{
+    background:#f7f7f9;
+    border:1px solid var(--line);
+    border-radius:13px;
+    padding:12px 13px;
+    font-size:13px;
+    line-height:1.45;
+    color:#48484a;
+}
+
+/* =========================
+   FECHAMENTO
+========================= */
+
+.closing-card{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-top:15px;
+    box-shadow:var(--shadow);
+}
+
+.closing-card h2{
+    margin:0 0 4px;
+    font-size:18px;
+    font-weight:750;
+    letter-spacing:-.2px;
+}
+
+.closing-subtitle{
+    margin:0 0 13px;
+    color:var(--muted);
+    font-size:13px;
+}
+
+.closing-text{
+    min-height:250px;
+    resize:vertical;
+    background:#f7f7f9;
+    border-color:var(--line);
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+    font-size:13px;
+    line-height:1.55;
+}
+
+.copy-btn{
+    width:100%;
+    min-height:46px;
+    margin-top:10px;
+    border:0;
+    background:var(--blue);
+    color:#fff;
+    border-radius:13px;
+    padding:11px 15px;
+    font-weight:700;
+}
+
+/* =========================
+   DRIVE
+========================= */
+
+.drive-card{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:13px;
+    box-shadow:var(--shadow);
+}
+
+.drive-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:11px;
+}
+
+.drive-title{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-size:19px;
+    font-weight:750;
+    letter-spacing:-.3px;
+}
+
+.drive-title::before{
+    content:"";
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--blue);
+    box-shadow:0 0 0 4px var(--blue-soft);
+}
+
+.problem{
+    padding:11px 0;
+    border-bottom:1px solid #f0f0f2;
+    font-size:14px;
+    line-height:1.45;
+    color:#3a3a3c;
+}
+
+.problem:last-of-type{
+    border-bottom:0;
+}
+
+.problem-category{
+    font-weight:700;
+    color:var(--text);
+}
+
+.no-problems{
+    padding:12px;
+    border-radius:12px;
+    background:#f7f7f9;
+    color:var(--muted);
+    font-size:13px;
+}
+
+.drive-card .copy-btn{
+    margin-top:13px;
+    background:#f2f2f7;
+    color:var(--blue);
+}
+
+/* =========================
+   LOADING / EMPTY
+========================= */
+
+.loading,
+.empty{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:32px 20px;
+    text-align:center;
+    color:var(--muted);
+    box-shadow:var(--shadow);
+    font-size:14px;
+}
+
+.loading{
+    min-height:100px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:
+        calc(20px + env(safe-area-inset-bottom));
+
+    transform:
+        translate(-50%, 10px);
+
+    width:max-content;
+    max-width:calc(100% - 32px);
+
+    background:rgba(28,28,30,.94);
+    color:#fff;
+
+    padding:11px 16px;
+    border-radius:14px;
+
+    font-size:13px;
+    font-weight:600;
+
+    opacity:0;
+    pointer-events:none;
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease;
+
+    z-index:1000;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.toast.show{
+    opacity:1;
+    transform:translate(-50%, 0);
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media(max-width:520px){
 
     .container{
-        padding:10px;
+        width:100%;
+        padding-left:12px;
+        padding-right:12px;
     }
 
     .header{
+        margin-left:-12px;
+        margin-right:-12px;
+        padding-left:16px;
+        padding-right:16px;
+    }
+
+    .header h1{
+        font-size:20px;
+    }
+
+    .controls{
         padding:15px;
     }
 
     .control-grid{
+        grid-template-columns:1fr 1fr;
+        gap:9px;
+    }
+
+    .machine-card,
+    .drive-card,
+    .closing-card{
+        padding:16px;
+    }
+
+    .machine-header{
+        align-items:flex-start;
+    }
+
+    .leader-name{
+        max-width:45%;
+    }
+}
+
+@media(max-width:360px){
+
+    .header h1{
+        font-size:18px;
+    }
+
+    .logout{
+        padding:8px 10px;
+    }
+
+    .machine-title,
+    .drive-title{
+        font-size:18px;
+    }
+
+    .save-row{
         grid-template-columns:1fr;
     }
 
-    .hours-grid{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .hours-grid .total-box{
-        grid-column:1 / -1;
-    }
-
-    .header h1{
-        font-size:19px;
+    .reset-btn{
+        width:100%;
     }
 }
 </style>
@@ -411,19 +664,29 @@ textarea:focus{
 <div class="container">
 
     <header class="header">
+
         <div class="header-top">
-            <div>
-                <h1>Controle de Produção — Setor A</h1>
-                <p>Supervisor</p>
+
+            <div class="header-brand">
+                <h1>CONTROLE DE PRODUÇÃO</h1>
+                <p class="header-subtitle">Setor de Injeção · Supervisor</p>
             </div>
 
-            <button class="logout" onclick="logout()">
+            <button
+                class="logout"
+                onclick="logout()">
                 Sair
             </button>
+
         </div>
 
-        <p id="userName"></p>
+        <div
+            id="userName"
+            class="user-name">
+        </div>
+
     </header>
+
 
     <section class="controls">
 
@@ -431,21 +694,37 @@ textarea:focus{
 
             <div class="field">
                 <label for="data">Data</label>
-                <input type="date" id="data">
+
+                <input
+                    type="date"
+                    id="data">
             </div>
+
 
             <div class="field">
                 <label for="turno">Turno</label>
+
                 <select id="turno">
-                    <option value="1º turno">1º turno</option>
-                    <option value="2º turno">2º turno</option>
-                    <option value="3º turno">3º turno</option>
+
+                    <option value="1º turno">
+                        1º turno
+                    </option>
+
+                    <option value="2º turno">
+                        2º turno
+                    </option>
+
+                    <option value="3º turno">
+                        3º turno
+                    </option>
+
                 </select>
             </div>
 
         </div>
 
     </section>
+
 
     <div class="tabs">
 
@@ -456,6 +735,7 @@ textarea:focus{
             Horas baixadas
         </button>
 
+
         <button
             id="tabDrive"
             class="tab"
@@ -465,23 +745,34 @@ textarea:focus{
 
     </div>
 
+
     <main>
 
         <section id="abaHoras">
 
-            <div id="listaHoras" class="loading">
+            <div
+                id="listaHoras"
+                class="loading">
                 Carregando...
             </div>
 
-            <div id="fechamento" class="closing-card hidden">
+
+            <div
+                id="fechamento"
+                class="closing-card hidden">
 
                 <h2>Fechamento do turno</h2>
+
+                <p class="closing-subtitle">
+                    Texto pronto para copiar e enviar.
+                </p>
 
                 <textarea
                     id="textoFechamento"
                     class="closing-text"
                     readonly>
                 </textarea>
+
 
                 <button
                     class="copy-btn"
@@ -494,9 +785,13 @@ textarea:focus{
         </section>
 
 
-        <section id="abaDrive" class="hidden">
+        <section
+            id="abaDrive"
+            class="hidden">
 
-            <div id="listaDrive" class="loading">
+            <div
+                id="listaDrive"
+                class="loading">
                 Carregando...
             </div>
 
@@ -506,7 +801,11 @@ textarea:focus{
 
 </div>
 
-<div id="toast" class="toast"></div>
+
+<div
+    id="toast"
+    class="toast">
+</div>
 
 
 <script>
@@ -540,29 +839,49 @@ let dados = [];
    INICIALIZAÇÃO
 ========================= */
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
 
-    const hoje = new Date();
+        const hoje = new Date();
 
-    const ano = hoje.getFullYear();
-    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-    const dia = String(hoje.getDate()).padStart(2, "0");
+        const ano =
+            hoje.getFullYear();
 
-    document.getElementById("data").value =
-        `${ano}-${mes}-${dia}`;
+        const mes =
+            String(
+                hoje.getMonth() + 1
+            ).padStart(2,"0");
 
-
-    document
-        .getElementById("data")
-        .addEventListener("change", carregarDados);
-
-    document
-        .getElementById("turno")
-        .addEventListener("change", carregarDados);
+        const dia =
+            String(
+                hoje.getDate()
+            ).padStart(2,"0");
 
 
-    await verificarAcesso();
-});
+        document.getElementById("data").value =
+            `${ano}-${mes}-${dia}`;
+
+
+        document
+            .getElementById("data")
+            .addEventListener(
+                "change",
+                carregarDados
+            );
+
+
+        document
+            .getElementById("turno")
+            .addEventListener(
+                "change",
+                carregarDados
+            );
+
+
+        await verificarAcesso();
+    }
+);
 
 
 /* =========================
@@ -572,54 +891,74 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function verificarAcesso(){
 
     const {
-        data: {
-            session: currentSession
+        data:{
+            session:currentSession
         }
-    } = await supabaseClient.auth.getSession();
+    } =
+        await supabaseClient.auth.getSession();
+
 
     if(!currentSession){
 
-        window.location.href = "index.html";
+        window.location.href =
+            "index.html";
+
         return;
     }
 
-    session = currentSession;
+
+    session =
+        currentSession;
 
 
     const {
-        data: usuario,
+        data:usuario,
         error
-    } = await supabaseClient
-        .from("usuarios")
-        .select("*")
-        .eq("id", session.user.id)
-        .eq("ativo", true)
-        .single();
+    } =
+        await supabaseClient
+            .from("usuarios")
+            .select("*")
+            .eq("id",session.user.id)
+            .eq("ativo",true)
+            .single();
 
 
     if(error || !usuario){
 
-        alert("Usuário sem cadastro no sistema.");
+        alert(
+            "Usuário sem cadastro no sistema."
+        );
+
         await supabaseClient.auth.signOut();
 
-        window.location.href = "index.html";
+        window.location.href =
+            "index.html";
+
         return;
     }
 
 
     if(usuario.perfil !== "supervisor"){
 
-        alert("Acesso restrito ao supervisor.");
+        alert(
+            "Acesso restrito ao supervisor."
+        );
 
-        window.location.href = "lider.html";
+        window.location.href =
+            "lider.html";
+
         return;
     }
 
 
-    perfil = usuario;
+    perfil =
+        usuario;
 
-    document.getElementById("userName").textContent =
-        `Usuário: ${usuario.nome}`;
+
+    document.getElementById(
+        "userName"
+    ).textContent =
+        usuario.nome;
 
 
     await carregarDados();
@@ -633,17 +972,31 @@ async function verificarAcesso(){
 async function carregarDados(){
 
     const data =
-        document.getElementById("data").value;
+        document.getElementById(
+            "data"
+        ).value;
+
 
     const turno =
-        document.getElementById("turno").value;
+        document.getElementById(
+            "turno"
+        ).value;
 
 
-    document.getElementById("listaHoras").innerHTML =
-        `<div class="loading">Carregando...</div>`;
+    document.getElementById(
+        "listaHoras"
+    ).innerHTML =
+        `<div class="loading">
+            Carregando...
+        </div>`;
 
-    document.getElementById("listaDrive").innerHTML =
-        `<div class="loading">Carregando...</div>`;
+
+    document.getElementById(
+        "listaDrive"
+    ).innerHTML =
+        `<div class="loading">
+            Carregando...
+        </div>`;
 
 
     /*
@@ -655,48 +1008,55 @@ async function carregarDados(){
     */
 
     const {
-        data: turnos,
+        data:turnos,
         error
-    } = await supabaseClient
-        .from("turnos")
-        .select(`
-            id,
-            data,
-            turno,
-            lider_id,
-            usuarios (
-                nome
-            ),
-            apontamentos (
+    } =
+        await supabaseClient
+            .from("turnos")
+            .select(`
                 id,
-                maquina,
-                hora_boa,
-                reposicao,
-                total_baixado,
-                saldo,
-                observacao,
-                nota_supervisor,
-                ocorrencias (
+                data,
+                turno,
+                lider_id,
+                usuarios (
+                    nome
+                ),
+                apontamentos (
                     id,
-                    categoria,
-                    descricao
+                    maquina,
+                    hora_boa,
+                    reposicao,
+                    total_baixado,
+                    saldo,
+                    observacao,
+                    nota_supervisor,
+                    ocorrencias (
+                        id,
+                        categoria,
+                        descricao
+                    )
                 )
-            )
-        `)
-        .eq("data", data)
-        .eq("turno", turno);
+            `)
+            .eq("data",data)
+            .eq("turno",turno);
 
 
     if(error){
 
         console.error(error);
 
-        document.getElementById("listaHoras").innerHTML =
+
+        document.getElementById(
+            "listaHoras"
+        ).innerHTML =
             `<div class="empty">
                 Erro ao carregar os dados.
             </div>`;
 
-        document.getElementById("listaDrive").innerHTML =
+
+        document.getElementById(
+            "listaDrive"
+        ).innerHTML =
             `<div class="empty">
                 Erro ao carregar os dados.
             </div>`;
@@ -708,17 +1068,27 @@ async function carregarDados(){
     dados = [];
 
 
-    for(const turnoItem of (turnos || [])){
+    for(
+        const turnoItem of
+        (turnos || [])
+    ){
 
-        for(const apontamento of
-            (turnoItem.apontamentos || [])){
+        for(
+            const apontamento of
+            (turnoItem.apontamentos || [])
+        ){
 
             dados.push({
+
                 ...apontamento,
+
                 lider_nome:
-                    turnoItem.usuarios?.nome || "—",
+                    turnoItem.usuarios?.nome ||
+                    "—",
+
                 turno_id:
                     turnoItem.id
+
             });
         }
     }
@@ -730,15 +1100,29 @@ async function carregarDados(){
        usamos o último registro encontrado.
     */
 
-    const mapa = new Map();
+    const mapa =
+        new Map();
 
-    for(const item of dados){
 
-        mapa.set(item.maquina, item);
+    for(
+        const item of dados
+    ){
+
+        mapa.set(
+            item.maquina,
+            item
+        );
     }
 
-    dados = Array.from(mapa.values())
-        .sort((a,b) => a.maquina - b.maquina);
+
+    dados =
+        Array.from(
+            mapa.values()
+        )
+        .sort(
+            (a,b) =>
+                a.maquina - b.maquina
+        );
 
 
     renderHoras();
@@ -753,7 +1137,9 @@ async function carregarDados(){
 function renderHoras(){
 
     const container =
-        document.getElementById("listaHoras");
+        document.getElementById(
+            "listaHoras"
+        );
 
 
     if(!dados.length){
@@ -764,6 +1150,7 @@ function renderHoras(){
                 para esta data e turno.
             </div>
         `;
+
 
         document
             .getElementById("fechamento")
@@ -776,16 +1163,24 @@ function renderHoras(){
     container.innerHTML = "";
 
 
-    for(const item of dados){
+    for(
+        const item of dados
+    ){
 
         const card =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
-        card.className = "machine-card";
+
+        card.className =
+            "machine-card";
 
 
         const total =
-            Number(item.total_baixado || 0);
+            Number(
+                item.total_baixado || 0
+            );
 
 
         const status =
@@ -797,11 +1192,15 @@ function renderHoras(){
             <div class="machine-header">
 
                 <div class="machine-title">
-                    M${String(item.maquina).padStart(2,"0")}
+                    M${String(
+                        item.maquina
+                    ).padStart(2,"0")}
                 </div>
 
                 <div class="leader-name">
-                    Líder: ${escapeHtml(item.lider_nome)}
+                    Líder: ${escapeHtml(
+                        item.lider_nome
+                    )}
                 </div>
 
             </div>
@@ -810,22 +1209,34 @@ function renderHoras(){
             <div class="hours-grid">
 
                 <div class="field">
-                    <label>Hora boa</label>
+
+                    <label>
+                        Hora boa
+                    </label>
 
                     <input
                         type="text"
-                        value="${formatMinutes(item.hora_boa)}"
+                        value="${formatMinutes(
+                            item.hora_boa
+                        )}"
                         data-field="hora_boa">
+
                 </div>
 
 
                 <div class="field">
-                    <label>Reposição</label>
+
+                    <label>
+                        Reposição
+                    </label>
 
                     <input
                         type="text"
-                        value="${formatMinutes(item.reposicao)}"
+                        value="${formatMinutes(
+                            item.reposicao
+                        )}"
                         data-field="reposicao">
+
                 </div>
 
 
@@ -838,7 +1249,9 @@ function renderHoras(){
                     <div
                         class="total-value"
                         data-total>
-                        ${formatMinutes(item.total_baixado)}
+                        ${formatMinutes(
+                            item.total_baixado
+                        )}
                     </div>
 
                 </div>
@@ -852,7 +1265,9 @@ function renderHoras(){
 
             <input
                 type="text"
-                value="${formatMinutes(item.saldo)}"
+                value="${formatMinutes(
+                    item.saldo
+                )}"
                 data-field="saldo"
                 placeholder="Ex.: 05:12">
 
@@ -877,15 +1292,10 @@ function renderHoras(){
                     Observação do líder
                 </label>
 
-                <div style="
-                    background:#f7f8f9;
-                    border:1px solid var(--border);
-                    border-radius:9px;
-                    padding:10px;
-                    font-size:13px;
-                    line-height:1.4;
-                ">
-                    ${escapeHtml(item.observacao)}
+                <div class="leader-observation">
+                    ${escapeHtml(
+                        item.observacao
+                    )}
                 </div>
                 `
                 :
@@ -897,9 +1307,13 @@ function renderHoras(){
 
                 <button
                     class="save-btn"
-                    onclick="salvarSupervisor(${item.id}, this)">
+                    onclick="salvarSupervisor(
+                        ${item.id},
+                        this
+                    )">
                     Salvar alterações
                 </button>
+
 
                 <button
                     class="reset-btn"
@@ -917,17 +1331,24 @@ function renderHoras(){
             );
 
 
-        inputs.forEach(input => {
+        inputs.forEach(
+            input => {
 
-            input.addEventListener(
-                "input",
-                () => atualizarTotalCard(card)
-            );
+                input.addEventListener(
+                    "input",
+                    () =>
+                        atualizarTotalCard(
+                            card
+                        )
+                );
 
-        });
+            }
+        );
 
 
-        container.appendChild(card);
+        container.appendChild(
+            card
+        );
     }
 
 
@@ -962,10 +1383,15 @@ function atualizarTotalCard(card){
 
 
     const totalBox =
-        card.querySelector(".total-box");
+        card.querySelector(
+            ".total-box"
+        );
+
 
     const totalValue =
-        card.querySelector("[data-total]");
+        card.querySelector(
+            "[data-total]"
+        );
 
 
     totalValue.textContent =
@@ -989,10 +1415,15 @@ function atualizarTotalCard(card){
    SALVAR ALTERAÇÕES
 ========================= */
 
-async function salvarSupervisor(id, button){
+async function salvarSupervisor(
+    id,
+    button
+){
 
     const card =
-        button.closest(".machine-card");
+        button.closest(
+            ".machine-card"
+        );
 
 
     const horaBoa =
@@ -1029,26 +1460,47 @@ async function salvarSupervisor(id, button){
         ).value.trim();
 
 
-    button.disabled = true;
-    button.textContent = "Salvando...";
+    button.disabled =
+        true;
+
+    button.textContent =
+        "Salvando...";
 
 
     const {
         error
-    } = await supabaseClient
-        .from("apontamentos")
-        .update({
-            hora_boa: horaBoa,
-            reposicao: reposicao,
-            total_baixado: total,
-            saldo: saldo,
-            nota_supervisor: nota || null
-        })
-        .eq("id", id);
+    } =
+        await supabaseClient
+            .from("apontamentos")
+            .update({
+
+                hora_boa:
+                    horaBoa,
+
+                reposicao:
+                    reposicao,
+
+                total_baixado:
+                    total,
+
+                saldo:
+                    saldo,
+
+                nota_supervisor:
+                    nota || null
+
+            })
+            .eq(
+                "id",
+                id
+            );
 
 
-    button.disabled = false;
-    button.textContent = "Salvar alterações";
+    button.disabled =
+        false;
+
+    button.textContent =
+        "Salvar alterações";
 
 
     if(error){
@@ -1090,21 +1542,29 @@ function gerarFechamento(){
 
     const linhas = [];
 
+
     linhas.push(
         "Horas baixadas setor A"
     );
 
+
     linhas.push("");
 
 
-    for(const item of dados){
+    for(
+        const item of dados
+    ){
 
         const maquina =
-            `M${String(item.maquina).padStart(2,"0")}`;
+            `M${String(
+                item.maquina
+            ).padStart(2,"0")}`;
 
 
         const total =
-            formatMinutes(item.total_baixado);
+            formatMinutes(
+                item.total_baixado
+            );
 
 
         let linha =
@@ -1118,7 +1578,9 @@ function gerarFechamento(){
         ){
 
             linha +=
-                ` (Saldo - ${formatMinutes(item.saldo)})`;
+                ` (Saldo - ${formatMinutes(
+                    item.saldo
+                )})`;
         }
 
 
@@ -1129,7 +1591,9 @@ function gerarFechamento(){
         }
 
 
-        linhas.push(linha);
+        linhas.push(
+            linha
+        );
     }
 
 
@@ -1152,7 +1616,9 @@ function gerarFechamento(){
 function renderDrive(){
 
     const container =
-        document.getElementById("listaDrive");
+        document.getElementById(
+            "listaDrive"
+        );
 
 
     if(!dados.length){
@@ -1171,23 +1637,32 @@ function renderDrive(){
     container.innerHTML = "";
 
 
-    for(const item of dados){
+    for(
+        const item of dados
+    ){
 
         const card =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
-        card.className = "drive-card";
+
+        card.className =
+            "drive-card";
 
 
         const maquina =
-            `M${String(item.maquina).padStart(2,"0")}`;
+            `M${String(
+                item.maquina
+            ).padStart(2,"0")}`;
 
 
         const ocorrencias =
             item.ocorrencias || [];
 
 
-        let problemasHTML = "";
+        let problemasHTML =
+            "";
 
 
         if(!ocorrencias.length){
@@ -1201,23 +1676,36 @@ function renderDrive(){
         }else{
 
             problemasHTML =
-                ocorrencias.map(oc => `
-                    <div class="problem">
+                ocorrencias
+                    .map(
+                        oc => `
+                            <div class="problem">
 
-                        • <span class="problem-category">
-                            ${escapeHtml(oc.categoria)}
-                          </span>:
-                        ${escapeHtml(oc.descricao)}
+                                •
+                                <span class="problem-category">
+                                    ${escapeHtml(
+                                        oc.categoria
+                                    )}
+                                </span>:
+                                ${escapeHtml(
+                                    oc.descricao
+                                )}
 
-                    </div>
-                `).join("");
+                            </div>
+                        `
+                    )
+                    .join("");
         }
 
 
         card.innerHTML = `
 
-            <div class="drive-title">
-                ${maquina}
+            <div class="drive-header">
+
+                <div class="drive-title">
+                    ${maquina}
+                </div>
+
             </div>
 
             ${problemasHTML}
@@ -1232,7 +1720,8 @@ function renderDrive(){
                         ${item.maquina},
                         this
                     )">
-                    Copiar problemas da ${maquina}
+                    Copiar problemas da
+                    ${maquina}
                 </button>
                 `
                 :
@@ -1242,7 +1731,9 @@ function renderDrive(){
         `;
 
 
-        container.appendChild(card);
+        container.appendChild(
+            card
+        );
     }
 }
 
@@ -1258,8 +1749,9 @@ async function copiarProblemas(
 
     const item =
         dados.find(
-            x => Number(x.maquina) ===
-            Number(maquinaNumero)
+            x =>
+                Number(x.maquina) ===
+                Number(maquinaNumero)
         );
 
 
@@ -1288,13 +1780,21 @@ async function copiarProblemas(
 
 
     const maquina =
-        `M${String(maquinaNumero).padStart(2,"0")}`;
+        `M${String(
+            maquinaNumero
+        ).padStart(2,"0")}`;
 
 
-    const linhas = [maquina, ""];
+    const linhas =
+        [
+            maquina,
+            ""
+        ];
 
 
-    for(const oc of ocorrencias){
+    for(
+        const oc of ocorrencias
+    ){
 
         linhas.push(
             `• ${oc.categoria}: ${oc.descricao}`
@@ -1312,6 +1812,7 @@ async function copiarProblemas(
             texto
         );
 
+
         button.textContent =
             `Problemas da ${maquina} copiados ✓`;
 
@@ -1321,12 +1822,15 @@ async function copiarProblemas(
         );
 
 
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            button.textContent =
-                `Copiar problemas da ${maquina}`;
+                button.textContent =
+                    `Copiar problemas da ${maquina}`;
 
-        }, 1800);
+            },
+            1800
+        );
 
 
     }catch(error){
@@ -1382,33 +1886,64 @@ async function copiarFechamento(){
 function mostrarAba(aba){
 
     const horas =
-        document.getElementById("abaHoras");
+        document.getElementById(
+            "abaHoras"
+        );
+
 
     const drive =
-        document.getElementById("abaDrive");
+        document.getElementById(
+            "abaDrive"
+        );
+
 
     const tabHoras =
-        document.getElementById("tabHoras");
+        document.getElementById(
+            "tabHoras"
+        );
+
 
     const tabDrive =
-        document.getElementById("tabDrive");
+        document.getElementById(
+            "tabDrive"
+        );
 
 
     if(aba === "horas"){
 
-        horas.classList.remove("hidden");
-        drive.classList.add("hidden");
+        horas.classList.remove(
+            "hidden"
+        );
 
-        tabHoras.classList.add("active");
-        tabDrive.classList.remove("active");
+        drive.classList.add(
+            "hidden"
+        );
+
+        tabHoras.classList.add(
+            "active"
+        );
+
+        tabDrive.classList.remove(
+            "active"
+        );
 
     }else{
 
-        horas.classList.add("hidden");
-        drive.classList.remove("hidden");
+        horas.classList.add(
+            "hidden"
+        );
 
-        tabHoras.classList.remove("active");
-        tabDrive.classList.add("active");
+        drive.classList.remove(
+            "hidden"
+        );
+
+        tabHoras.classList.remove(
+            "active"
+        );
+
+        tabDrive.classList.add(
+            "active"
+        );
     }
 }
 
@@ -1417,20 +1952,30 @@ function mostrarAba(aba){
    STATUS
 ========================= */
 
-function getStatusClass(totalMinutes){
+function getStatusClass(
+    totalMinutes
+){
 
     const turno =
-        document.getElementById("turno").value;
+        document.getElementById(
+            "turno"
+        ).value;
+
 
     const target =
         shiftTargets[turno];
 
 
-    if(totalMinutes >= target)
+    if(
+        totalMinutes >= target
+    )
         return "status-green";
 
 
-    if(totalMinutes >= target - 48)
+    if(
+        totalMinutes >=
+        target - 48
+    )
         return "status-yellow";
 
 
@@ -1489,14 +2034,22 @@ function formatMinutes(minutes){
 
 
     const horas =
-        Math.floor(minutes / 60);
+        Math.floor(
+            minutes / 60
+        );
 
 
     const mins =
-        Math.abs(minutes % 60);
+        Math.abs(
+            minutes % 60
+        );
 
 
-    return `${String(horas).padStart(2,"0")}:${String(mins).padStart(2,"0")}`;
+    return `${String(
+        horas
+    ).padStart(2,"0")}:${String(
+        mins
+    ).padStart(2,"0")}`;
 }
 
 
@@ -1506,30 +2059,52 @@ function formatMinutes(minutes){
 
 function escapeHtml(value){
 
-    if(value === null || value === undefined)
+    if(
+        value === null ||
+        value === undefined
+    )
         return "";
 
 
     return String(value)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 }
 
 
 function mostrarToast(texto){
 
     const toast =
-        document.getElementById("toast");
+        document.getElementById(
+            "toast"
+        );
 
 
     toast.textContent =
         texto;
 
 
-    toast.classList.add("show");
+    toast.classList.add(
+        "show"
+    );
 
 
     clearTimeout(
@@ -1538,11 +2113,16 @@ function mostrarToast(texto){
 
 
     window.toastTimer =
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            toast.classList.remove("show");
+                toast.classList.remove(
+                    "show"
+                );
 
-        }, 2000);
+            },
+            2000
+        );
 }
 
 
