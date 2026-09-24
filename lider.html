@@ -1,0 +1,2472 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Apontamento — Setor A</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --bg:#f4f5f7;
+  --card:#ffffff;
+  --border:#dfe3e8;
+  --text:#20242a;
+  --muted:#69727d;
+
+  --green:#198754;
+  --green-bg:#e8f5ee;
+
+  --yellow:#d89b00;
+  --yellow-bg:#fff6d9;
+
+  --red:#d64545;
+  --red-bg:#fdeaea;
+
+  --blue:#1769aa;
+  --danger:#c62828;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+button,
+input,
+select,
+textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  width:100%;
+  max-width:720px;
+  margin:0 auto;
+  padding:18px 14px 40px;
+}
+
+header{
+  margin-bottom:18px;
+}
+
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+h1{
+  margin:0;
+  font-size:23px;
+}
+
+.subtitle{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.user-area{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.user-name{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.btn-logout{
+  border:1px solid var(--border);
+  background:white;
+  color:var(--text);
+  border-radius:8px;
+  padding:7px 9px;
+  font-size:12px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:15px;
+  margin-bottom:14px;
+}
+
+.section-title{
+  font-size:15px;
+  font-weight:700;
+  margin-bottom:12px;
+}
+
+.fields{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:6px;
+  font-size:12px;
+  color:var(--muted);
+  font-weight:700;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:white;
+  color:var(--text);
+  padding:10px 11px;
+  outline:none;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(25,135,84,.08);
+}
+
+.machine-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+}
+
+.machine-btn{
+  min-height:48px;
+  border:1px solid var(--border);
+  background:white;
+  color:var(--text);
+  border-radius:9px;
+  font-weight:700;
+  position:relative;
+}
+
+.machine-btn.saved{
+  background:var(--green-bg);
+  border-color:var(--green);
+  color:var(--green-dark,#146c43);
+}
+
+.machine-btn.saved::after{
+  content:"✓";
+  position:absolute;
+  top:3px;
+  right:5px;
+  font-size:11px;
+  color:var(--green);
+}
+
+.machine-form{
+  display:none;
+}
+
+.machine-form.active{
+  display:block;
+}
+
+.machine-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.machine-title strong{
+  font-size:18px;
+}
+
+.close-form{
+  border:1px solid var(--border);
+  background:white;
+  border-radius:8px;
+  padding:7px 10px;
+  font-size:12px;
+}
+
+.hours-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+}
+
+.hour-box{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px;
+  background:white;
+}
+
+.hour-box label{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.hour-box input{
+  border:0;
+  padding:0;
+  font-size:17px;
+  font-weight:700;
+}
+
+.total-box{
+  transition:.15s;
+}
+
+.status-red{
+  background:var(--red-bg);
+  border-color:var(--red);
+}
+
+.status-yellow{
+  background:var(--yellow-bg);
+  border-color:var(--yellow);
+}
+
+.status-green{
+  background:var(--green-bg);
+  border-color:var(--green);
+}
+
+.saldo-row{
+  margin-top:10px;
+}
+
+.saldo-row label{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+.problems-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:18px;
+  margin-bottom:8px;
+}
+
+.problems-header strong{
+  font-size:14px;
+}
+
+.add-problem{
+  border:1px solid var(--green);
+  color:var(--green);
+  background:var(--green-bg);
+  border-radius:8px;
+  padding:7px 10px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.problem-editor{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px;
+  margin-bottom:8px;
+  background:#fafafa;
+}
+
+.problem-editor .row{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+}
+
+.problem-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:7px;
+  margin-top:8px;
+}
+
+.btn-small{
+  border:1px solid var(--border);
+  background:white;
+  border-radius:7px;
+  padding:7px 9px;
+  font-size:12px;
+}
+
+.btn-save-problem{
+  background:var(--green);
+  border-color:var(--green);
+  color:white;
+}
+
+.problem-card{
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:9px 10px;
+  margin-bottom:7px;
+  background:white;
+}
+
+.problem-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.problem-number{
+  font-size:12px;
+  font-weight:800;
+  color:var(--green);
+}
+
+.problem-category{
+  font-size:12px;
+  font-weight:700;
+}
+
+.problem-description{
+  margin-top:4px;
+  font-size:13px;
+  line-height:1.35;
+}
+
+.problem-buttons{
+  display:flex;
+  gap:5px;
+  margin-top:8px;
+}
+
+.problem-buttons button{
+  border:1px solid var(--border);
+  background:white;
+  border-radius:6px;
+  padding:5px 7px;
+  font-size:11px;
+}
+
+.btn-delete{
+  color:var(--danger);
+}
+
+textarea{
+  min-height:80px;
+  resize:vertical;
+}
+
+.primary{
+  width:100%;
+  border:0;
+  background:var(--green);
+  color:white;
+  border-radius:10px;
+  padding:13px;
+  font-weight:700;
+  margin-top:12px;
+}
+
+.primary:disabled{
+  opacity:.6;
+}
+
+.summary-machine{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:11px;
+  margin-bottom:9px;
+  background:white;
+}
+
+.summary-machine-header{
+  font-weight:800;
+  margin-bottom:9px;
+}
+
+.summary-hours{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:6px;
+}
+
+.summary-hour{
+  border:1px solid var(--border);
+  border-radius:7px;
+  padding:7px;
+}
+
+.summary-hour small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  margin-bottom:3px;
+}
+
+.summary-hour strong{
+  font-size:14px;
+}
+
+.summary-problems{
+  margin-top:9px;
+  border-top:1px solid var(--border);
+  padding-top:8px;
+}
+
+.summary-problem{
+  font-size:12px;
+  line-height:1.4;
+  margin-bottom:5px;
+}
+
+.summary-observation{
+  margin-top:8px;
+  padding-top:8px;
+  border-top:1px solid var(--border);
+  color:var(--muted);
+  font-size:12px;
+}
+
+.closing-card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  margin-top:14px;
+}
+
+.closing-title{
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.closing-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:7px;
+}
+
+.closing-item{
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:9px;
+  text-align:center;
+}
+
+.closing-item small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.closing-item strong{
+  display:block;
+  margin-top:3px;
+  font-size:15px;
+}
+
+.empty{
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+  padding:10px;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translateX(-50%);
+  background:#20242a;
+  color:white;
+  padding:11px 15px;
+  border-radius:9px;
+  font-size:13px;
+  opacity:0;
+  pointer-events:none;
+  transition:.2s;
+  z-index:1000;
+}
+
+.toast.show{
+  opacity:1;
+}
+
+@media(max-width:420px){
+  .machine-grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+
+  .fields{
+    grid-template-columns:1fr;
+  }
+
+  .hours-grid,
+  .summary-hours{
+    grid-template-columns:1fr 1fr 1fr;
+  }
+
+  .user-name{
+    display:none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header>
+
+    <div class="header-top">
+
+      <div>
+        <h1>Apontamento — Setor A</h1>
+
+        <div class="subtitle">
+          Registro de produção do turno
+        </div>
+      </div>
+
+      <div class="user-area">
+        <span class="user-name" id="userName"></span>
+
+        <button
+          class="btn-logout"
+          id="logoutBtn">
+          Sair
+        </button>
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- ===================================================
+       DADOS DO TURNO
+  ==================================================== -->
+
+  <section class="card">
+
+    <div class="section-title">
+      Dados do turno
+    </div>
+
+    <div class="fields">
+
+      <div class="field">
+
+        <label for="data">
+          Data
+        </label>
+
+        <input
+          id="data"
+          type="date">
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="shift">
+          Turno
+        </label>
+
+        <select id="shift">
+
+          <option value="1º turno">
+            1º turno
+          </option>
+
+          <option value="2º turno">
+            2º turno
+          </option>
+
+          <option value="3º turno">
+            3º turno
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================
+       MÁQUINAS
+  ==================================================== -->
+
+  <section class="card">
+
+    <div class="section-title">
+      Máquinas
+    </div>
+
+    <div
+      class="machine-grid"
+      id="machineGrid">
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================
+       FORMULÁRIO DA MÁQUINA
+  ==================================================== -->
+
+  <section
+    class="card machine-form"
+    id="machineForm">
+
+    <div class="machine-title">
+
+      <strong id="machineTitle">
+        Máquina 01
+      </strong>
+
+      <button
+        class="close-form"
+        id="closeMachine">
+        Fechar
+      </button>
+
+    </div>
+
+
+    <div class="hours-grid">
+
+      <div class="hour-box">
+
+        <label>
+          Hora boa
+        </label>
+
+        <input
+          id="horaBoa"
+          type="time"
+          step="60"
+          value="00:00">
+
+      </div>
+
+
+      <div class="hour-box">
+
+        <label>
+          Reposição
+        </label>
+
+        <input
+          id="reposicao"
+          type="time"
+          step="60"
+          value="00:00">
+
+      </div>
+
+
+      <div
+        class="hour-box total-box status-red"
+        id="totalBox">
+
+        <label>
+          Total baixado
+        </label>
+
+        <input
+          id="totalBaixado"
+          type="time"
+          step="60"
+          value="00:00"
+          readonly>
+
+      </div>
+
+    </div>
+
+
+    <div class="saldo-row">
+
+      <label for="saldo">
+        Saldo
+      </label>
+
+      <input
+        id="saldo"
+        type="time"
+        step="60"
+        value="00:00">
+
+    </div>
+
+
+    <!-- PROBLEMAS -->
+
+    <div class="problems-header">
+
+      <strong>
+        Problemas / ocorrências
+      </strong>
+
+      <button
+        class="add-problem"
+        id="addProblem">
+        + Adicionar problema
+      </button>
+
+    </div>
+
+
+    <div id="problemEditorContainer"></div>
+
+    <div id="problemList"></div>
+
+
+    <!-- OBSERVAÇÃO -->
+
+    <div
+      class="field"
+      style="margin-top:16px;">
+
+      <label for="observacao">
+        Observação geral
+      </label>
+
+      <textarea
+        id="observacao"
+        placeholder="Digite uma observação, se necessário...">
+      </textarea>
+
+    </div>
+
+
+    <button
+      class="primary"
+      id="saveMachine">
+      Salvar máquina
+    </button>
+
+  </section>
+
+
+  <!-- ===================================================
+       FECHAMENTO
+  ==================================================== -->
+
+  <section
+    class="card"
+    id="summarySection"
+    style="display:none;">
+
+    <div class="section-title">
+      Fechamento do turno
+    </div>
+
+    <div id="summaryMachines"></div>
+
+    <div class="closing-card">
+
+      <div class="closing-title">
+        Resumo geral
+      </div>
+
+      <div class="closing-grid">
+
+        <div class="closing-item">
+          <small>Máquinas</small>
+          <strong id="summaryMachineCount">0</strong>
+        </div>
+
+        <div class="closing-item">
+          <small>Hora boa</small>
+          <strong id="summaryGood">00:00</strong>
+        </div>
+
+        <div class="closing-item">
+          <small>Reposição</small>
+          <strong id="summaryReplacement">00:00</strong>
+        </div>
+
+      </div>
+
+      <div
+        class="closing-grid"
+        style="margin-top:7px;">
+
+        <div class="closing-item">
+          <small>Total baixado</small>
+          <strong id="summaryTotal">00:00</strong>
+        </div>
+
+        <div class="closing-item">
+          <small>Saldo</small>
+          <strong id="summaryBalance">00:00</strong>
+        </div>
+
+        <div class="closing-item">
+          <small>Ocorrências</small>
+          <strong id="summaryProblems">0</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<div
+  class="toast"
+  id="toast">
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+  "https://icajmncojvidhrqlbevq.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+let currentUser = null;
+let currentProfile = null;
+
+let currentTurnId = null;
+let currentMachine = null;
+
+let machines = {};
+
+let editingProblemIndex = null;
+
+
+/* =========================================================
+   METAS
+========================================================= */
+
+const shiftTargets = {
+
+  "1º turno": 8 * 60 + 48,
+
+  "2º turno": 8 * 60 + 36,
+
+  "3º turno": 6 * 60 + 36
+
+};
+
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const machineGrid =
+  document.getElementById("machineGrid");
+
+const machineForm =
+  document.getElementById("machineForm");
+
+const machineTitle =
+  document.getElementById("machineTitle");
+
+const horaBoa =
+  document.getElementById("horaBoa");
+
+const reposicao =
+  document.getElementById("reposicao");
+
+const totalBaixado =
+  document.getElementById("totalBaixado");
+
+const totalBox =
+  document.getElementById("totalBox");
+
+const saldo =
+  document.getElementById("saldo");
+
+const observacao =
+  document.getElementById("observacao");
+
+const problemList =
+  document.getElementById("problemList");
+
+const problemEditorContainer =
+  document.getElementById("problemEditorContainer");
+
+const summarySection =
+  document.getElementById("summarySection");
+
+const summaryMachines =
+  document.getElementById("summaryMachines");
+
+const toast =
+  document.getElementById("toast");
+
+
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
+
+function showToast(text){
+
+  toast.textContent = text;
+
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2200);
+}
+
+
+function minutesToTime(totalMinutes){
+
+  totalMinutes =
+    Math.max(0, Number(totalMinutes) || 0);
+
+  const hours =
+    Math.floor(totalMinutes / 60);
+
+  const minutes =
+    totalMinutes % 60;
+
+  return String(hours).padStart(2,"0")
+    + ":" +
+    String(minutes).padStart(2,"0");
+}
+
+
+function timeToMinutes(value){
+
+  if(!value){
+    return 0;
+  }
+
+  const parts =
+    value.split(":").map(Number);
+
+  return (
+    (parts[0] || 0) * 60 +
+    (parts[1] || 0)
+  );
+}
+
+
+function getStatusClass(totalMinutes){
+
+  const shift =
+    document.getElementById("shift").value;
+
+  const target =
+    shiftTargets[shift];
+
+  if(totalMinutes >= target){
+    return "status-green";
+  }
+
+  if(totalMinutes >= target - 48){
+    return "status-yellow";
+  }
+
+  return "status-red";
+}
+
+
+function setToday(){
+
+  const now =
+    new Date();
+
+  const year =
+    now.getFullYear();
+
+  const month =
+    String(now.getMonth() + 1)
+      .padStart(2,"0");
+
+  const day =
+    String(now.getDate())
+      .padStart(2,"0");
+
+  document.getElementById("data").value =
+    `${year}-${month}-${day}`;
+}
+
+
+/* =========================================================
+   AUTENTICAÇÃO
+========================================================= */
+
+async function checkAuth(){
+
+  const {
+    data: {
+      session
+    }
+  } =
+    await supabaseClient.auth.getSession();
+
+
+  if(!session){
+
+    window.location.href =
+      "index.html";
+
+    return false;
+  }
+
+
+  currentUser =
+    session.user;
+
+
+  const {
+    data: profile,
+    error
+  } =
+    await supabaseClient
+      .from("usuarios")
+      .select(
+        "id,nome,usuario,perfil,ativo"
+      )
+      .eq("id", currentUser.id)
+      .single();
+
+
+  if(error || !profile || !profile.ativo){
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href =
+      "index.html";
+
+    return false;
+  }
+
+
+  if(profile.perfil !== "lider"){
+
+    alert(
+      "Seu usuário não possui acesso à tela de Líder."
+    );
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href =
+      "index.html";
+
+    return false;
+  }
+
+
+  currentProfile =
+    profile;
+
+
+  document.getElementById("userName").textContent =
+    profile.nome;
+
+
+  return true;
+}
+
+
+/* =========================================================
+   TURNOS
+========================================================= */
+
+async function getOrCreateTurn(){
+
+  const data =
+    document.getElementById("data").value;
+
+  const shift =
+    document.getElementById("shift").value;
+
+
+  if(!data || !shift){
+    return null;
+  }
+
+
+  const {
+    data: existing,
+    error: findError
+  } =
+    await supabaseClient
+      .from("turnos")
+      .select("*")
+      .eq("data", data)
+      .eq("turno", shift)
+      .eq("lider_id", currentUser.id)
+      .maybeSingle();
+
+
+  if(findError){
+
+    console.error(findError);
+
+    showToast(
+      "Erro ao consultar o turno."
+    );
+
+    return null;
+  }
+
+
+  if(existing){
+
+    currentTurnId =
+      existing.id;
+
+    return existing;
+  }
+
+
+  const {
+    data: created,
+    error: createError
+  } =
+    await supabaseClient
+      .from("turnos")
+      .insert({
+        data: data,
+        turno: shift,
+        lider_id: currentUser.id,
+        status: "aberto"
+      })
+      .select()
+      .single();
+
+
+  if(createError){
+
+    console.error(createError);
+
+    showToast(
+      "Não foi possível criar o turno."
+    );
+
+    return null;
+  }
+
+
+  currentTurnId =
+    created.id;
+
+
+  return created;
+}
+
+
+/* =========================================================
+   MÁQUINAS
+========================================================= */
+
+function createMachineButtons(){
+
+  machineGrid.innerHTML = "";
+
+  for(let i = 1; i <= 29; i++){
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "machine-btn";
+
+    button.dataset.machine =
+      i;
+
+    button.textContent =
+      String(i).padStart(2,"0");
+
+    button.addEventListener(
+      "click",
+      () => openMachine(i)
+    );
+
+    machineGrid.appendChild(button);
+  }
+}
+
+
+function updateMachineButton(machine){
+
+  const button =
+    document.querySelector(
+      `.machine-btn[data-machine="${machine}"]`
+    );
+
+  if(!button){
+    return;
+  }
+
+
+  if(machines[machine]){
+
+    button.classList.add("saved");
+
+  }else{
+
+    button.classList.remove("saved");
+
+  }
+}
+
+
+/* =========================================================
+   ABRIR MÁQUINA
+========================================================= */
+
+async function openMachine(machine){
+
+  currentMachine =
+    machine;
+
+
+  await getOrCreateTurn();
+
+
+  const saved =
+    machines[machine];
+
+
+  machineTitle.textContent =
+    "Máquina " +
+    String(machine).padStart(2,"0");
+
+
+  if(saved){
+
+    horaBoa.value =
+      minutesToTime(saved.horaBoa);
+
+    reposicao.value =
+      minutesToTime(saved.reposicao);
+
+    totalBaixado.value =
+      minutesToTime(saved.totalBaixado);
+
+    saldo.value =
+      minutesToTime(saved.saldo);
+
+    observacao.value =
+      saved.observacao || "";
+
+  }else{
+
+    horaBoa.value =
+      "00:00";
+
+    reposicao.value =
+      "00:00";
+
+    totalBaixado.value =
+      "00:00";
+
+    saldo.value =
+      "00:00";
+
+    observacao.value =
+      "";
+
+  }
+
+
+  updateTotalColor();
+
+  renderProblems();
+
+
+  machineForm.classList.add("active");
+
+  machineForm.scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
+
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+function updateTotal(){
+
+  const good =
+    timeToMinutes(
+      horaBoa.value
+    );
+
+  const replacement =
+    timeToMinutes(
+      reposicao.value
+    );
+
+  const total =
+    good + replacement;
+
+
+  totalBaixado.value =
+    minutesToTime(total);
+
+
+  updateTotalColor();
+}
+
+
+function updateTotalColor(){
+
+  const total =
+    timeToMinutes(
+      totalBaixado.value
+    );
+
+
+  totalBox.classList.remove(
+    "status-red",
+    "status-yellow",
+    "status-green"
+  );
+
+
+  totalBox.classList.add(
+    getStatusClass(total)
+  );
+}
+
+
+horaBoa.addEventListener(
+  "input",
+  updateTotal
+);
+
+reposicao.addEventListener(
+  "input",
+  updateTotal
+);
+
+
+document.getElementById("shift")
+  .addEventListener(
+    "change",
+    updateTotalColor
+  );
+
+
+/* =========================================================
+   PROBLEMAS
+========================================================= */
+
+function createProblemEditor(){
+
+  problemEditorContainer.innerHTML = "";
+
+
+  const editor =
+    document.createElement("div");
+
+  editor.className =
+    "problem-editor";
+
+
+  editor.innerHTML = `
+
+    <div class="row">
+
+      <div class="field">
+
+        <label>Categoria</label>
+
+        <select class="problem-category">
+
+          <option value="Elétrico">
+            Elétrico
+          </option>
+
+          <option value="Mecânico">
+            Mecânico
+          </option>
+
+          <option value="Ajuste de matriz">
+            Ajuste de matriz
+          </option>
+
+          <option value="Troca de matriz">
+            Troca de matriz
+          </option>
+
+          <option value="Parada de máquina">
+            Parada de máquina
+          </option>
+
+          <option value="Problema de material">
+            Problema de material
+          </option>
+
+          <option value="Falta de material">
+            Falta de material
+          </option>
+
+          <option value="Regulagem de processo">
+            Regulagem de processo
+          </option>
+
+          <option value="Setup">
+            Setup
+          </option>
+
+          <option value="Outro">
+            Outro
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>Descrição</label>
+
+        <textarea
+          class="problem-description-input"
+          placeholder="Descreva o problema..."
+          rows="3"></textarea>
+
+      </div>
+
+    </div>
+
+
+    <div class="problem-actions">
+
+      <button
+        class="btn-small"
+        id="cancelProblem">
+        Cancelar
+      </button>
+
+      <button
+        class="btn-small btn-save-problem"
+        id="saveProblem">
+        Salvar problema
+      </button>
+
+    </div>
+  `;
+
+
+  problemEditorContainer
+    .appendChild(editor);
+
+
+  document
+    .getElementById("cancelProblem")
+    .addEventListener(
+      "click",
+      () => {
+
+        problemEditorContainer.innerHTML = "";
+
+        editingProblemIndex = null;
+
+      }
+    );
+
+
+  document
+    .getElementById("saveProblem")
+    .addEventListener(
+      "click",
+      saveProblemFromEditor
+    );
+}
+
+
+document
+  .getElementById("addProblem")
+  .addEventListener(
+    "click",
+    () => {
+
+      if(
+        problemEditorContainer
+          .children.length
+      ){
+        return;
+      }
+
+      editingProblemIndex = null;
+
+      createProblemEditor();
+
+    }
+  );
+
+
+function saveProblemFromEditor(){
+
+  const editor =
+    problemEditorContainer
+      .querySelector(".problem-editor");
+
+
+  if(!editor){
+    return;
+  }
+
+
+  const category =
+    editor
+      .querySelector(".problem-category")
+      .value;
+
+
+  const description =
+    editor
+      .querySelector(".problem-description-input")
+      .value.trim();
+
+
+  if(!description){
+
+    showToast(
+      "Digite a descrição do problema."
+    );
+
+    return;
+  }
+
+
+  if(!machines[currentMachine]){
+
+    machines[currentMachine] = {
+
+      horaBoa:0,
+      reposicao:0,
+      totalBaixado:0,
+      saldo:0,
+      observacao:"",
+      problems:[]
+
+    };
+
+  }
+
+
+  if(!machines[currentMachine].problems){
+
+    machines[currentMachine].problems = [];
+
+  }
+
+
+  if(editingProblemIndex !== null){
+
+    machines[currentMachine]
+      .problems[
+        editingProblemIndex
+      ] = {
+        categoria:category,
+        descricao:description
+      };
+
+  }else{
+
+    machines[currentMachine]
+      .problems
+      .push({
+        categoria:category,
+        descricao:description
+      });
+
+  }
+
+
+  editingProblemIndex = null;
+
+  problemEditorContainer.innerHTML = "";
+
+  renderProblems();
+}
+
+
+function renderProblems(){
+
+  problemList.innerHTML = "";
+
+
+  const machine =
+    machines[currentMachine];
+
+
+  if(
+    !machine ||
+    !machine.problems ||
+    !machine.problems.length
+  ){
+
+    return;
+  }
+
+
+  machine.problems.forEach(
+    (problem,index) => {
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "problem-card";
+
+
+      card.innerHTML = `
+
+        <div class="problem-top">
+
+          <div>
+
+            <span class="problem-number">
+              ${index + 1}
+            </span>
+
+            <span class="problem-category">
+              ${escapeHtml(problem.categoria)}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="problem-description">
+          ${escapeHtml(problem.descricao)}
+        </div>
+
+
+        <div class="problem-buttons">
+
+          <button
+            data-edit="${index}">
+            Editar
+          </button>
+
+          <button
+            class="btn-delete"
+            data-delete="${index}">
+            Excluir
+          </button>
+
+        </div>
+      `;
+
+
+      card
+        .querySelector(
+          `[data-edit="${index}"]`
+        )
+        .addEventListener(
+          "click",
+          () => editProblem(index)
+        );
+
+
+      card
+        .querySelector(
+          `[data-delete="${index}"]`
+        )
+        .addEventListener(
+          "click",
+          () => deleteProblem(index)
+        );
+
+
+      problemList.appendChild(card);
+
+    }
+  );
+}
+
+
+function editProblem(index){
+
+  const problem =
+    machines[currentMachine]
+      .problems[index];
+
+
+  createProblemEditor();
+
+
+  const editor =
+    problemEditorContainer
+      .querySelector(".problem-editor");
+
+
+  editor.querySelector(
+    ".problem-category"
+  ).value =
+    problem.categoria;
+
+
+  editor.querySelector(
+    ".problem-description-input"
+  ).value =
+    problem.descricao;
+
+
+  editingProblemIndex =
+    index;
+}
+
+
+function deleteProblem(index){
+
+  if(
+    !confirm(
+      "Excluir este problema?"
+    )
+  ){
+    return;
+  }
+
+
+  machines[currentMachine]
+    .problems
+    .splice(index,1);
+
+
+  renderProblems();
+}
+
+
+function escapeHtml(text){
+
+  return String(text)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+
+/* =========================================================
+   SALVAR MÁQUINA
+========================================================= */
+
+async function saveMachine(){
+
+  if(!currentMachine){
+
+    return;
+  }
+
+
+  const turn =
+    await getOrCreateTurn();
+
+
+  if(!turn){
+
+    return;
+  }
+
+
+  const machineData = {
+
+    horaBoa:
+      timeToMinutes(
+        horaBoa.value
+      ),
+
+    reposicao:
+      timeToMinutes(
+        reposicao.value
+      ),
+
+    totalBaixado:
+      timeToMinutes(
+        totalBaixado.value
+      ),
+
+    saldo:
+      timeToMinutes(
+        saldo.value
+      ),
+
+    observacao:
+      observacao.value.trim(),
+
+    problems:
+      machines[currentMachine]?.problems || []
+
+  };
+
+
+  const {
+    data: existing,
+    error: existingError
+  } =
+    await supabaseClient
+      .from("apontamentos")
+      .select("id")
+      .eq("turno_id", turn.id)
+      .eq("maquina", currentMachine)
+      .maybeSingle();
+
+
+  if(existingError){
+
+    console.error(existingError);
+
+    showToast(
+      "Erro ao consultar a máquina."
+    );
+
+    return;
+  }
+
+
+  let apontamentoId;
+
+
+  if(existing){
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("apontamentos")
+        .update({
+
+          hora_boa:
+            machineData.horaBoa,
+
+          reposicao:
+            machineData.reposicao,
+
+          total_baixado:
+            machineData.totalBaixado,
+
+          saldo:
+            machineData.saldo,
+
+          observacao:
+            machineData.observacao,
+
+          atualizado_em:
+            new Date().toISOString()
+
+        })
+        .eq("id", existing.id);
+
+
+    if(error){
+
+      console.error(error);
+
+      showToast(
+        "Não foi possível salvar a máquina."
+      );
+
+      return;
+    }
+
+
+    apontamentoId =
+      existing.id;
+
+
+    await supabaseClient
+      .from("ocorrencias")
+      .delete()
+      .eq(
+        "apontamento_id",
+        apontamentoId
+      );
+
+  }else{
+
+    const {
+      data: inserted,
+      error
+    } =
+      await supabaseClient
+        .from("apontamentos")
+        .insert({
+
+          turno_id:
+            turn.id,
+
+          maquina:
+            currentMachine,
+
+          hora_boa:
+            machineData.horaBoa,
+
+          reposicao:
+            machineData.reposicao,
+
+          total_baixado:
+            machineData.totalBaixado,
+
+          saldo:
+            machineData.saldo,
+
+          observacao:
+            machineData.observacao
+
+        })
+        .select()
+        .single();
+
+
+    if(error){
+
+      console.error(error);
+
+      showToast(
+        "Não foi possível salvar a máquina."
+      );
+
+      return;
+    }
+
+
+    apontamentoId =
+      inserted.id;
+
+  }
+
+
+  /* Salva ocorrências */
+
+  if(
+    machineData.problems.length
+  ){
+
+    const rows =
+      machineData.problems.map(
+        problem => ({
+
+          apontamento_id:
+            apontamentoId,
+
+          categoria:
+            problem.categoria,
+
+          descricao:
+            problem.descricao
+
+        })
+      );
+
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("ocorrencias")
+        .insert(rows);
+
+
+    if(error){
+
+      console.error(error);
+
+      showToast(
+        "Máquina salva, mas houve erro nas ocorrências."
+      );
+
+      return;
+    }
+
+  }
+
+
+  machines[currentMachine] =
+    machineData;
+
+
+  updateMachineButton(
+    currentMachine
+  );
+
+
+  renderSummary();
+
+
+  showToast(
+    "Máquina " +
+    String(currentMachine).padStart(2,"0") +
+    " salva ✓"
+  );
+
+
+  machineForm.classList.remove(
+    "active"
+  );
+
+
+  currentMachine =
+    null;
+
+
+  machineForm.scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
+
+
+document
+  .getElementById("saveMachine")
+  .addEventListener(
+    "click",
+    saveMachine
+  );
+
+
+document
+  .getElementById("closeMachine")
+  .addEventListener(
+    "click",
+    () => {
+
+      machineForm.classList.remove(
+        "active"
+      );
+
+      currentMachine = null;
+
+    }
+  );
+
+
+/* =========================================================
+   CARREGAR DADOS DO BANCO
+========================================================= */
+
+async function loadTurnData(){
+
+  const turn =
+    await getOrCreateTurn();
+
+
+  if(!turn){
+    return;
+  }
+
+
+  machines = {};
+
+
+  const {
+    data: rows,
+    error
+  } =
+    await supabaseClient
+      .from("apontamentos")
+      .select(`
+        id,
+        maquina,
+        hora_boa,
+        reposicao,
+        total_baixado,
+        saldo,
+        observacao,
+        ocorrencias (
+          id,
+          categoria,
+          descricao
+        )
+      `)
+      .eq("turno_id", turn.id)
+      .order("maquina");
+
+
+  if(error){
+
+    console.error(error);
+
+    showToast(
+      "Erro ao carregar os apontamentos."
+    );
+
+    return;
+  }
+
+
+  rows.forEach(row => {
+
+    machines[row.maquina] = {
+
+      id:row.id,
+
+      horaBoa:
+        row.hora_boa || 0,
+
+      reposicao:
+        row.reposicao || 0,
+
+      totalBaixado:
+        row.total_baixado || 0,
+
+      saldo:
+        row.saldo || 0,
+
+      observacao:
+        row.observacao || "",
+
+      problems:
+        (row.ocorrencias || [])
+          .map(o => ({
+
+            categoria:
+              o.categoria,
+
+            descricao:
+              o.descricao
+
+          }))
+
+    };
+
+
+    updateMachineButton(
+      row.maquina
+    );
+
+  });
+
+
+  renderSummary();
+}
+
+
+/* =========================================================
+   RESUMO
+========================================================= */
+
+function renderSummary(){
+
+  const keys =
+    Object.keys(machines)
+      .map(Number)
+      .sort((a,b) => a-b);
+
+
+  if(!keys.length){
+
+    summarySection.style.display =
+      "none";
+
+    return;
+  }
+
+
+  summarySection.style.display =
+    "block";
+
+
+  summaryMachines.innerHTML = "";
+
+
+  let totalGood = 0;
+  let totalReplacement = 0;
+  let totalDownloaded = 0;
+  let totalBalance = 0;
+  let totalProblems = 0;
+
+
+  keys.forEach(machine => {
+
+    const data =
+      machines[machine];
+
+
+    totalGood +=
+      data.horaBoa;
+
+    totalReplacement +=
+      data.reposicao;
+
+    totalDownloaded +=
+      data.totalBaixado;
+
+    totalBalance +=
+      data.saldo;
+
+    totalProblems +=
+      data.problems?.length || 0;
+
+
+    const card =
+      document.createElement("div");
+
+    card.className =
+      "summary-machine";
+
+
+    const status =
+      getStatusClass(
+        data.totalBaixado
+      );
+
+
+    const problemsHtml =
+      data.problems?.length
+        ? `
+          <div class="summary-problems">
+
+            ${
+              data.problems.map(
+                (problem,index) => `
+                  <div class="summary-problem">
+                    ${index + 1}. <strong>
+                    ${escapeHtml(problem.categoria)}
+                    </strong>:
+                    ${escapeHtml(problem.descricao)}
+                  </div>
+                `
+              ).join("")
+            }
+
+          </div>
+        `
+        : "";
+
+
+    const observationHtml =
+      data.observacao
+        ? `
+          <div class="summary-observation">
+            <strong>Observação:</strong>
+            ${escapeHtml(data.observacao)}
+          </div>
+        `
+        : "";
+
+
+    card.innerHTML = `
+
+      <div class="summary-machine-header">
+        Máquina ${String(machine).padStart(2,"0")}
+      </div>
+
+
+      <div class="summary-hours">
+
+        <div class="summary-hour">
+          <small>Hora boa</small>
+          <strong>
+            ${minutesToTime(data.horaBoa)}
+          </strong>
+        </div>
+
+
+        <div class="summary-hour">
+          <small>Reposição</small>
+          <strong>
+            ${minutesToTime(data.reposicao)}
+          </strong>
+        </div>
+
+
+        <div class="summary-hour ${status}">
+          <small>Total baixado</small>
+          <strong>
+            ${minutesToTime(data.totalBaixado)}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div style="margin-top:7px;font-size:12px;">
+        <strong>Saldo:</strong>
+        ${minutesToTime(data.saldo)}
+      </div>
+
+
+      ${problemsHtml}
+
+      ${observationHtml}
+
+    `;
+
+
+    summaryMachines.appendChild(card);
+
+  });
+
+
+  document.getElementById(
+    "summaryMachineCount"
+  ).textContent =
+    keys.length;
+
+
+  document.getElementById(
+    "summaryGood"
+  ).textContent =
+    minutesToTime(totalGood);
+
+
+  document.getElementById(
+    "summaryReplacement"
+  ).textContent =
+    minutesToTime(totalReplacement);
+
+
+  document.getElementById(
+    "summaryTotal"
+  ).textContent =
+    minutesToTime(totalDownloaded);
+
+
+  document.getElementById(
+    "summaryBalance"
+  ).textContent =
+    minutesToTime(totalBalance);
+
+
+  document.getElementById(
+    "summaryProblems"
+  ).textContent =
+    totalProblems;
+
+}
+
+
+/* =========================================================
+   DATA / TURNO
+========================================================= */
+
+document
+  .getElementById("data")
+  .addEventListener(
+    "change",
+    async () => {
+
+      machines = {};
+
+      createMachineButtons();
+
+      await loadTurnData();
+
+    }
+  );
+
+
+document
+  .getElementById("shift")
+  .addEventListener(
+    "change",
+    async () => {
+
+      machines = {};
+
+      createMachineButtons();
+
+      await loadTurnData();
+
+    }
+  );
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+document
+  .getElementById("logoutBtn")
+  .addEventListener(
+    "click",
+    async () => {
+
+      await supabaseClient.auth.signOut();
+
+      window.location.href =
+        "index.html";
+
+    }
+  );
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+async function init(){
+
+  const authenticated =
+    await checkAuth();
+
+
+  if(!authenticated){
+    return;
+  }
+
+
+  setToday();
+
+  createMachineButtons();
+
+  await loadTurnData();
+
+}
+
+
+init();
+
+</script>
+
+</body>
+</html>

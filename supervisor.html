@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Produção — Supervisor</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+    --bg:#f4f5f7;
+    --card:#ffffff;
+    --border:#dfe3e8;
+    --text:#20242a;
+    --muted:#69727d;
+
+    --green:#198754;
+    --green-bg:#e8f5ee;
+
+    --yellow:#d89b00;
+    --yellow-bg:#fff6d9;
+
+    --red:#d64545;
+    --red-bg:#fdeaea;
+
+    --blue:#2563eb;
+    --blue-bg:#eaf1ff;
+
+    --danger:#c62828;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+button,
+input,
+select,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.container{
+    width:min(100%,900px);
+    margin:auto;
+    padding:16px;
+}
+
+/* HEADER */
+
+.header{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:14px;
+}
+
+.header h1{
+    margin:0;
+    font-size:21px;
+}
+
+.header p{
+    margin:5px 0 0;
+    color:var(--muted);
+    font-size:14px;
+}
+
+.header-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:flex-start;
+}
+
+.logout{
+    border:1px solid var(--border);
+    background:white;
+    border-radius:8px;
+    padding:8px 11px;
+    font-size:13px;
+}
+
+/* CONTROLES */
+
+.controls{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:14px;
+}
+
+.control-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.field label{
+    display:block;
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:5px;
+    color:var(--muted);
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    border:1px solid var(--border);
+    border-radius:9px;
+    padding:10px;
+    background:#fff;
+    color:var(--text);
+    outline:none;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:var(--blue);
+}
+
+/* ABAS */
+
+.tabs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-bottom:14px;
+}
+
+.tab{
+    border:1px solid var(--border);
+    background:white;
+    padding:11px;
+    border-radius:9px;
+    font-weight:bold;
+}
+
+.tab.active{
+    background:var(--text);
+    color:white;
+    border-color:var(--text);
+}
+
+/* CARDS */
+
+.machine-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:15px;
+    margin-bottom:12px;
+}
+
+.machine-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:13px;
+}
+
+.machine-title{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.leader-name{
+    font-size:12px;
+    color:var(--muted);
+    text-align:right;
+}
+
+.hours-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:8px;
+}
+
+.total-box{
+    border-radius:9px;
+    padding:10px;
+    font-weight:bold;
+}
+
+.total-box.status-green{
+    background:var(--green-bg);
+    color:var(--green);
+}
+
+.total-box.status-yellow{
+    background:var(--yellow-bg);
+    color:var(--yellow);
+}
+
+.total-box.status-red{
+    background:var(--red-bg);
+    color:var(--red);
+}
+
+.total-label{
+    font-size:11px;
+    margin-bottom:4px;
+}
+
+.total-value{
+    font-size:17px;
+}
+
+.section-label{
+    display:block;
+    font-size:12px;
+    color:var(--muted);
+    font-weight:bold;
+    margin:13px 0 5px;
+}
+
+.save-row{
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+}
+
+.save-btn{
+    flex:1;
+    border:0;
+    background:var(--green);
+    color:white;
+    border-radius:9px;
+    padding:11px;
+    font-weight:bold;
+}
+
+.reset-btn{
+    border:1px solid var(--border);
+    background:white;
+    border-radius:9px;
+    padding:11px 14px;
+}
+
+/* FECHAMENTO */
+
+.closing-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:15px;
+    margin-top:14px;
+}
+
+.closing-card h2{
+    margin:0 0 12px;
+    font-size:17px;
+}
+
+.closing-text{
+    min-height:250px;
+    resize:vertical;
+    font-family:monospace;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.primary-btn{
+    width:100%;
+    margin-top:10px;
+    border:0;
+    background:var(--blue);
+    color:white;
+    border-radius:9px;
+    padding:12px;
+    font-weight:bold;
+}
+
+.copy-btn{
+    width:100%;
+    margin-top:9px;
+    border:1px solid var(--border);
+    background:white;
+    color:var(--text);
+    border-radius:9px;
+    padding:11px;
+    font-weight:bold;
+}
+
+/* DRIVE */
+
+.drive-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:15px;
+    margin-bottom:12px;
+}
+
+.drive-title{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.problem{
+    padding:8px 0;
+    border-bottom:1px solid #edf0f2;
+    font-size:14px;
+    line-height:1.4;
+}
+
+.problem:last-child{
+    border-bottom:0;
+}
+
+.problem-category{
+    font-weight:bold;
+}
+
+.no-problems{
+    color:var(--muted);
+    font-size:13px;
+    margin-bottom:10px;
+}
+
+/* TOAST */
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:20px;
+    transform:translateX(-50%);
+    background:#20242a;
+    color:white;
+    padding:11px 15px;
+    border-radius:9px;
+    font-size:13px;
+    opacity:0;
+    pointer-events:none;
+    transition:.2s;
+    z-index:1000;
+}
+
+.toast.show{
+    opacity:1;
+}
+
+/* LOADING / EMPTY */
+
+.loading,
+.empty{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:25px;
+    text-align:center;
+    color:var(--muted);
+}
+
+.hidden{
+    display:none !important;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    .container{
+        padding:10px;
+    }
+
+    .header{
+        padding:15px;
+    }
+
+    .control-grid{
+        grid-template-columns:1fr;
+    }
+
+    .hours-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .hours-grid .total-box{
+        grid-column:1 / -1;
+    }
+
+    .header h1{
+        font-size:19px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <div class="header-top">
+            <div>
+                <h1>Controle de Produção — Setor A</h1>
+                <p>Supervisor</p>
+            </div>
+
+            <button class="logout" onclick="logout()">
+                Sair
+            </button>
+        </div>
+
+        <p id="userName"></p>
+    </header>
+
+    <section class="controls">
+
+        <div class="control-grid">
+
+            <div class="field">
+                <label for="data">Data</label>
+                <input type="date" id="data">
+            </div>
+
+            <div class="field">
+                <label for="turno">Turno</label>
+                <select id="turno">
+                    <option value="1º turno">1º turno</option>
+                    <option value="2º turno">2º turno</option>
+                    <option value="3º turno">3º turno</option>
+                </select>
+            </div>
+
+        </div>
+
+    </section>
+
+    <div class="tabs">
+
+        <button
+            id="tabHoras"
+            class="tab active"
+            onclick="mostrarAba('horas')">
+            Horas baixadas
+        </button>
+
+        <button
+            id="tabDrive"
+            class="tab"
+            onclick="mostrarAba('drive')">
+            Drive
+        </button>
+
+    </div>
+
+    <main>
+
+        <section id="abaHoras">
+
+            <div id="listaHoras" class="loading">
+                Carregando...
+            </div>
+
+            <div id="fechamento" class="closing-card hidden">
+
+                <h2>Fechamento do turno</h2>
+
+                <textarea
+                    id="textoFechamento"
+                    class="closing-text"
+                    readonly>
+                </textarea>
+
+                <button
+                    class="copy-btn"
+                    onclick="copiarFechamento()">
+                    Copiar horas
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <section id="abaDrive" class="hidden">
+
+            <div id="listaDrive" class="loading">
+                Carregando...
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+
+<script>
+
+const SUPABASE_URL =
+    "https://icajmncojvidhrqlbevq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+const shiftTargets = {
+    "1º turno": 8 * 60 + 48,
+    "2º turno": 8 * 60 + 36,
+    "3º turno": 6 * 60 + 36
+};
+
+
+let session = null;
+let perfil = null;
+let dados = [];
+
+
+/* =========================
+   INICIALIZAÇÃO
+========================= */
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    const hoje = new Date();
+
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+    const dia = String(hoje.getDate()).padStart(2, "0");
+
+    document.getElementById("data").value =
+        `${ano}-${mes}-${dia}`;
+
+
+    document
+        .getElementById("data")
+        .addEventListener("change", carregarDados);
+
+    document
+        .getElementById("turno")
+        .addEventListener("change", carregarDados);
+
+
+    await verificarAcesso();
+});
+
+
+/* =========================
+   AUTENTICAÇÃO
+========================= */
+
+async function verificarAcesso(){
+
+    const {
+        data: {
+            session: currentSession
+        }
+    } = await supabaseClient.auth.getSession();
+
+    if(!currentSession){
+
+        window.location.href = "index.html";
+        return;
+    }
+
+    session = currentSession;
+
+
+    const {
+        data: usuario,
+        error
+    } = await supabaseClient
+        .from("usuarios")
+        .select("*")
+        .eq("id", session.user.id)
+        .eq("ativo", true)
+        .single();
+
+
+    if(error || !usuario){
+
+        alert("Usuário sem cadastro no sistema.");
+        await supabaseClient.auth.signOut();
+
+        window.location.href = "index.html";
+        return;
+    }
+
+
+    if(usuario.perfil !== "supervisor"){
+
+        alert("Acesso restrito ao supervisor.");
+
+        window.location.href = "lider.html";
+        return;
+    }
+
+
+    perfil = usuario;
+
+    document.getElementById("userName").textContent =
+        `Usuário: ${usuario.nome}`;
+
+
+    await carregarDados();
+}
+
+
+/* =========================
+   CARREGAR DADOS
+========================= */
+
+async function carregarDados(){
+
+    const data =
+        document.getElementById("data").value;
+
+    const turno =
+        document.getElementById("turno").value;
+
+
+    document.getElementById("listaHoras").innerHTML =
+        `<div class="loading">Carregando...</div>`;
+
+    document.getElementById("listaDrive").innerHTML =
+        `<div class="loading">Carregando...</div>`;
+
+
+    /*
+       Buscamos os turnos do dia/turno.
+
+       Um turno está ligado ao líder.
+       Depois buscamos os apontamentos
+       e suas ocorrências.
+    */
+
+    const {
+        data: turnos,
+        error
+    } = await supabaseClient
+        .from("turnos")
+        .select(`
+            id,
+            data,
+            turno,
+            lider_id,
+            usuarios (
+                nome
+            ),
+            apontamentos (
+                id,
+                maquina,
+                hora_boa,
+                reposicao,
+                total_baixado,
+                saldo,
+                observacao,
+                nota_supervisor,
+                ocorrencias (
+                    id,
+                    categoria,
+                    descricao
+                )
+            )
+        `)
+        .eq("data", data)
+        .eq("turno", turno);
+
+
+    if(error){
+
+        console.error(error);
+
+        document.getElementById("listaHoras").innerHTML =
+            `<div class="empty">
+                Erro ao carregar os dados.
+            </div>`;
+
+        document.getElementById("listaDrive").innerHTML =
+            `<div class="empty">
+                Erro ao carregar os dados.
+            </div>`;
+
+        return;
+    }
+
+
+    dados = [];
+
+
+    for(const turnoItem of (turnos || [])){
+
+        for(const apontamento of
+            (turnoItem.apontamentos || [])){
+
+            dados.push({
+                ...apontamento,
+                lider_nome:
+                    turnoItem.usuarios?.nome || "—",
+                turno_id:
+                    turnoItem.id
+            });
+        }
+    }
+
+
+    /*
+       Caso mais de um líder tenha apontado
+       a mesma máquina no mesmo turno,
+       usamos o último registro encontrado.
+    */
+
+    const mapa = new Map();
+
+    for(const item of dados){
+
+        mapa.set(item.maquina, item);
+    }
+
+    dados = Array.from(mapa.values())
+        .sort((a,b) => a.maquina - b.maquina);
+
+
+    renderHoras();
+    renderDrive();
+}
+
+
+/* =========================
+   HORAS
+========================= */
+
+function renderHoras(){
+
+    const container =
+        document.getElementById("listaHoras");
+
+
+    if(!dados.length){
+
+        container.innerHTML = `
+            <div class="empty">
+                Nenhum apontamento encontrado
+                para esta data e turno.
+            </div>
+        `;
+
+        document
+            .getElementById("fechamento")
+            .classList.add("hidden");
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    for(const item of dados){
+
+        const card =
+            document.createElement("div");
+
+        card.className = "machine-card";
+
+
+        const total =
+            Number(item.total_baixado || 0);
+
+
+        const status =
+            getStatusClass(total);
+
+
+        card.innerHTML = `
+
+            <div class="machine-header">
+
+                <div class="machine-title">
+                    M${String(item.maquina).padStart(2,"0")}
+                </div>
+
+                <div class="leader-name">
+                    Líder: ${escapeHtml(item.lider_nome)}
+                </div>
+
+            </div>
+
+
+            <div class="hours-grid">
+
+                <div class="field">
+                    <label>Hora boa</label>
+
+                    <input
+                        type="text"
+                        value="${formatMinutes(item.hora_boa)}"
+                        data-field="hora_boa">
+                </div>
+
+
+                <div class="field">
+                    <label>Reposição</label>
+
+                    <input
+                        type="text"
+                        value="${formatMinutes(item.reposicao)}"
+                        data-field="reposicao">
+                </div>
+
+
+                <div class="total-box ${status}">
+
+                    <div class="total-label">
+                        Total baixado
+                    </div>
+
+                    <div
+                        class="total-value"
+                        data-total>
+                        ${formatMinutes(item.total_baixado)}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <label class="section-label">
+                Saldo
+            </label>
+
+            <input
+                type="text"
+                value="${formatMinutes(item.saldo)}"
+                data-field="saldo"
+                placeholder="Ex.: 05:12">
+
+
+            <label class="section-label">
+                Nota do supervisor
+            </label>
+
+            <textarea
+                rows="2"
+                data-field="nota_supervisor"
+                placeholder="Ex.: ligada de máquina">${escapeHtml(
+                    item.nota_supervisor || ""
+                )}</textarea>
+
+
+            ${
+                item.observacao
+                ?
+                `
+                <label class="section-label">
+                    Observação do líder
+                </label>
+
+                <div style="
+                    background:#f7f8f9;
+                    border:1px solid var(--border);
+                    border-radius:9px;
+                    padding:10px;
+                    font-size:13px;
+                    line-height:1.4;
+                ">
+                    ${escapeHtml(item.observacao)}
+                </div>
+                `
+                :
+                ""
+            }
+
+
+            <div class="save-row">
+
+                <button
+                    class="save-btn"
+                    onclick="salvarSupervisor(${item.id}, this)">
+                    Salvar alterações
+                </button>
+
+                <button
+                    class="reset-btn"
+                    onclick="carregarDados()">
+                    Atualizar
+                </button>
+
+            </div>
+        `;
+
+
+        const inputs =
+            card.querySelectorAll(
+                'input[data-field="hora_boa"], input[data-field="reposicao"]'
+            );
+
+
+        inputs.forEach(input => {
+
+            input.addEventListener(
+                "input",
+                () => atualizarTotalCard(card)
+            );
+
+        });
+
+
+        container.appendChild(card);
+    }
+
+
+    gerarFechamento();
+}
+
+
+/* =========================
+   ATUALIZA TOTAL NO CARD
+========================= */
+
+function atualizarTotalCard(card){
+
+    const horaBoa =
+        parseTime(
+            card.querySelector(
+                'input[data-field="hora_boa"]'
+            ).value
+        );
+
+
+    const reposicao =
+        parseTime(
+            card.querySelector(
+                'input[data-field="reposicao"]'
+            ).value
+        );
+
+
+    const total =
+        horaBoa + reposicao;
+
+
+    const totalBox =
+        card.querySelector(".total-box");
+
+    const totalValue =
+        card.querySelector("[data-total]");
+
+
+    totalValue.textContent =
+        formatMinutes(total);
+
+
+    totalBox.classList.remove(
+        "status-green",
+        "status-yellow",
+        "status-red"
+    );
+
+
+    totalBox.classList.add(
+        getStatusClass(total)
+    );
+}
+
+
+/* =========================
+   SALVAR ALTERAÇÕES
+========================= */
+
+async function salvarSupervisor(id, button){
+
+    const card =
+        button.closest(".machine-card");
+
+
+    const horaBoa =
+        parseTime(
+            card.querySelector(
+                'input[data-field="hora_boa"]'
+            ).value
+        );
+
+
+    const reposicao =
+        parseTime(
+            card.querySelector(
+                'input[data-field="reposicao"]'
+            ).value
+        );
+
+
+    const total =
+        horaBoa + reposicao;
+
+
+    const saldo =
+        parseTime(
+            card.querySelector(
+                'input[data-field="saldo"]'
+            ).value
+        );
+
+
+    const nota =
+        card.querySelector(
+            'textarea[data-field="nota_supervisor"]'
+        ).value.trim();
+
+
+    button.disabled = true;
+    button.textContent = "Salvando...";
+
+
+    const {
+        error
+    } = await supabaseClient
+        .from("apontamentos")
+        .update({
+            hora_boa: horaBoa,
+            reposicao: reposicao,
+            total_baixado: total,
+            saldo: saldo,
+            nota_supervisor: nota || null
+        })
+        .eq("id", id);
+
+
+    button.disabled = false;
+    button.textContent = "Salvar alterações";
+
+
+    if(error){
+
+        console.error(error);
+
+        mostrarToast(
+            "Erro ao salvar alterações."
+        );
+
+        return;
+    }
+
+
+    mostrarToast(
+        "Apontamento atualizado ✓"
+    );
+
+
+    await carregarDados();
+}
+
+
+/* =========================
+   FECHAMENTO
+========================= */
+
+function gerarFechamento(){
+
+    if(!dados.length){
+
+        document
+            .getElementById("fechamento")
+            .classList.add("hidden");
+
+        return;
+    }
+
+
+    const linhas = [];
+
+    linhas.push(
+        "Horas baixadas setor A"
+    );
+
+    linhas.push("");
+
+
+    for(const item of dados){
+
+        const maquina =
+            `M${String(item.maquina).padStart(2,"0")}`;
+
+
+        const total =
+            formatMinutes(item.total_baixado);
+
+
+        let linha =
+            `${maquina} - ${total}`;
+
+
+        if(
+            item.saldo !== null &&
+            item.saldo !== undefined &&
+            Number(item.saldo) !== 0
+        ){
+
+            linha +=
+                ` (Saldo - ${formatMinutes(item.saldo)})`;
+        }
+
+
+        if(item.nota_supervisor){
+
+            linha +=
+                ` — ${item.nota_supervisor}`;
+        }
+
+
+        linhas.push(linha);
+    }
+
+
+    document.getElementById(
+        "textoFechamento"
+    ).value =
+        linhas.join("\n");
+
+
+    document
+        .getElementById("fechamento")
+        .classList.remove("hidden");
+}
+
+
+/* =========================
+   DRIVE
+========================= */
+
+function renderDrive(){
+
+    const container =
+        document.getElementById("listaDrive");
+
+
+    if(!dados.length){
+
+        container.innerHTML = `
+            <div class="empty">
+                Nenhum apontamento encontrado
+                para esta data e turno.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    for(const item of dados){
+
+        const card =
+            document.createElement("div");
+
+        card.className = "drive-card";
+
+
+        const maquina =
+            `M${String(item.maquina).padStart(2,"0")}`;
+
+
+        const ocorrencias =
+            item.ocorrencias || [];
+
+
+        let problemasHTML = "";
+
+
+        if(!ocorrencias.length){
+
+            problemasHTML = `
+                <div class="no-problems">
+                    Nenhum problema registrado.
+                </div>
+            `;
+
+        }else{
+
+            problemasHTML =
+                ocorrencias.map(oc => `
+                    <div class="problem">
+
+                        • <span class="problem-category">
+                            ${escapeHtml(oc.categoria)}
+                          </span>:
+                        ${escapeHtml(oc.descricao)}
+
+                    </div>
+                `).join("");
+        }
+
+
+        card.innerHTML = `
+
+            <div class="drive-title">
+                ${maquina}
+            </div>
+
+            ${problemasHTML}
+
+            ${
+                ocorrencias.length
+                ?
+                `
+                <button
+                    class="copy-btn"
+                    onclick="copiarProblemas(
+                        ${item.maquina},
+                        this
+                    )">
+                    Copiar problemas da ${maquina}
+                </button>
+                `
+                :
+                ""
+            }
+
+        `;
+
+
+        container.appendChild(card);
+    }
+}
+
+
+/* =========================
+   COPIAR PROBLEMAS
+========================= */
+
+async function copiarProblemas(
+    maquinaNumero,
+    button
+){
+
+    const item =
+        dados.find(
+            x => Number(x.maquina) ===
+            Number(maquinaNumero)
+        );
+
+
+    if(!item){
+
+        mostrarToast(
+            "Máquina não encontrada."
+        );
+
+        return;
+    }
+
+
+    const ocorrencias =
+        item.ocorrencias || [];
+
+
+    if(!ocorrencias.length){
+
+        mostrarToast(
+            "Não há problemas registrados."
+        );
+
+        return;
+    }
+
+
+    const maquina =
+        `M${String(maquinaNumero).padStart(2,"0")}`;
+
+
+    const linhas = [maquina, ""];
+
+
+    for(const oc of ocorrencias){
+
+        linhas.push(
+            `• ${oc.categoria}: ${oc.descricao}`
+        );
+    }
+
+
+    const texto =
+        linhas.join("\n");
+
+
+    try{
+
+        await navigator.clipboard.writeText(
+            texto
+        );
+
+        button.textContent =
+            `Problemas da ${maquina} copiados ✓`;
+
+
+        mostrarToast(
+            `Problemas da ${maquina} copiados ✓`
+        );
+
+
+        setTimeout(() => {
+
+            button.textContent =
+                `Copiar problemas da ${maquina}`;
+
+        }, 1800);
+
+
+    }catch(error){
+
+        console.error(error);
+
+        mostrarToast(
+            "Não foi possível copiar."
+        );
+    }
+}
+
+
+/* =========================
+   COPIAR FECHAMENTO
+========================= */
+
+async function copiarFechamento(){
+
+    const texto =
+        document.getElementById(
+            "textoFechamento"
+        ).value;
+
+
+    try{
+
+        await navigator.clipboard.writeText(
+            texto
+        );
+
+
+        mostrarToast(
+            "Horas copiadas ✓"
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        mostrarToast(
+            "Não foi possível copiar."
+        );
+    }
+}
+
+
+/* =========================
+   ABAS
+========================= */
+
+function mostrarAba(aba){
+
+    const horas =
+        document.getElementById("abaHoras");
+
+    const drive =
+        document.getElementById("abaDrive");
+
+    const tabHoras =
+        document.getElementById("tabHoras");
+
+    const tabDrive =
+        document.getElementById("tabDrive");
+
+
+    if(aba === "horas"){
+
+        horas.classList.remove("hidden");
+        drive.classList.add("hidden");
+
+        tabHoras.classList.add("active");
+        tabDrive.classList.remove("active");
+
+    }else{
+
+        horas.classList.add("hidden");
+        drive.classList.remove("hidden");
+
+        tabHoras.classList.remove("active");
+        tabDrive.classList.add("active");
+    }
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+function getStatusClass(totalMinutes){
+
+    const turno =
+        document.getElementById("turno").value;
+
+    const target =
+        shiftTargets[turno];
+
+
+    if(totalMinutes >= target)
+        return "status-green";
+
+
+    if(totalMinutes >= target - 48)
+        return "status-yellow";
+
+
+    return "status-red";
+}
+
+
+/* =========================
+   TEMPO
+========================= */
+
+function parseTime(value){
+
+    if(!value)
+        return 0;
+
+
+    value =
+        String(value)
+            .trim()
+            .replace(",",":");
+
+
+    if(value.includes(":")){
+
+        const parts =
+            value.split(":");
+
+
+        const horas =
+            Number(parts[0]) || 0;
+
+
+        const minutos =
+            Number(parts[1]) || 0;
+
+
+        return horas * 60 + minutos;
+    }
+
+
+    const numero =
+        Number(value);
+
+
+    return Number.isFinite(numero)
+        ? numero
+        : 0;
+}
+
+
+function formatMinutes(minutes){
+
+    minutes =
+        Number(minutes) || 0;
+
+
+    const horas =
+        Math.floor(minutes / 60);
+
+
+    const mins =
+        Math.abs(minutes % 60);
+
+
+    return `${String(horas).padStart(2,"0")}:${String(mins).padStart(2,"0")}`;
+}
+
+
+/* =========================
+   UTILITÁRIOS
+========================= */
+
+function escapeHtml(value){
+
+    if(value === null || value === undefined)
+        return "";
+
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+function mostrarToast(texto){
+
+    const toast =
+        document.getElementById("toast");
+
+
+    toast.textContent =
+        texto;
+
+
+    toast.classList.add("show");
+
+
+    clearTimeout(
+        window.toastTimer
+    );
+
+
+    window.toastTimer =
+        setTimeout(() => {
+
+            toast.classList.remove("show");
+
+        }, 2000);
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logout(){
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href =
+        "index.html";
+}
+
+</script>
+
+</body>
+</html>
