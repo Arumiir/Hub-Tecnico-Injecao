@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>Redefinir senha • Controle de Produção</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        *{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+            -webkit-tap-highlight-color:transparent;
+        }
+
+        :root{
+            --bg:#f2f2f7;
+            --card:#fff;
+            --text:#111;
+            --muted:#6e6e73;
+            --border:#e5e5ea;
+            --blue:#007aff;
+            --blue-dark:#0066d6;
+            --green:#34c759;
+            --red:#ff3b30;
+        }
+
+        body{
+            min-height:100vh;
+            min-height:100dvh;
+            background:var(--bg);
+            color:var(--text);
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Display",
+                "SF Pro Text",
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            padding:
+                max(20px,env(safe-area-inset-top))
+                20px
+                max(20px,env(safe-area-inset-bottom))
+                20px;
+        }
+
+        .app{
+            width:100%;
+            max-width:430px;
+        }
+
+        .brand{
+            text-align:center;
+            margin-bottom:28px;
+        }
+
+        .brand-icon{
+            width:68px;
+            height:68px;
+            margin:0 auto 17px;
+            border-radius:21px;
+            background:#000;
+            color:#fff;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            font-size:23px;
+            font-weight:700;
+            letter-spacing:-1px;
+
+            box-shadow:
+                0 12px 30px rgba(0,0,0,.12);
+        }
+
+        .brand h1{
+            font-size:25px;
+            line-height:1.15;
+            font-weight:700;
+            letter-spacing:-.6px;
+        }
+
+        .brand p{
+            margin-top:6px;
+            color:var(--muted);
+            font-size:15px;
+        }
+
+        .card{
+            background:var(--card);
+            border-radius:25px;
+            padding:25px 21px 21px;
+
+            box-shadow:
+                0 12px 35px rgba(0,0,0,.07),
+                0 2px 8px rgba(0,0,0,.035);
+        }
+
+        .title{
+            font-size:22px;
+            font-weight:700;
+            letter-spacing:-.4px;
+            margin-bottom:7px;
+        }
+
+        .subtitle{
+            color:var(--muted);
+            font-size:14px;
+            line-height:1.45;
+            margin-bottom:22px;
+        }
+
+        .field{
+            margin-bottom:15px;
+        }
+
+        label{
+            display:block;
+            margin:0 0 7px 3px;
+            font-size:13px;
+            font-weight:600;
+            color:#3c3c43;
+        }
+
+        .input-wrap{
+            position:relative;
+        }
+
+        input{
+            width:100%;
+            height:51px;
+            padding:0 52px 0 15px;
+
+            border:1px solid var(--border);
+            background:#f8f8fa;
+            border-radius:14px;
+
+            outline:none;
+            color:var(--text);
+
+            font-family:inherit;
+            font-size:16px;
+
+            transition:
+                border-color .18s ease,
+                background .18s ease,
+                box-shadow .18s ease;
+        }
+
+        input:focus{
+            background:#fff;
+            border-color:rgba(0,122,255,.55);
+            box-shadow:0 0 0 4px rgba(0,122,255,.10);
+        }
+
+        .toggle{
+            position:absolute;
+            right:5px;
+            top:5px;
+
+            width:42px;
+            height:41px;
+
+            border:0;
+            background:transparent;
+            color:#6e6e73;
+            border-radius:11px;
+
+            font-size:18px;
+            cursor:pointer;
+        }
+
+        .toggle:active{
+            background:#e9e9ee;
+        }
+
+        .button{
+            width:100%;
+            height:51px;
+
+            border:0;
+            border-radius:15px;
+
+            background:var(--blue);
+            color:#fff;
+
+            font-family:inherit;
+            font-size:16px;
+            font-weight:600;
+
+            cursor:pointer;
+
+            box-shadow:
+                0 6px 15px rgba(0,122,255,.20);
+        }
+
+        .button:active{
+            background:var(--blue-dark);
+            transform:scale(.985);
+        }
+
+        .button:disabled{
+            opacity:.55;
+            cursor:not-allowed;
+        }
+
+        .message{
+            display:none;
+            border-radius:13px;
+            padding:12px 13px;
+            margin-bottom:15px;
+
+            font-size:14px;
+            line-height:1.4;
+        }
+
+        .message.show{
+            display:block;
+        }
+
+        .message.error{
+            background:#fff0ef;
+            color:#b42318;
+        }
+
+        .message.success{
+            background:#edf9f0;
+            color:#187a36;
+        }
+
+        .success{
+            text-align:center;
+        }
+
+        .success-icon{
+            width:60px;
+            height:60px;
+            margin:0 auto 18px;
+
+            border-radius:50%;
+            background:#eaf8ee;
+            color:var(--green);
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            font-size:28px;
+        }
+
+        .success h2{
+            font-size:21px;
+            margin-bottom:9px;
+        }
+
+        .success p{
+            color:var(--muted);
+            font-size:14px;
+            line-height:1.5;
+            margin-bottom:22px;
+        }
+
+        .footer{
+            text-align:center;
+            color:#8e8e93;
+            font-size:12px;
+            margin-top:18px;
+        }
+
+        .loading{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+        }
+
+        .spinner{
+            width:17px;
+            height:17px;
+
+            border:2px solid rgba(255,255,255,.4);
+            border-top-color:#fff;
+
+            border-radius:50%;
+
+            animation:spin .7s linear infinite;
+        }
+
+        @keyframes spin{
+            to{
+                transform:rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            CP
+        </div>
+
+        <h1>
+            CONTROLE DE PRODUÇÃO
+        </h1>
+
+        <p>
+            Setor de Injeção
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <div id="formArea">
+
+            <div class="title">
+                Nova senha
+            </div>
+
+            <div class="subtitle">
+                Defina uma nova senha para acessar o sistema.
+            </div>
+
+
+            <div id="message" class="message"></div>
+
+
+            <form id="resetForm">
+
+                <div class="field">
+
+                    <label for="senha">
+                        Nova senha
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <input
+                            id="senha"
+                            type="password"
+                            autocomplete="new-password"
+                            minlength="6"
+                            placeholder="Digite a nova senha"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="toggle"
+                            onclick="togglePassword('senha', this)"
+                        >
+                            ◉
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="confirmacao">
+                        Confirmar nova senha
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <input
+                            id="confirmacao"
+                            type="password"
+                            autocomplete="new-password"
+                            minlength="6"
+                            placeholder="Digite novamente"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="toggle"
+                            onclick="togglePassword('confirmacao', this)"
+                        >
+                            ◉
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="button"
+                    class="button"
+                    type="submit"
+                >
+                    Alterar senha
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <div
+            id="successArea"
+            class="success"
+            style="display:none;"
+        >
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <h2>
+                Senha alterada
+            </h2>
+
+            <p>
+                Sua senha foi atualizada com sucesso.
+                Agora você já pode entrar no Controle de Produção.
+            </p>
+
+            <button
+                class="button"
+                onclick="window.location.href='index.html'"
+            >
+                Ir para o login
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        Controle de Produção • Setor de Injeção
+    </div>
+
+</div>
+
+
+<script>
+
+    const SUPABASE_URL =
+        "https://icajmncojvidhrqlbevq.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
+
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+
+    function togglePassword(inputId, button){
+
+        const input =
+            document.getElementById(inputId);
+
+        if(input.type === "password"){
+
+            input.type = "text";
+
+        }else{
+
+            input.type = "password";
+
+        }
+
+    }
+
+
+    function showMessage(text, type){
+
+        const element =
+            document.getElementById("message");
+
+        element.textContent = text;
+
+        element.className =
+            "message show " + type;
+
+    }
+
+
+    function setLoading(loading){
+
+        const button =
+            document.getElementById("button");
+
+        if(loading){
+
+            button.disabled = true;
+
+            button.innerHTML = `
+                <span class="loading">
+                    <span class="spinner"></span>
+                    Alterando...
+                </span>
+            `;
+
+        }else{
+
+            button.disabled = false;
+
+            button.textContent = "Alterar senha";
+
+        }
+
+    }
+
+
+    document
+        .getElementById("resetForm")
+        .addEventListener("submit", async event => {
+
+            event.preventDefault();
+
+            const senha =
+                document
+                    .getElementById("senha")
+                    .value;
+
+            const confirmacao =
+                document
+                    .getElementById("confirmacao")
+                    .value;
+
+
+            if(senha.length < 6){
+
+                showMessage(
+                    "A senha deve ter pelo menos 6 caracteres.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if(senha !== confirmacao){
+
+                showMessage(
+                    "As senhas não são iguais.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            setLoading(true);
+
+
+            try{
+
+                const {
+                    data
+                } =
+                    await supabaseClient.auth
+                        .getSession();
+
+
+                if(!data?.session){
+
+                    throw new Error(
+                        "O link de recuperação expirou ou já foi utilizado."
+                    );
+
+                }
+
+
+                const {
+                    error
+                } =
+                    await supabaseClient.auth
+                        .updateUser({
+                            password: senha
+                        });
+
+
+                if(error){
+
+                    throw error;
+
+                }
+
+
+                await supabaseClient.auth.signOut();
+
+
+                document
+                    .getElementById("formArea")
+                    .style.display = "none";
+
+                document
+                    .getElementById("successArea")
+                    .style.display = "block";
+
+
+            }catch(error){
+
+                console.error(error);
+
+                showMessage(
+                    error.message ||
+                    "Não foi possível alterar a senha.",
+                    "error"
+                );
+
+            }finally{
+
+                setLoading(false);
+
+            }
+
+        });
+
+</script>
+
+</body>
+</html>

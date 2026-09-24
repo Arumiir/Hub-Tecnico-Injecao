@@ -2,535 +2,489 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Apontamento — Setor A</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Controle de Produção</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root{
-  --bg:#f4f5f7;
-  --card:#ffffff;
-  --border:#dfe3e8;
-  --text:#20242a;
-  --muted:#69727d;
-
-  --green:#198754;
-  --green-bg:#e8f5ee;
-
-  --yellow:#d89b00;
-  --yellow-bg:#fff6d9;
-
-  --red:#d64545;
-  --red-bg:#fdeaea;
-
-  --blue:#1769aa;
-  --danger:#c62828;
+    --bg:#f2f2f7;
+    --card:#fff;
+    --text:#111;
+    --muted:#8e8e93;
+    --line:#e5e5ea;
+    --blue:#007aff;
+    --green:#34c759;
+    --red:#ff3b30;
+    --yellow:#ffcc00;
 }
 
 *{
-  box-sizing:border-box;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
 body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,Helvetica,sans-serif;
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Arial,sans-serif;
 }
 
-button,
-input,
-select,
-textarea{
-  font:inherit;
+button,input,select,textarea{
+    font:inherit;
 }
 
 button{
-  cursor:pointer;
+    border:0;
+    cursor:pointer;
+}
+
+.hidden{
+    display:none!important;
 }
 
 .app{
-  width:100%;
-  max-width:720px;
-  margin:0 auto;
-  padding:18px 14px 40px;
+    min-height:100vh;
+    padding-bottom:110px;
 }
 
-header{
-  margin-bottom:18px;
+.header{
+    position:sticky;
+    top:0;
+    z-index:20;
+    padding:
+        calc(14px + env(safe-area-inset-top))
+        18px 14px;
+    background:rgba(242,242,247,.88);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(0,0,0,.06);
 }
 
 .header-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
 }
 
-h1{
-  margin:0;
-  font-size:23px;
+.header-title{
+    font-size:22px;
+    font-weight:750;
+    letter-spacing:-.6px;
 }
 
-.subtitle{
-  margin-top:5px;
-  color:var(--muted);
-  font-size:14px;
+.header-subtitle{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:3px;
 }
 
-.user-area{
-  display:flex;
-  align-items:center;
-  gap:8px;
+.avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:#111;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    font-weight:700;
 }
 
-.user-name{
-  font-size:12px;
-  color:var(--muted);
-}
-
-.btn-logout{
-  border:1px solid var(--border);
-  background:white;
-  color:var(--text);
-  border-radius:8px;
-  padding:7px 9px;
-  font-size:12px;
+.container{
+    width:min(900px,100%);
+    margin:auto;
+    padding:18px;
 }
 
 .card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:15px;
-  margin-bottom:14px;
+    background:var(--card);
+    border-radius:22px;
+    padding:18px;
+    box-shadow:0 4px 18px rgba(0,0,0,.05);
+    margin-bottom:14px;
 }
 
-.section-title{
-  font-size:15px;
-  font-weight:700;
-  margin-bottom:12px;
+.leader-card{
+    padding:20px;
 }
 
-.fields{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+.leader-label{
+    color:var(--muted);
+    font-size:12px;
+    font-weight:600;
+    margin-bottom:4px;
 }
 
-.field label{
-  display:block;
-  margin-bottom:6px;
-  font-size:12px;
-  color:var(--muted);
-  font-weight:700;
+.leader-name{
+    font-size:22px;
+    font-weight:750;
+    letter-spacing:-.4px;
+}
+
+.context-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:18px;
+}
+
+.context-date{
+    grid-column:1 / -1;
+}
+
+.field-label{
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:6px;
+    font-weight:600;
 }
 
 input,
 select,
 textarea{
-  width:100%;
-  border:1px solid var(--border);
-  border-radius:9px;
-  background:white;
-  color:var(--text);
-  padding:10px 11px;
-  outline:none;
+    width:100%;
+    border:0;
+    outline:none;
+    background:#f2f2f7;
+    border-radius:13px;
+    padding:12px 13px;
+    color:var(--text);
 }
 
-input:focus,
-select:focus,
-textarea:focus{
-  border-color:var(--green);
-  box-shadow:0 0 0 3px rgba(25,135,84,.08);
+.section-title{
+    font-size:17px;
+    font-weight:750;
+    margin:24px 4px 10px;
 }
 
 .machine-grid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:8px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
 }
 
-.machine-btn{
-  min-height:48px;
-  border:1px solid var(--border);
-  background:white;
-  color:var(--text);
-  border-radius:9px;
-  font-weight:700;
-  position:relative;
+.machine{
+    min-height:76px;
+    background:var(--card);
+    border-radius:18px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 3px 12px rgba(0,0,0,.04);
+    position:relative;
+    transition:.18s;
 }
 
-.machine-btn.saved{
-  background:var(--green-bg);
-  border-color:var(--green);
-  color:var(--green-dark,#146c43);
+.machine:active{
+    transform:scale(.96);
 }
 
-.machine-btn.saved::after{
-  content:"✓";
-  position:absolute;
-  top:3px;
-  right:5px;
-  font-size:11px;
-  color:var(--green);
+.machine-code{
+    font-size:16px;
+    font-weight:750;
 }
 
-.machine-form{
-  display:none;
+.machine-time{
+    margin-top:4px;
+    font-size:12px;
+    color:var(--muted);
 }
 
-.machine-form.active{
-  display:block;
+.machine.saved{
+    background:#e9f9ee;
 }
 
-.machine-title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:14px;
+.machine.saved .machine-code{
+    color:#168a39;
 }
 
-.machine-title strong{
-  font-size:18px;
+.machine-check{
+    position:absolute;
+    top:7px;
+    right:8px;
+    color:var(--green);
+    font-size:12px;
+    font-weight:800;
 }
 
-.close-form{
-  border:1px solid var(--border);
-  background:white;
-  border-radius:8px;
-  padding:7px 10px;
-  font-size:12px;
+.machine-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:16px;
 }
 
-.hours-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:8px;
+.machine-header h2{
+    margin:0;
+    font-size:28px;
+    letter-spacing:-.7px;
 }
 
-.hour-box{
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:10px;
-  background:white;
+.back-button{
+    background:#e5e5ea;
+    color:#111;
+    border-radius:12px;
+    padding:9px 13px;
+    font-weight:650;
 }
 
-.hour-box label{
-  display:block;
-  color:var(--muted);
-  font-size:11px;
-  font-weight:700;
-  margin-bottom:6px;
-}
-
-.hour-box input{
-  border:0;
-  padding:0;
-  font-size:17px;
-  font-weight:700;
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
 }
 
 .total-box{
-  transition:.15s;
+    margin-top:14px;
+    border-radius:16px;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#f2f2f7;
 }
 
-.status-red{
-  background:var(--red-bg);
-  border-color:var(--red);
+.total-label{
+    font-size:13px;
+    color:var(--muted);
 }
 
-.status-yellow{
-  background:var(--yellow-bg);
-  border-color:var(--yellow);
+.total-value{
+    font-size:24px;
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
 }
 
 .status-green{
-  background:var(--green-bg);
-  border-color:var(--green);
+    background:#e9f9ee!important;
+    color:#168a39;
 }
 
-.saldo-row{
-  margin-top:10px;
+.status-yellow{
+    background:#fff8d9!important;
+    color:#8a6900;
 }
 
-.saldo-row label{
-  display:block;
-  font-size:12px;
-  font-weight:700;
-  color:var(--muted);
-  margin-bottom:6px;
+.status-red{
+    background:#ffe9e7!important;
+    color:#c9281f;
 }
 
-.problems-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:18px;
-  margin-bottom:8px;
+.occurrence-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-top:12px;
 }
 
-.problems-header strong{
-  font-size:14px;
+.occurrence{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#f2f2f7;
+    border-radius:14px;
+    padding:11px 12px;
 }
 
-.add-problem{
-  border:1px solid var(--green);
-  color:var(--green);
-  background:var(--green-bg);
-  border-radius:8px;
-  padding:7px 10px;
-  font-size:12px;
-  font-weight:700;
+.occurrence-content{
+    flex:1;
+    min-width:0;
 }
 
-.problem-editor{
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:10px;
-  margin-bottom:8px;
-  background:#fafafa;
+.occurrence-type{
+    font-size:12px;
+    font-weight:750;
+    color:var(--blue);
 }
 
-.problem-editor .row{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:8px;
+.occurrence-description{
+    font-size:14px;
+    margin-top:3px;
+    word-break:break-word;
 }
 
-.problem-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:7px;
-  margin-top:8px;
+.occurrence-actions{
+    display:flex;
+    gap:5px;
 }
 
-.btn-small{
-  border:1px solid var(--border);
-  background:white;
-  border-radius:7px;
-  padding:7px 9px;
-  font-size:12px;
+.small-button{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    background:#fff;
+    color:#555;
 }
 
-.btn-save-problem{
-  background:var(--green);
-  border-color:var(--green);
-  color:white;
+.add-occurrence{
+    width:100%;
+    background:#f2f2f7;
+    color:var(--blue);
+    padding:13px;
+    border-radius:14px;
+    font-weight:700;
+    margin-top:10px;
 }
 
-.problem-card{
-  border:1px solid var(--border);
-  border-radius:9px;
-  padding:9px 10px;
-  margin-bottom:7px;
-  background:white;
+.occurrence-editor{
+    margin-top:12px;
+    padding:14px;
+    border-radius:16px;
+    background:#f2f2f7;
 }
 
-.problem-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:10px;
+.editor-actions{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
 }
 
-.problem-number{
-  font-size:12px;
-  font-weight:800;
-  color:var(--green);
-}
-
-.problem-category{
-  font-size:12px;
-  font-weight:700;
-}
-
-.problem-description{
-  margin-top:4px;
-  font-size:13px;
-  line-height:1.35;
-}
-
-.problem-buttons{
-  display:flex;
-  gap:5px;
-  margin-top:8px;
-}
-
-.problem-buttons button{
-  border:1px solid var(--border);
-  background:white;
-  border-radius:6px;
-  padding:5px 7px;
-  font-size:11px;
-}
-
-.btn-delete{
-  color:var(--danger);
-}
-
-textarea{
-  min-height:80px;
-  resize:vertical;
+.secondary{
+    flex:1;
+    padding:12px;
+    border-radius:13px;
+    background:#fff;
 }
 
 .primary{
-  width:100%;
-  border:0;
-  background:var(--green);
-  color:white;
-  border-radius:10px;
-  padding:13px;
-  font-weight:700;
-  margin-top:12px;
+    flex:1;
+    padding:12px;
+    border-radius:13px;
+    background:var(--blue);
+    color:#fff;
+    font-weight:700;
 }
 
-.primary:disabled{
-  opacity:.6;
+.delete-machine{
+    width:100%;
+    margin-top:4px;
+    padding:14px;
+    border-radius:14px;
+    background:#fff;
+    color:var(--red);
+    font-weight:650;
+    border:1px solid #f0d0cd;
 }
 
-.summary-machine{
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:11px;
-  margin-bottom:9px;
-  background:white;
+.delete-machine:active{
+    background:#fff0ef;
 }
 
-.summary-machine-header{
-  font-weight:800;
-  margin-bottom:9px;
+.bottom-action{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:30;
+    padding:
+        12px
+        18px
+        calc(12px + env(safe-area-inset-bottom));
+    background:rgba(242,242,247,.9);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
 }
 
-.summary-hours{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:6px;
+.save-button{
+    width:min(900px,100%);
+    display:block;
+    margin:auto;
+    background:var(--green);
+    color:#fff;
+    padding:15px;
+    border-radius:17px;
+    font-size:16px;
+    font-weight:750;
+    box-shadow:0 6px 20px rgba(52,199,89,.25);
 }
 
-.summary-hour{
-  border:1px solid var(--border);
-  border-radius:7px;
-  padding:7px;
+.summary-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
 }
 
-.summary-hour small{
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-  margin-bottom:3px;
+.summary-table th{
+    color:var(--muted);
+    font-weight:600;
+    text-align:left;
+    padding:8px 4px;
+    border-bottom:1px solid var(--line);
 }
 
-.summary-hour strong{
-  font-size:14px;
+.summary-table td{
+    padding:10px 4px;
+    border-bottom:1px solid var(--line);
 }
 
-.summary-problems{
-  margin-top:9px;
-  border-top:1px solid var(--border);
-  padding-top:8px;
+.summary-table tr:last-child td{
+    border-bottom:0;
 }
 
-.summary-problem{
-  font-size:12px;
-  line-height:1.4;
-  margin-bottom:5px;
-}
-
-.summary-observation{
-  margin-top:8px;
-  padding-top:8px;
-  border-top:1px solid var(--border);
-  color:var(--muted);
-  font-size:12px;
-}
-
-.closing-card{
-  background:white;
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:14px;
-  margin-top:14px;
-}
-
-.closing-title{
-  font-weight:800;
-  margin-bottom:10px;
-}
-
-.closing-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:7px;
-}
-
-.closing-item{
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:9px;
-  text-align:center;
-}
-
-.closing-item small{
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-}
-
-.closing-item strong{
-  display:block;
-  margin-top:3px;
-  font-size:15px;
-}
-
-.empty{
-  color:var(--muted);
-  font-size:13px;
-  text-align:center;
-  padding:10px;
+.logout{
+    width:100%;
+    margin-top:18px;
+    padding:13px;
+    border-radius:14px;
+    background:#fff;
+    color:var(--red);
+    font-weight:650;
 }
 
 .toast{
-  position:fixed;
-  left:50%;
-  bottom:20px;
-  transform:translateX(-50%);
-  background:#20242a;
-  color:white;
-  padding:11px 15px;
-  border-radius:9px;
-  font-size:13px;
-  opacity:0;
-  pointer-events:none;
-  transition:.2s;
-  z-index:1000;
+    position:fixed;
+    left:50%;
+    bottom:95px;
+    transform:translateX(-50%) translateY(15px);
+    background:#111;
+    color:#fff;
+    padding:11px 16px;
+    border-radius:14px;
+    font-size:14px;
+    font-weight:650;
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
+    z-index:100;
 }
 
 .toast.show{
-  opacity:1;
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
 }
 
-@media(max-width:420px){
-  .machine-grid{
-    grid-template-columns:repeat(4,1fr);
-  }
-
-  .fields{
-    grid-template-columns:1fr;
-  }
-
-  .hours-grid,
-  .summary-hours{
-    grid-template-columns:1fr 1fr 1fr;
-  }
-
-  .user-name{
-    display:none;
-  }
+.loading{
+    text-align:center;
+    color:var(--muted);
+    padding:30px 10px;
 }
+
+@media(max-width:600px){
+
+    .machine-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .machine{
+        min-height:72px;
+    }
+
+    .context-grid{
+        gap:10px;
+    }
+
+    .context-grid input,
+    .context-grid select{
+        padding:11px 10px;
+        font-size:14px;
+    }
+}
+
 </style>
 </head>
 
@@ -538,1933 +492,2194 @@ textarea{
 
 <div class="app">
 
-  <header>
-
+<header class="header">
     <div class="header-top">
-
-      <div>
-        <h1>Apontamento — Setor A</h1>
-
-        <div class="subtitle">
-          Registro de produção do turno
+        <div>
+            <div class="header-title">CONTROLE DE PRODUÇÃO</div>
+            <div class="header-subtitle">Setor de Injeção</div>
         </div>
-      </div>
 
-      <div class="user-area">
-        <span class="user-name" id="userName"></span>
+        <div class="avatar" id="avatar">--</div>
+    </div>
+</header>
 
-        <button
-          class="btn-logout"
-          id="logoutBtn">
-          Sair
-        </button>
-      </div>
+<main class="container">
+
+<section id="dashboard">
+
+    <div class="card leader-card">
+
+        <div class="leader-label">
+            LÍDER
+        </div>
+
+        <div id="leaderName" class="leader-name">
+            Carregando...
+        </div>
+
+        <div class="context-grid">
+
+            <div class="context-date">
+                <div class="field-label">Data</div>
+
+                <input
+                    id="date"
+                    type="date"
+                >
+            </div>
+
+            <div>
+                <div class="field-label">Turno</div>
+
+                <select id="shift">
+                    <option>1º turno</option>
+                    <option>2º turno</option>
+                    <option>3º turno</option>
+                </select>
+            </div>
+
+            <div>
+                <div class="field-label">Setor</div>
+
+                <select id="sector">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                </select>
+            </div>
+
+        </div>
 
     </div>
 
-  </header>
-
-
-  <!-- ===================================================
-       DADOS DO TURNO
-  ==================================================== -->
-
-  <section class="card">
 
     <div class="section-title">
-      Dados do turno
+        Máquinas
     </div>
 
-    <div class="fields">
-
-      <div class="field">
-
-        <label for="data">
-          Data
-        </label>
-
-        <input
-          id="data"
-          type="date">
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="shift">
-          Turno
-        </label>
-
-        <select id="shift">
-
-          <option value="1º turno">
-            1º turno
-          </option>
-
-          <option value="2º turno">
-            2º turno
-          </option>
-
-          <option value="3º turno">
-            3º turno
-          </option>
-
-        </select>
-
-      </div>
-
+    <div id="machineGrid" class="machine-grid">
+        <div class="loading">
+            Carregando...
+        </div>
     </div>
 
-  </section>
-
-
-  <!-- ===================================================
-       MÁQUINAS
-  ==================================================== -->
-
-  <section class="card">
 
     <div class="section-title">
-      Máquinas
+        Fechamento
     </div>
 
-    <div
-      class="machine-grid"
-      id="machineGrid">
-    </div>
+    <div class="card">
 
-  </section>
+        <div
+            id="summaryEmpty"
+            style="color:#8e8e93;font-size:14px;"
+        >
+            Nenhuma máquina salva ainda.
+        </div>
 
+        <div id="summaryContent" class="hidden">
 
-  <!-- ===================================================
-       FORMULÁRIO DA MÁQUINA
-  ==================================================== -->
+            <table class="summary-table">
 
-  <section
-    class="card machine-form"
-    id="machineForm">
+                <thead>
+                    <tr>
+                        <th>Máquina</th>
+                        <th>Total</th>
+                        <th>Saldo</th>
+                    </tr>
+                </thead>
 
-    <div class="machine-title">
+                <tbody id="summaryBody"></tbody>
 
-      <strong id="machineTitle">
-        Máquina 01
-      </strong>
+            </table>
 
-      <button
-        class="close-form"
-        id="closeMachine">
-        Fechar
-      </button>
-
-    </div>
-
-
-    <div class="hours-grid">
-
-      <div class="hour-box">
-
-        <label>
-          Hora boa
-        </label>
-
-        <input
-          id="horaBoa"
-          type="time"
-          step="60"
-          value="00:00">
-
-      </div>
-
-
-      <div class="hour-box">
-
-        <label>
-          Reposição
-        </label>
-
-        <input
-          id="reposicao"
-          type="time"
-          step="60"
-          value="00:00">
-
-      </div>
-
-
-      <div
-        class="hour-box total-box status-red"
-        id="totalBox">
-
-        <label>
-          Total baixado
-        </label>
-
-        <input
-          id="totalBaixado"
-          type="time"
-          step="60"
-          value="00:00"
-          readonly>
-
-      </div>
-
-    </div>
-
-
-    <div class="saldo-row">
-
-      <label for="saldo">
-        Saldo
-      </label>
-
-      <input
-        id="saldo"
-        type="time"
-        step="60"
-        value="00:00">
-
-    </div>
-
-
-    <!-- PROBLEMAS -->
-
-    <div class="problems-header">
-
-      <strong>
-        Problemas / ocorrências
-      </strong>
-
-      <button
-        class="add-problem"
-        id="addProblem">
-        + Adicionar problema
-      </button>
-
-    </div>
-
-
-    <div id="problemEditorContainer"></div>
-
-    <div id="problemList"></div>
-
-
-    <!-- OBSERVAÇÃO -->
-
-    <div
-      class="field"
-      style="margin-top:16px;">
-
-      <label for="observacao">
-        Observação geral
-      </label>
-
-      <textarea
-        id="observacao"
-        placeholder="Digite uma observação, se necessário...">
-      </textarea>
+        </div>
 
     </div>
 
 
     <button
-      class="primary"
-      id="saveMachine">
-      Salvar máquina
+        class="logout"
+        onclick="logout()"
+    >
+        Sair
     </button>
 
-  </section>
+</section>
 
 
-  <!-- ===================================================
-       FECHAMENTO
-  ==================================================== -->
+<section id="machineScreen" class="hidden">
 
-  <section
-    class="card"
-    id="summarySection"
-    style="display:none;">
+    <div class="machine-header">
 
-    <div class="section-title">
-      Fechamento do turno
-    </div>
+        <button
+            class="back-button"
+            onclick="backToDashboard()"
+        >
+            ‹ Voltar
+        </button>
 
-    <div id="summaryMachines"></div>
+        <h2 id="machineTitle">
+            M01
+        </h2>
 
-    <div class="closing-card">
-
-      <div class="closing-title">
-        Resumo geral
-      </div>
-
-      <div class="closing-grid">
-
-        <div class="closing-item">
-          <small>Máquinas</small>
-          <strong id="summaryMachineCount">0</strong>
-        </div>
-
-        <div class="closing-item">
-          <small>Hora boa</small>
-          <strong id="summaryGood">00:00</strong>
-        </div>
-
-        <div class="closing-item">
-          <small>Reposição</small>
-          <strong id="summaryReplacement">00:00</strong>
-        </div>
-
-      </div>
-
-      <div
-        class="closing-grid"
-        style="margin-top:7px;">
-
-        <div class="closing-item">
-          <small>Total baixado</small>
-          <strong id="summaryTotal">00:00</strong>
-        </div>
-
-        <div class="closing-item">
-          <small>Saldo</small>
-          <strong id="summaryBalance">00:00</strong>
-        </div>
-
-        <div class="closing-item">
-          <small>Ocorrências</small>
-          <strong id="summaryProblems">0</strong>
-        </div>
-
-      </div>
+        <div style="width:65px;"></div>
 
     </div>
 
-  </section>
+
+    <div class="card">
+
+        <div
+            class="section-title"
+            style="margin:0 0 12px;"
+        >
+            Produção
+        </div>
+
+        <div class="form-grid">
+
+            <div>
+
+                <div class="field-label">
+                    Hora boa
+                </div>
+
+                <input
+                    id="goodHours"
+                    type="text"
+                    inputmode="text"
+                    autocomplete="off"
+                    placeholder="00:00"
+                    oninput="formatTimeInput(this); calculateTotal()"
+                >
+
+            </div>
+
+
+            <div>
+
+                <div class="field-label">
+                    Reposição
+                </div>
+
+                <input
+                    id="replacementHours"
+                    type="text"
+                    inputmode="text"
+                    autocomplete="off"
+                    placeholder="00:00"
+                    oninput="formatTimeInput(this); calculateTotal()"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div id="totalBox" class="total-box">
+
+            <div class="total-label">
+                Total baixado
+            </div>
+
+            <div
+                id="totalHours"
+                class="total-value"
+            >
+                00:00
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div
+            class="section-title"
+            style="margin:0 0 12px;"
+        >
+            Saldo
+        </div>
+
+        <input
+            id="balance"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            placeholder="00:00"
+            oninput="formatBalanceInput(this)"
+        >
+
+    </div>
+
+
+    <div class="card">
+
+        <div
+            class="section-title"
+            style="margin:0;"
+        >
+            Ocorrências
+        </div>
+
+        <div
+            id="occurrenceList"
+            class="occurrence-list"
+        ></div>
+
+
+        <button
+            class="add-occurrence"
+            onclick="openOccurrenceEditor()"
+        >
+            + Adicionar ocorrência
+        </button>
+
+
+        <div
+            id="occurrenceEditor"
+            class="occurrence-editor hidden"
+        >
+
+            <div class="field-label">
+                Tipo
+            </div>
+
+            <select id="occurrenceType">
+
+                <option>Mecânico</option>
+                <option>Elétrico</option>
+                <option>Matriz</option>
+                <option>Material</option>
+                <option>Processo</option>
+                <option>Parada de máquina</option>
+                <option>Setup</option>
+                <option>Outro</option>
+
+            </select>
+
+
+            <div
+                class="field-label"
+                style="margin-top:10px;"
+            >
+                Descrição
+            </div>
+
+            <textarea
+                id="occurrenceDescription"
+                placeholder="Descreva o problema..."
+            ></textarea>
+
+
+            <div class="editor-actions">
+
+                <button
+                    class="secondary"
+                    onclick="cancelOccurrence()"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    class="primary"
+                    onclick="saveOccurrence()"
+                >
+                    Salvar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div
+            class="section-title"
+            style="margin:0 0 12px;"
+        >
+            Observação
+        </div>
+
+        <textarea
+            id="observation"
+            placeholder="Observação geral da máquina..."
+        ></textarea>
+
+    </div>
+
+
+    <div
+        id="deleteMachineCard"
+        class="card hidden"
+        style="padding:14px;"
+    >
+
+        <button
+            class="delete-machine"
+            onclick="deleteMachine()"
+        >
+            Excluir lançamento desta máquina
+        </button>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<div id="bottomAction" class="bottom-action hidden">
+
+    <button
+        class="save-button"
+        onclick="saveMachine()"
+    >
+        Salvar máquina
+    </button>
 
 </div>
 
 
-<div
-  class="toast"
-  id="toast">
+<div id="toast" class="toast"></div>
+
 </div>
 
 
 <script>
 
-/* =========================================================
-   SUPABASE
-========================================================= */
-
 const SUPABASE_URL =
-  "https://icajmncojvidhrqlbevq.supabase.co";
+    "https://icajmncojvidhrqlbevq.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
+    "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
 
 const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
-
-/* =========================================================
-   ESTADO
-========================================================= */
 
 let currentUser = null;
 let currentProfile = null;
-
-let currentTurnId = null;
+let currentTurn = null;
 let currentMachine = null;
+let machineData = {};
+let editingOccurrence = null;
+let loadingData = false;
 
-let machines = {};
 
-let editingProblemIndex = null;
+const sectorMachines = {
 
+    A:{
+        start:1,
+        end:29
+    },
 
-/* =========================================================
-   METAS
-========================================================= */
+    B:{
+        start:30,
+        end:51
+    },
 
-const shiftTargets = {
-
-  "1º turno": 8 * 60 + 48,
-
-  "2º turno": 8 * 60 + 36,
-
-  "3º turno": 6 * 60 + 36
+    C:{
+        start:52,
+        end:85
+    }
 
 };
 
 
-/* =========================================================
-   ELEMENTOS
-========================================================= */
+const shiftTargets = {
 
-const machineGrid =
-  document.getElementById("machineGrid");
+    "1º turno":
+        8 * 60 + 48,
 
-const machineForm =
-  document.getElementById("machineForm");
+    "2º turno":
+        8 * 60 + 36,
 
-const machineTitle =
-  document.getElementById("machineTitle");
+    "3º turno":
+        6 * 60 + 36
 
-const horaBoa =
-  document.getElementById("horaBoa");
-
-const reposicao =
-  document.getElementById("reposicao");
-
-const totalBaixado =
-  document.getElementById("totalBaixado");
-
-const totalBox =
-  document.getElementById("totalBox");
-
-const saldo =
-  document.getElementById("saldo");
-
-const observacao =
-  document.getElementById("observacao");
-
-const problemList =
-  document.getElementById("problemList");
-
-const problemEditorContainer =
-  document.getElementById("problemEditorContainer");
-
-const summarySection =
-  document.getElementById("summarySection");
-
-const summaryMachines =
-  document.getElementById("summaryMachines");
-
-const toast =
-  document.getElementById("toast");
+};
 
 
-/* =========================================================
-   UTILITÁRIOS
-========================================================= */
+document.addEventListener(
+    "DOMContentLoaded",
+    initialize
+);
 
-function showToast(text){
 
-  toast.textContent = text;
+async function initialize(){
 
-  toast.classList.add("show");
+    document
+        .getElementById("date")
+        .value =
+        new Date()
+            .toISOString()
+            .split("T")[0];
 
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2200);
+
+    document
+        .getElementById("shift")
+        .addEventListener(
+            "change",
+            loadProductionData
+        );
+
+
+    document
+        .getElementById("sector")
+        .addEventListener(
+            "change",
+            loadProductionData
+        );
+
+
+    document
+        .getElementById("date")
+        .addEventListener(
+            "change",
+            loadProductionData
+        );
+
+
+    const {
+        data:{
+            session
+        }
+    } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+
+    if(!session){
+
+        window.location.href =
+            "index.html";
+
+        return;
+    }
+
+
+    currentUser =
+        session.user;
+
+
+    await loadProfile();
+
 }
 
 
-function minutesToTime(totalMinutes){
+async function loadProfile(){
 
-  totalMinutes =
-    Math.max(0, Number(totalMinutes) || 0);
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("usuarios")
+            .select("*")
+            .eq("id", currentUser.id)
+            .eq("ativo", true)
+            .single();
 
-  const hours =
-    Math.floor(totalMinutes / 60);
 
-  const minutes =
-    totalMinutes % 60;
+    if(error || !data){
 
-  return String(hours).padStart(2,"0")
-    + ":" +
-    String(minutes).padStart(2,"0");
+        alert(
+            "Não foi possível carregar seu perfil."
+        );
+
+        await supabaseClient
+            .auth
+            .signOut();
+
+        window.location.href =
+            "index.html";
+
+        return;
+    }
+
+
+    if(data.perfil !== "lider"){
+
+        alert(
+            "Este usuário não possui acesso de líder."
+        );
+
+        await supabaseClient
+            .auth
+            .signOut();
+
+        window.location.href =
+            "index.html";
+
+        return;
+    }
+
+
+    currentProfile = data;
+
+
+    document
+        .getElementById("leaderName")
+        .textContent =
+            data.nome;
+
+
+    document
+        .getElementById("avatar")
+        .textContent =
+            getInitials(data.nome);
+
+
+    await loadProductionData();
+
+}
+
+
+async function loadProductionData(){
+
+    if(!currentProfile)
+        return;
+
+
+    if(currentMachine){
+        backToDashboard();
+    }
+
+
+    loadingData = true;
+    machineData = {};
+    currentTurn = null;
+
+    renderMachines();
+
+
+    const date =
+        document
+            .getElementById("date")
+            .value;
+
+
+    const shift =
+        document
+            .getElementById("shift")
+            .value;
+
+
+    const sector =
+        document
+            .getElementById("sector")
+            .value;
+
+
+    const {
+        data:turn,
+        error:turnError
+    } =
+        await supabaseClient
+            .from("turnos")
+            .select("*")
+            .eq("data", date)
+            .eq("turno", shift)
+            .eq("setor", sector)
+            .eq("lider_id", currentUser.id)
+            .maybeSingle();
+
+
+    if(turnError){
+
+        console.error(turnError);
+
+        showToast(
+            "Erro ao carregar os dados."
+        );
+
+        loadingData = false;
+
+        renderMachines();
+
+        return;
+    }
+
+
+    currentTurn = turn;
+
+
+    if(!turn){
+
+        loadingData = false;
+
+        renderMachines();
+
+        return;
+    }
+
+
+    const {
+        data:records,
+        error
+    } =
+        await supabaseClient
+            .from("apontamentos")
+            .select(`
+                *,
+                ocorrencias(*)
+            `)
+            .eq("turno_id", turn.id)
+            .order("maquina", {
+                ascending:true
+            });
+
+
+    if(error){
+
+        console.error(error);
+
+        showToast(
+            "Erro ao carregar os apontamentos."
+        );
+
+        loadingData = false;
+
+        renderMachines();
+
+        return;
+    }
+
+
+    (records || []).forEach(record => {
+
+        const id =
+            String(record.maquina)
+                .padStart(2,"0");
+
+
+        machineData[id] = {
+
+            id:record.id,
+
+            good:
+                record.horas_boas || "",
+
+            replacement:
+                record.horas_reposicao || "",
+
+            total:
+                record.horas_baixadas || "00:00",
+
+            balance:
+                record.saldo || "",
+
+            observation:
+                record.observacao || "",
+
+            occurrences:
+                (record.ocorrencias || [])
+                    .map(item => ({
+
+                        id:item.id,
+
+                        type:
+                            item.tipo || "Outro",
+
+                        description:
+                            item.descricao || ""
+
+                    }))
+
+        };
+
+    });
+
+
+    loadingData = false;
+
+    renderMachines();
+
+}
+
+
+async function getOrCreateTurn(){
+
+    const date =
+        document
+            .getElementById("date")
+            .value;
+
+
+    const shift =
+        document
+            .getElementById("shift")
+            .value;
+
+
+    const sector =
+        document
+            .getElementById("sector")
+            .value;
+
+
+    if(
+        currentTurn &&
+        currentTurn.data === date &&
+        currentTurn.turno === shift &&
+        currentTurn.setor === sector
+    ){
+
+        return currentTurn;
+
+    }
+
+
+    const {
+        data:existing,
+        error:findError
+    } =
+        await supabaseClient
+            .from("turnos")
+            .select("*")
+            .eq("data", date)
+            .eq("turno", shift)
+            .eq("setor", sector)
+            .eq("lider_id", currentUser.id)
+            .maybeSingle();
+
+
+    if(findError)
+        throw findError;
+
+
+    if(existing){
+
+        currentTurn = existing;
+
+        return existing;
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("turnos")
+            .insert({
+
+                data:date,
+
+                turno:shift,
+
+                setor:sector,
+
+                lider_id:
+                    currentUser.id
+
+            })
+            .select()
+            .single();
+
+
+    if(error)
+        throw error;
+
+
+    currentTurn = data;
+
+    return data;
+
+}
+
+
+function formatTimeInput(el){
+
+    let value =
+        el.value
+            .replace(/[^\d:]/g,"");
+
+
+    if(value.includes(":")){
+
+        const parts =
+            value.split(":");
+
+
+        const hours =
+            parts[0].slice(0,2);
+
+
+        const minutes =
+            (parts[1] || "")
+                .slice(0,2);
+
+
+        el.value =
+            hours + ":" + minutes;
+
+
+        return;
+
+    }
+
+
+    value =
+        value.slice(0,4);
+
+
+    if(value.length > 2){
+
+        value =
+            value.slice(0,2) +
+            ":" +
+            value.slice(2);
+
+    }
+
+
+    el.value =
+        value;
+
+}
+
+
+function formatBalanceInput(el){
+
+    let value =
+        el.value;
+
+
+    const negative =
+        value.startsWith("-");
+
+
+    value =
+        value.replace(/[^\d:]/g,"");
+
+
+    if(value.includes(":")){
+
+        const parts =
+            value.split(":");
+
+
+        const hours =
+            parts[0].slice(0,2);
+
+
+        const minutes =
+            (parts[1] || "")
+                .slice(0,2);
+
+
+        el.value =
+            (negative ? "-" : "") +
+            hours +
+            ":" +
+            minutes;
+
+
+        return;
+
+    }
+
+
+    value =
+        value.slice(0,4);
+
+
+    if(value.length > 2){
+
+        value =
+            value.slice(0,2) +
+            ":" +
+            value.slice(2);
+
+    }
+
+
+    el.value =
+        (negative ? "-" : "") +
+        value;
+
 }
 
 
 function timeToMinutes(value){
 
-  if(!value){
-    return 0;
-  }
+    if(!value)
+        return 0;
 
-  const parts =
-    value.split(":").map(Number);
 
-  return (
-    (parts[0] || 0) * 60 +
-    (parts[1] || 0)
-  );
+    const negative =
+        value.startsWith("-");
+
+
+    value =
+        value.replace("-","");
+
+
+    const parts =
+        value.split(":");
+
+
+    const hours =
+        parseInt(parts[0],10) || 0;
+
+
+    const minutes =
+        parseInt(parts[1],10) || 0;
+
+
+    const total =
+        hours * 60 + minutes;
+
+
+    return negative
+        ? -total
+        : total;
+
+}
+
+
+function minutesToTime(minutes){
+
+    if(minutes === 0)
+        return "00:00";
+
+
+    if(minutes < 0){
+
+        return "-" +
+            minutesToTime(
+                Math.abs(minutes)
+            );
+
+    }
+
+
+    const hours =
+        Math.floor(minutes / 60);
+
+
+    const mins =
+        minutes % 60;
+
+
+    return String(hours)
+        .padStart(2,"0")
+        +
+        ":" +
+        String(mins)
+        .padStart(2,"0");
+
 }
 
 
 function getStatusClass(totalMinutes){
 
-  const shift =
-    document.getElementById("shift").value;
+    const shift =
+        document
+            .getElementById("shift")
+            .value;
 
-  const target =
-    shiftTargets[shift];
 
-  if(totalMinutes >= target){
-    return "status-green";
-  }
+    const target =
+        shiftTargets[shift];
 
-  if(totalMinutes >= target - 48){
-    return "status-yellow";
-  }
 
-  return "status-red";
+    if(totalMinutes >= target)
+        return "status-green";
+
+
+    if(totalMinutes >= target - 48)
+        return "status-yellow";
+
+
+    return "status-red";
+
 }
 
 
-function setToday(){
+function calculateTotal(){
 
-  const now =
-    new Date();
+    const good =
+        timeToMinutes(
+            document
+                .getElementById("goodHours")
+                .value
+        );
 
-  const year =
-    now.getFullYear();
 
-  const month =
-    String(now.getMonth() + 1)
-      .padStart(2,"0");
+    const replacement =
+        timeToMinutes(
+            document
+                .getElementById("replacementHours")
+                .value
+        );
 
-  const day =
-    String(now.getDate())
-      .padStart(2,"0");
 
-  document.getElementById("data").value =
-    `${year}-${month}-${day}`;
+    const total =
+        good + replacement;
+
+
+    document
+        .getElementById("totalHours")
+        .textContent =
+            minutesToTime(total);
+
+
+    const box =
+        document
+            .getElementById("totalBox");
+
+
+    box.classList.remove(
+        "status-green",
+        "status-yellow",
+        "status-red"
+    );
+
+
+    box.classList.add(
+        getStatusClass(total)
+    );
+
 }
 
 
-/* =========================================================
-   AUTENTICAÇÃO
-========================================================= */
+function getCurrentSector(){
 
-async function checkAuth(){
+    return document
+        .getElementById("sector")
+        .value;
 
-  const {
-    data: {
-      session
+}
+
+
+function getSectorMachines(){
+
+    const sector =
+        getCurrentSector();
+
+
+    const config =
+        sectorMachines[sector];
+
+
+    const machines = [];
+
+
+    for(
+        let i = config.start;
+        i <= config.end;
+        i++
+    ){
+
+        machines.push(
+            String(i).padStart(2,"0")
+        );
+
     }
-  } =
-    await supabaseClient.auth.getSession();
 
 
-  if(!session){
+    return machines;
 
-    window.location.href =
-      "index.html";
-
-    return false;
-  }
-
-
-  currentUser =
-    session.user;
-
-
-  const {
-    data: profile,
-    error
-  } =
-    await supabaseClient
-      .from("usuarios")
-      .select(
-        "id,nome,usuario,perfil,ativo"
-      )
-      .eq("id", currentUser.id)
-      .single();
-
-
-  if(error || !profile || !profile.ativo){
-
-    await supabaseClient.auth.signOut();
-
-    window.location.href =
-      "index.html";
-
-    return false;
-  }
-
-
-  if(profile.perfil !== "lider"){
-
-    alert(
-      "Seu usuário não possui acesso à tela de Líder."
-    );
-
-    await supabaseClient.auth.signOut();
-
-    window.location.href =
-      "index.html";
-
-    return false;
-  }
-
-
-  currentProfile =
-    profile;
-
-
-  document.getElementById("userName").textContent =
-    profile.nome;
-
-
-  return true;
 }
 
 
-/* =========================================================
-   TURNOS
-========================================================= */
+function renderMachines(){
 
-async function getOrCreateTurn(){
+    const grid =
+        document
+            .getElementById("machineGrid");
 
-  const data =
-    document.getElementById("data").value;
 
-  const shift =
-    document.getElementById("shift").value;
+    grid.innerHTML = "";
 
 
-  if(!data || !shift){
-    return null;
-  }
+    if(loadingData){
 
+        grid.innerHTML = `
 
-  const {
-    data: existing,
-    error: findError
-  } =
-    await supabaseClient
-      .from("turnos")
-      .select("*")
-      .eq("data", data)
-      .eq("turno", shift)
-      .eq("lider_id", currentUser.id)
-      .maybeSingle();
+            <div
+                class="loading"
+                style="grid-column:1/-1;"
+            >
+                Carregando...
+            </div>
 
+        `;
 
-  if(findError){
 
-    console.error(findError);
+        renderSummary();
 
-    showToast(
-      "Erro ao consultar o turno."
-    );
-
-    return null;
-  }
-
-
-  if(existing){
-
-    currentTurnId =
-      existing.id;
-
-    return existing;
-  }
-
-
-  const {
-    data: created,
-    error: createError
-  } =
-    await supabaseClient
-      .from("turnos")
-      .insert({
-        data: data,
-        turno: shift,
-        lider_id: currentUser.id,
-        status: "aberto"
-      })
-      .select()
-      .single();
-
-
-  if(createError){
-
-    console.error(createError);
-
-    showToast(
-      "Não foi possível criar o turno."
-    );
-
-    return null;
-  }
-
-
-  currentTurnId =
-    created.id;
-
-
-  return created;
-}
-
-
-/* =========================================================
-   MÁQUINAS
-========================================================= */
-
-function createMachineButtons(){
-
-  machineGrid.innerHTML = "";
-
-  for(let i = 1; i <= 29; i++){
-
-    const button =
-      document.createElement("button");
-
-    button.className =
-      "machine-btn";
-
-    button.dataset.machine =
-      i;
-
-    button.textContent =
-      String(i).padStart(2,"0");
-
-    button.addEventListener(
-      "click",
-      () => openMachine(i)
-    );
-
-    machineGrid.appendChild(button);
-  }
-}
-
-
-function updateMachineButton(machine){
-
-  const button =
-    document.querySelector(
-      `.machine-btn[data-machine="${machine}"]`
-    );
-
-  if(!button){
-    return;
-  }
-
-
-  if(machines[machine]){
-
-    button.classList.add("saved");
-
-  }else{
-
-    button.classList.remove("saved");
-
-  }
-}
-
-
-/* =========================================================
-   ABRIR MÁQUINA
-========================================================= */
-
-async function openMachine(machine){
-
-  currentMachine =
-    machine;
-
-
-  await getOrCreateTurn();
-
-
-  const saved =
-    machines[machine];
-
-
-  machineTitle.textContent =
-    "Máquina " +
-    String(machine).padStart(2,"0");
-
-
-  if(saved){
-
-    horaBoa.value =
-      minutesToTime(saved.horaBoa);
-
-    reposicao.value =
-      minutesToTime(saved.reposicao);
-
-    totalBaixado.value =
-      minutesToTime(saved.totalBaixado);
-
-    saldo.value =
-      minutesToTime(saved.saldo);
-
-    observacao.value =
-      saved.observacao || "";
-
-  }else{
-
-    horaBoa.value =
-      "00:00";
-
-    reposicao.value =
-      "00:00";
-
-    totalBaixado.value =
-      "00:00";
-
-    saldo.value =
-      "00:00";
-
-    observacao.value =
-      "";
-
-  }
-
-
-  updateTotalColor();
-
-  renderProblems();
-
-
-  machineForm.classList.add("active");
-
-  machineForm.scrollIntoView({
-    behavior:"smooth",
-    block:"start"
-  });
-}
-
-
-/* =========================================================
-   TOTAL
-========================================================= */
-
-function updateTotal(){
-
-  const good =
-    timeToMinutes(
-      horaBoa.value
-    );
-
-  const replacement =
-    timeToMinutes(
-      reposicao.value
-    );
-
-  const total =
-    good + replacement;
-
-
-  totalBaixado.value =
-    minutesToTime(total);
-
-
-  updateTotalColor();
-}
-
-
-function updateTotalColor(){
-
-  const total =
-    timeToMinutes(
-      totalBaixado.value
-    );
-
-
-  totalBox.classList.remove(
-    "status-red",
-    "status-yellow",
-    "status-green"
-  );
-
-
-  totalBox.classList.add(
-    getStatusClass(total)
-  );
-}
-
-
-horaBoa.addEventListener(
-  "input",
-  updateTotal
-);
-
-reposicao.addEventListener(
-  "input",
-  updateTotal
-);
-
-
-document.getElementById("shift")
-  .addEventListener(
-    "change",
-    updateTotalColor
-  );
-
-
-/* =========================================================
-   PROBLEMAS
-========================================================= */
-
-function createProblemEditor(){
-
-  problemEditorContainer.innerHTML = "";
-
-
-  const editor =
-    document.createElement("div");
-
-  editor.className =
-    "problem-editor";
-
-
-  editor.innerHTML = `
-
-    <div class="row">
-
-      <div class="field">
-
-        <label>Categoria</label>
-
-        <select class="problem-category">
-
-          <option value="Elétrico">
-            Elétrico
-          </option>
-
-          <option value="Mecânico">
-            Mecânico
-          </option>
-
-          <option value="Ajuste de matriz">
-            Ajuste de matriz
-          </option>
-
-          <option value="Troca de matriz">
-            Troca de matriz
-          </option>
-
-          <option value="Parada de máquina">
-            Parada de máquina
-          </option>
-
-          <option value="Problema de material">
-            Problema de material
-          </option>
-
-          <option value="Falta de material">
-            Falta de material
-          </option>
-
-          <option value="Regulagem de processo">
-            Regulagem de processo
-          </option>
-
-          <option value="Setup">
-            Setup
-          </option>
-
-          <option value="Outro">
-            Outro
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div class="field">
-
-        <label>Descrição</label>
-
-        <textarea
-          class="problem-description-input"
-          placeholder="Descreva o problema..."
-          rows="3"></textarea>
-
-      </div>
-
-    </div>
-
-
-    <div class="problem-actions">
-
-      <button
-        class="btn-small"
-        id="cancelProblem">
-        Cancelar
-      </button>
-
-      <button
-        class="btn-small btn-save-problem"
-        id="saveProblem">
-        Salvar problema
-      </button>
-
-    </div>
-  `;
-
-
-  problemEditorContainer
-    .appendChild(editor);
-
-
-  document
-    .getElementById("cancelProblem")
-    .addEventListener(
-      "click",
-      () => {
-
-        problemEditorContainer.innerHTML = "";
-
-        editingProblemIndex = null;
-
-      }
-    );
-
-
-  document
-    .getElementById("saveProblem")
-    .addEventListener(
-      "click",
-      saveProblemFromEditor
-    );
-}
-
-
-document
-  .getElementById("addProblem")
-  .addEventListener(
-    "click",
-    () => {
-
-      if(
-        problemEditorContainer
-          .children.length
-      ){
         return;
-      }
-
-      editingProblemIndex = null;
-
-      createProblemEditor();
-
     }
-  );
 
 
-function saveProblemFromEditor(){
-
-  const editor =
-    problemEditorContainer
-      .querySelector(".problem-editor");
+    const machines =
+        getSectorMachines();
 
 
-  if(!editor){
-    return;
-  }
+    machines.forEach(id => {
+
+        const button =
+            document.createElement("button");
 
 
-  const category =
-    editor
-      .querySelector(".problem-category")
-      .value;
+        button.className =
+            "machine";
 
 
-  const description =
-    editor
-      .querySelector(".problem-description-input")
-      .value.trim();
+        const data =
+            machineData[id];
 
 
-  if(!description){
+        if(data){
 
-    showToast(
-      "Digite a descrição do problema."
+            button.classList.add(
+                "saved"
+            );
+
+
+            button.innerHTML = `
+
+                <span class="machine-check">
+                    ✓
+                </span>
+
+                <span class="machine-code">
+                    M${id}
+                </span>
+
+                <span class="machine-time">
+                    ${escapeHtml(
+                        data.total || "00:00"
+                    )}
+                </span>
+
+            `;
+
+        }else{
+
+            button.innerHTML = `
+
+                <span class="machine-code">
+                    M${id}
+                </span>
+
+                <span class="machine-time">
+                    Toque para abrir
+                </span>
+
+            `;
+
+        }
+
+
+        button.onclick =
+            () => openMachine(id);
+
+
+        grid.appendChild(button);
+
+    });
+
+
+    renderSummary();
+
+}
+
+
+function renderSummary(){
+
+    const body =
+        document
+            .getElementById("summaryBody");
+
+
+    const empty =
+        document
+            .getElementById("summaryEmpty");
+
+
+    const content =
+        document
+            .getElementById("summaryContent");
+
+
+    body.innerHTML = "";
+
+
+    const machines =
+        Object.keys(machineData)
+            .sort(
+                (a,b) =>
+                    Number(a) - Number(b)
+            );
+
+
+    if(machines.length === 0){
+
+        empty.classList.remove(
+            "hidden"
+        );
+
+        content.classList.add(
+            "hidden"
+        );
+
+        return;
+    }
+
+
+    empty.classList.add(
+        "hidden"
     );
 
-    return;
-  }
+
+    content.classList.remove(
+        "hidden"
+    );
 
 
-  if(!machines[currentMachine]){
+    machines.forEach(id => {
 
-    machines[currentMachine] = {
+        const data =
+            machineData[id];
 
-      horaBoa:0,
-      reposicao:0,
-      totalBaixado:0,
-      saldo:0,
-      observacao:"",
-      problems:[]
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>M${id}</td>
+
+            <td>
+                ${escapeHtml(
+                    data.total || "00:00"
+                )}
+            </td>
+
+            <td>
+                ${
+                    data.balance
+                    ? escapeHtml(data.balance)
+                    : "—"
+                }
+            </td>
+
+        `;
+
+
+        body.appendChild(row);
+
+    });
+
+}
+
+
+function openMachine(id){
+
+    currentMachine = id;
+
+
+    document
+        .getElementById("dashboard")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("machineScreen")
+        .classList.remove("hidden");
+
+
+    document
+        .getElementById("bottomAction")
+        .classList.remove("hidden");
+
+
+    document
+        .getElementById("machineTitle")
+        .textContent =
+            "M" + id;
+
+
+    const data =
+        machineData[id] || {
+
+            good:"",
+
+            replacement:"",
+
+            balance:"",
+
+            observation:"",
+
+            occurrences:[]
+
+        };
+
+
+    document
+        .getElementById("goodHours")
+        .value =
+            data.good || "";
+
+
+    document
+        .getElementById("replacementHours")
+        .value =
+            data.replacement || "";
+
+
+    document
+        .getElementById("balance")
+        .value =
+            data.balance || "";
+
+
+    document
+        .getElementById("observation")
+        .value =
+            data.observation || "";
+
+
+    const deleteCard =
+        document
+            .getElementById(
+                "deleteMachineCard"
+            );
+
+
+    if(
+        machineData[id] &&
+        machineData[id].id
+    ){
+
+        deleteCard.classList.remove(
+            "hidden"
+        );
+
+    }else{
+
+        deleteCard.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    renderOccurrences(
+        data.occurrences || []
+    );
+
+
+    document
+        .getElementById("occurrenceEditor")
+        .classList.add("hidden");
+
+
+    editingOccurrence = null;
+
+
+    calculateTotal();
+
+}
+
+
+function backToDashboard(){
+
+    currentMachine = null;
+
+
+    document
+        .getElementById("machineScreen")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("dashboard")
+        .classList.remove("hidden");
+
+
+    document
+        .getElementById("bottomAction")
+        .classList.add("hidden");
+
+
+    renderMachines();
+
+}
+
+
+function openOccurrenceEditor(index = null){
+
+    editingOccurrence =
+        index;
+
+
+    document
+        .getElementById("occurrenceEditor")
+        .classList.remove("hidden");
+
+
+    if(index !== null){
+
+        const occurrence =
+            machineData[currentMachine]
+                .occurrences[index];
+
+
+        document
+            .getElementById("occurrenceType")
+            .value =
+                occurrence.type;
+
+
+        document
+            .getElementById(
+                "occurrenceDescription"
+            )
+            .value =
+                occurrence.description;
+
+    }else{
+
+        document
+            .getElementById("occurrenceType")
+            .value =
+                "Mecânico";
+
+
+        document
+            .getElementById(
+                "occurrenceDescription"
+            )
+            .value =
+                "";
+
+    }
+
+
+    document
+        .getElementById(
+            "occurrenceDescription"
+        )
+        .focus();
+
+}
+
+
+function cancelOccurrence(){
+
+    editingOccurrence = null;
+
+
+    document
+        .getElementById(
+            "occurrenceEditor"
+        )
+        .classList.add("hidden");
+
+}
+
+
+function saveOccurrence(){
+
+    const type =
+        document
+            .getElementById(
+                "occurrenceType"
+            )
+            .value;
+
+
+    const description =
+        document
+            .getElementById(
+                "occurrenceDescription"
+            )
+            .value
+            .trim();
+
+
+    if(!description){
+
+        showToast(
+            "Digite uma descrição."
+        );
+
+        return;
+    }
+
+
+    if(!machineData[currentMachine]){
+
+        machineData[currentMachine] = {
+
+            good:"",
+
+            replacement:"",
+
+            balance:"",
+
+            observation:"",
+
+            occurrences:[]
+
+        };
+
+    }
+
+
+    if(
+        !machineData[currentMachine]
+            .occurrences
+    ){
+
+        machineData[currentMachine]
+            .occurrences = [];
+
+    }
+
+
+    const occurrence = {
+
+        type,
+
+        description
 
     };
 
-  }
 
+    if(editingOccurrence === null){
 
-  if(!machines[currentMachine].problems){
+        machineData[currentMachine]
+            .occurrences
+            .push(occurrence);
 
-    machines[currentMachine].problems = [];
+    }else{
 
-  }
-
-
-  if(editingProblemIndex !== null){
-
-    machines[currentMachine]
-      .problems[
-        editingProblemIndex
-      ] = {
-        categoria:category,
-        descricao:description
-      };
-
-  }else{
-
-    machines[currentMachine]
-      .problems
-      .push({
-        categoria:category,
-        descricao:description
-      });
-
-  }
-
-
-  editingProblemIndex = null;
-
-  problemEditorContainer.innerHTML = "";
-
-  renderProblems();
-}
-
-
-function renderProblems(){
-
-  problemList.innerHTML = "";
-
-
-  const machine =
-    machines[currentMachine];
-
-
-  if(
-    !machine ||
-    !machine.problems ||
-    !machine.problems.length
-  ){
-
-    return;
-  }
-
-
-  machine.problems.forEach(
-    (problem,index) => {
-
-      const card =
-        document.createElement("div");
-
-      card.className =
-        "problem-card";
-
-
-      card.innerHTML = `
-
-        <div class="problem-top">
-
-          <div>
-
-            <span class="problem-number">
-              ${index + 1}
-            </span>
-
-            <span class="problem-category">
-              ${escapeHtml(problem.categoria)}
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div class="problem-description">
-          ${escapeHtml(problem.descricao)}
-        </div>
-
-
-        <div class="problem-buttons">
-
-          <button
-            data-edit="${index}">
-            Editar
-          </button>
-
-          <button
-            class="btn-delete"
-            data-delete="${index}">
-            Excluir
-          </button>
-
-        </div>
-      `;
-
-
-      card
-        .querySelector(
-          `[data-edit="${index}"]`
-        )
-        .addEventListener(
-          "click",
-          () => editProblem(index)
-        );
-
-
-      card
-        .querySelector(
-          `[data-delete="${index}"]`
-        )
-        .addEventListener(
-          "click",
-          () => deleteProblem(index)
-        );
-
-
-      problemList.appendChild(card);
+        machineData[currentMachine]
+            .occurrences[
+                editingOccurrence
+            ] =
+                occurrence;
 
     }
-  );
+
+
+    editingOccurrence = null;
+
+
+    document
+        .getElementById(
+            "occurrenceEditor"
+        )
+        .classList.add("hidden");
+
+
+    renderOccurrences(
+        machineData[currentMachine]
+            .occurrences
+    );
+
 }
 
 
-function editProblem(index){
+function renderOccurrences(list){
 
-  const problem =
-    machines[currentMachine]
-      .problems[index];
-
-
-  createProblemEditor();
-
-
-  const editor =
-    problemEditorContainer
-      .querySelector(".problem-editor");
+    const container =
+        document
+            .getElementById(
+                "occurrenceList"
+            );
 
 
-  editor.querySelector(
-    ".problem-category"
-  ).value =
-    problem.categoria;
+    container.innerHTML = "";
 
 
-  editor.querySelector(
-    ".problem-description-input"
-  ).value =
-    problem.descricao;
+    if(!list || list.length === 0){
+
+        container.innerHTML = `
+
+            <div
+                style="
+                    color:#8e8e93;
+                    font-size:14px;
+                    padding:4px 0;
+                "
+            >
+                Nenhuma ocorrência registrada.
+            </div>
+
+        `;
+
+        return;
+    }
 
 
-  editingProblemIndex =
-    index;
+    list.forEach((item,index) => {
+
+        const row =
+            document.createElement("div");
+
+
+        row.className =
+            "occurrence";
+
+
+        row.innerHTML = `
+
+            <div class="occurrence-content">
+
+                <div class="occurrence-type">
+                    ${escapeHtml(item.type)}
+                </div>
+
+                <div class="occurrence-description">
+                    ${escapeHtml(
+                        item.description
+                    )}
+                </div>
+
+            </div>
+
+            <div class="occurrence-actions">
+
+                <button
+                    class="small-button"
+                    onclick="openOccurrenceEditor(${index})"
+                >
+                    ✎
+                </button>
+
+                <button
+                    class="small-button"
+                    onclick="deleteOccurrence(${index})"
+                >
+                    ×
+                </button>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(row);
+
+    });
+
 }
 
 
-function deleteProblem(index){
+async function deleteOccurrence(index){
 
-  if(
-    !confirm(
-      "Excluir este problema?"
-    )
-  ){
-    return;
-  }
+    const occurrence =
+        machineData[currentMachine]
+            .occurrences[index];
 
 
-  machines[currentMachine]
-    .problems
-    .splice(index,1);
+    if(!confirm(
+        "Excluir esta ocorrência?"
+    )){
+        return;
+    }
 
 
-  renderProblems();
+    if(occurrence.id){
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("ocorrencias")
+                .delete()
+                .eq(
+                    "id",
+                    occurrence.id
+                );
+
+
+        if(error){
+
+            console.error(error);
+
+            showToast(
+                "Erro ao excluir."
+            );
+
+            return;
+        }
+
+    }
+
+
+    machineData[currentMachine]
+        .occurrences
+        .splice(index,1);
+
+
+    renderOccurrences(
+        machineData[currentMachine]
+            .occurrences
+    );
+
+
+    showToast(
+        "Ocorrência excluída."
+    );
+
+}
+
+
+async function saveMachine(){
+
+    if(!currentMachine)
+        return;
+
+
+    const button =
+        document.querySelector(
+            ".save-button"
+        );
+
+
+    const originalText =
+        button.textContent;
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "Salvando...";
+
+
+    try{
+
+        const turn =
+            await getOrCreateTurn();
+
+
+        const good =
+            document
+                .getElementById(
+                    "goodHours"
+                )
+                .value
+                .trim();
+
+
+        const replacement =
+            document
+                .getElementById(
+                    "replacementHours"
+                )
+                .value
+                .trim();
+
+
+        const balance =
+            document
+                .getElementById(
+                    "balance"
+                )
+                .value
+                .trim();
+
+
+        const observation =
+            document
+                .getElementById(
+                    "observation"
+                )
+                .value
+                .trim();
+
+
+        const totalMinutes =
+            timeToMinutes(good) +
+            timeToMinutes(replacement);
+
+
+        const total =
+            minutesToTime(totalMinutes);
+
+
+        const payload = {
+
+            turno_id:
+                turn.id,
+
+            maquina:
+                Number(currentMachine),
+
+            horas_boas:
+                good || null,
+
+            horas_reposicao:
+                replacement || null,
+
+            horas_baixadas:
+                total,
+
+            saldo:
+                balance || null,
+
+            observacao:
+                observation || null
+
+        };
+
+
+        const {
+            data:savedRecord,
+            error
+        } =
+            await supabaseClient
+                .from("apontamentos")
+                .upsert(
+                    payload,
+                    {
+                        onConflict:
+                            "turno_id,maquina"
+                    }
+                )
+                .select()
+                .single();
+
+
+        if(error)
+            throw error;
+
+
+        const {
+            error:deleteError
+        } =
+            await supabaseClient
+                .from("ocorrencias")
+                .delete()
+                .eq(
+                    "apontamento_id",
+                    savedRecord.id
+                );
+
+
+        if(deleteError)
+            throw deleteError;
+
+
+        const occurrences =
+            machineData[currentMachine]
+                ?.occurrences || [];
+
+
+        if(occurrences.length > 0){
+
+            const rows =
+                occurrences.map(item => ({
+
+                    apontamento_id:
+                        savedRecord.id,
+
+                    tipo:
+                        item.type,
+
+                    descricao:
+                        item.description
+
+                }));
+
+
+            const {
+                error:occurrenceError
+            } =
+                await supabaseClient
+                    .from("ocorrencias")
+                    .insert(rows);
+
+
+            if(occurrenceError)
+                throw occurrenceError;
+
+        }
+
+
+        machineData[currentMachine] = {
+
+            id:
+                savedRecord.id,
+
+            good,
+
+            replacement,
+
+            total,
+
+            balance,
+
+            observation,
+
+            occurrences
+
+        };
+
+
+        showToast(
+            "M" +
+            currentMachine +
+            " salvo ✓"
+        );
+
+
+        setTimeout(() => {
+
+            backToDashboard();
+
+        },500);
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            "Não foi possível salvar."
+        );
+
+    }finally{
+
+        button.disabled = false;
+
+        button.textContent =
+            originalText;
+
+    }
+
+}
+
+
+async function deleteMachine(){
+
+    if(!currentMachine)
+        return;
+
+
+    const data =
+        machineData[currentMachine];
+
+
+    if(!data || !data.id){
+
+        showToast(
+            "Esta máquina ainda não foi salva."
+        );
+
+        return;
+    }
+
+
+    const confirmed =
+        confirm(
+            "Excluir o lançamento da M" +
+            currentMachine +
+            "?\n\n" +
+            "Isso removerá horas, saldo, observação " +
+            "e todas as ocorrências desta máquina."
+        );
+
+
+    if(!confirmed)
+        return;
+
+
+    const deleteButton =
+        document.querySelector(
+            ".delete-machine"
+        );
+
+
+    deleteButton.disabled = true;
+
+    deleteButton.textContent =
+        "Excluindo...";
+
+
+    try{
+
+        const {
+            error:occurrenceError
+        } =
+            await supabaseClient
+                .from("ocorrencias")
+                .delete()
+                .eq(
+                    "apontamento_id",
+                    data.id
+                );
+
+
+        if(occurrenceError)
+            throw occurrenceError;
+
+
+        const {
+            error:apontamentoError
+        } =
+            await supabaseClient
+                .from("apontamentos")
+                .delete()
+                .eq(
+                    "id",
+                    data.id
+                );
+
+
+        if(apontamentoError)
+            throw apontamentoError;
+
+
+        delete machineData[currentMachine];
+
+
+        showToast(
+            "Lançamento da M" +
+            currentMachine +
+            " excluído ✓"
+        );
+
+
+        setTimeout(() => {
+
+            backToDashboard();
+
+        },500);
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            "Não foi possível excluir."
+        );
+
+
+        deleteButton.disabled = false;
+
+        deleteButton.textContent =
+            "Excluir lançamento desta máquina";
+
+    }
+
+}
+
+
+async function logout(){
+
+    if(!confirm(
+        "Sair do controle de produção?"
+    )){
+        return;
+    }
+
+
+    await supabaseClient
+        .auth
+        .signOut();
+
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+function getInitials(name){
+
+    if(!name)
+        return "--";
+
+
+    const parts =
+        name
+            .trim()
+            .split(/\s+/);
+
+
+    if(parts.length === 1){
+
+        return parts[0]
+            .substring(0,2)
+            .toUpperCase();
+
+    }
+
+
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
+
 }
 
 
 function escapeHtml(text){
 
-  return String(text)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+    return String(text)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
 }
 
 
-/* =========================================================
-   SALVAR MÁQUINA
-========================================================= */
+function showToast(message){
 
-async function saveMachine(){
-
-  if(!currentMachine){
-
-    return;
-  }
+    const toast =
+        document
+            .getElementById("toast");
 
 
-  const turn =
-    await getOrCreateTurn();
+    toast.textContent =
+        message;
 
 
-  if(!turn){
-
-    return;
-  }
-
-
-  const machineData = {
-
-    horaBoa:
-      timeToMinutes(
-        horaBoa.value
-      ),
-
-    reposicao:
-      timeToMinutes(
-        reposicao.value
-      ),
-
-    totalBaixado:
-      timeToMinutes(
-        totalBaixado.value
-      ),
-
-    saldo:
-      timeToMinutes(
-        saldo.value
-      ),
-
-    observacao:
-      observacao.value.trim(),
-
-    problems:
-      machines[currentMachine]?.problems || []
-
-  };
-
-
-  const {
-    data: existing,
-    error: existingError
-  } =
-    await supabaseClient
-      .from("apontamentos")
-      .select("id")
-      .eq("turno_id", turn.id)
-      .eq("maquina", currentMachine)
-      .maybeSingle();
-
-
-  if(existingError){
-
-    console.error(existingError);
-
-    showToast(
-      "Erro ao consultar a máquina."
+    toast.classList.add(
+        "show"
     );
 
-    return;
-  }
 
-
-  let apontamentoId;
-
-
-  if(existing){
-
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("apontamentos")
-        .update({
-
-          hora_boa:
-            machineData.horaBoa,
-
-          reposicao:
-            machineData.reposicao,
-
-          total_baixado:
-            machineData.totalBaixado,
-
-          saldo:
-            machineData.saldo,
-
-          observacao:
-            machineData.observacao,
-
-          atualizado_em:
-            new Date().toISOString()
-
-        })
-        .eq("id", existing.id);
-
-
-    if(error){
-
-      console.error(error);
-
-      showToast(
-        "Não foi possível salvar a máquina."
-      );
-
-      return;
-    }
-
-
-    apontamentoId =
-      existing.id;
-
-
-    await supabaseClient
-      .from("ocorrencias")
-      .delete()
-      .eq(
-        "apontamento_id",
-        apontamentoId
-      );
-
-  }else{
-
-    const {
-      data: inserted,
-      error
-    } =
-      await supabaseClient
-        .from("apontamentos")
-        .insert({
-
-          turno_id:
-            turn.id,
-
-          maquina:
-            currentMachine,
-
-          hora_boa:
-            machineData.horaBoa,
-
-          reposicao:
-            machineData.reposicao,
-
-          total_baixado:
-            machineData.totalBaixado,
-
-          saldo:
-            machineData.saldo,
-
-          observacao:
-            machineData.observacao
-
-        })
-        .select()
-        .single();
-
-
-    if(error){
-
-      console.error(error);
-
-      showToast(
-        "Não foi possível salvar a máquina."
-      );
-
-      return;
-    }
-
-
-    apontamentoId =
-      inserted.id;
-
-  }
-
-
-  /* Salva ocorrências */
-
-  if(
-    machineData.problems.length
-  ){
-
-    const rows =
-      machineData.problems.map(
-        problem => ({
-
-          apontamento_id:
-            apontamentoId,
-
-          categoria:
-            problem.categoria,
-
-          descricao:
-            problem.descricao
-
-        })
-      );
-
-
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("ocorrencias")
-        .insert(rows);
-
-
-    if(error){
-
-      console.error(error);
-
-      showToast(
-        "Máquina salva, mas houve erro nas ocorrências."
-      );
-
-      return;
-    }
-
-  }
-
-
-  machines[currentMachine] =
-    machineData;
-
-
-  updateMachineButton(
-    currentMachine
-  );
-
-
-  renderSummary();
-
-
-  showToast(
-    "Máquina " +
-    String(currentMachine).padStart(2,"0") +
-    " salva ✓"
-  );
-
-
-  machineForm.classList.remove(
-    "active"
-  );
-
-
-  currentMachine =
-    null;
-
-
-  machineForm.scrollIntoView({
-    behavior:"smooth",
-    block:"start"
-  });
-}
-
-
-document
-  .getElementById("saveMachine")
-  .addEventListener(
-    "click",
-    saveMachine
-  );
-
-
-document
-  .getElementById("closeMachine")
-  .addEventListener(
-    "click",
-    () => {
-
-      machineForm.classList.remove(
-        "active"
-      );
-
-      currentMachine = null;
-
-    }
-  );
-
-
-/* =========================================================
-   CARREGAR DADOS DO BANCO
-========================================================= */
-
-async function loadTurnData(){
-
-  const turn =
-    await getOrCreateTurn();
-
-
-  if(!turn){
-    return;
-  }
-
-
-  machines = {};
-
-
-  const {
-    data: rows,
-    error
-  } =
-    await supabaseClient
-      .from("apontamentos")
-      .select(`
-        id,
-        maquina,
-        hora_boa,
-        reposicao,
-        total_baixado,
-        saldo,
-        observacao,
-        ocorrencias (
-          id,
-          categoria,
-          descricao
-        )
-      `)
-      .eq("turno_id", turn.id)
-      .order("maquina");
-
-
-  if(error){
-
-    console.error(error);
-
-    showToast(
-      "Erro ao carregar os apontamentos."
+    clearTimeout(
+        window.toastTimer
     );
 
-    return;
-  }
 
+    window.toastTimer =
+        setTimeout(() => {
 
-  rows.forEach(row => {
+            toast.classList.remove(
+                "show"
+            );
 
-    machines[row.maquina] = {
-
-      id:row.id,
-
-      horaBoa:
-        row.hora_boa || 0,
-
-      reposicao:
-        row.reposicao || 0,
-
-      totalBaixado:
-        row.total_baixado || 0,
-
-      saldo:
-        row.saldo || 0,
-
-      observacao:
-        row.observacao || "",
-
-      problems:
-        (row.ocorrencias || [])
-          .map(o => ({
-
-            categoria:
-              o.categoria,
-
-            descricao:
-              o.descricao
-
-          }))
-
-    };
-
-
-    updateMachineButton(
-      row.maquina
-    );
-
-  });
-
-
-  renderSummary();
-}
-
-
-/* =========================================================
-   RESUMO
-========================================================= */
-
-function renderSummary(){
-
-  const keys =
-    Object.keys(machines)
-      .map(Number)
-      .sort((a,b) => a-b);
-
-
-  if(!keys.length){
-
-    summarySection.style.display =
-      "none";
-
-    return;
-  }
-
-
-  summarySection.style.display =
-    "block";
-
-
-  summaryMachines.innerHTML = "";
-
-
-  let totalGood = 0;
-  let totalReplacement = 0;
-  let totalDownloaded = 0;
-  let totalBalance = 0;
-  let totalProblems = 0;
-
-
-  keys.forEach(machine => {
-
-    const data =
-      machines[machine];
-
-
-    totalGood +=
-      data.horaBoa;
-
-    totalReplacement +=
-      data.reposicao;
-
-    totalDownloaded +=
-      data.totalBaixado;
-
-    totalBalance +=
-      data.saldo;
-
-    totalProblems +=
-      data.problems?.length || 0;
-
-
-    const card =
-      document.createElement("div");
-
-    card.className =
-      "summary-machine";
-
-
-    const status =
-      getStatusClass(
-        data.totalBaixado
-      );
-
-
-    const problemsHtml =
-      data.problems?.length
-        ? `
-          <div class="summary-problems">
-
-            ${
-              data.problems.map(
-                (problem,index) => `
-                  <div class="summary-problem">
-                    ${index + 1}. <strong>
-                    ${escapeHtml(problem.categoria)}
-                    </strong>:
-                    ${escapeHtml(problem.descricao)}
-                  </div>
-                `
-              ).join("")
-            }
-
-          </div>
-        `
-        : "";
-
-
-    const observationHtml =
-      data.observacao
-        ? `
-          <div class="summary-observation">
-            <strong>Observação:</strong>
-            ${escapeHtml(data.observacao)}
-          </div>
-        `
-        : "";
-
-
-    card.innerHTML = `
-
-      <div class="summary-machine-header">
-        Máquina ${String(machine).padStart(2,"0")}
-      </div>
-
-
-      <div class="summary-hours">
-
-        <div class="summary-hour">
-          <small>Hora boa</small>
-          <strong>
-            ${minutesToTime(data.horaBoa)}
-          </strong>
-        </div>
-
-
-        <div class="summary-hour">
-          <small>Reposição</small>
-          <strong>
-            ${minutesToTime(data.reposicao)}
-          </strong>
-        </div>
-
-
-        <div class="summary-hour ${status}">
-          <small>Total baixado</small>
-          <strong>
-            ${minutesToTime(data.totalBaixado)}
-          </strong>
-        </div>
-
-      </div>
-
-
-      <div style="margin-top:7px;font-size:12px;">
-        <strong>Saldo:</strong>
-        ${minutesToTime(data.saldo)}
-      </div>
-
-
-      ${problemsHtml}
-
-      ${observationHtml}
-
-    `;
-
-
-    summaryMachines.appendChild(card);
-
-  });
-
-
-  document.getElementById(
-    "summaryMachineCount"
-  ).textContent =
-    keys.length;
-
-
-  document.getElementById(
-    "summaryGood"
-  ).textContent =
-    minutesToTime(totalGood);
-
-
-  document.getElementById(
-    "summaryReplacement"
-  ).textContent =
-    minutesToTime(totalReplacement);
-
-
-  document.getElementById(
-    "summaryTotal"
-  ).textContent =
-    minutesToTime(totalDownloaded);
-
-
-  document.getElementById(
-    "summaryBalance"
-  ).textContent =
-    minutesToTime(totalBalance);
-
-
-  document.getElementById(
-    "summaryProblems"
-  ).textContent =
-    totalProblems;
+        },2200);
 
 }
-
-
-/* =========================================================
-   DATA / TURNO
-========================================================= */
-
-document
-  .getElementById("data")
-  .addEventListener(
-    "change",
-    async () => {
-
-      machines = {};
-
-      createMachineButtons();
-
-      await loadTurnData();
-
-    }
-  );
-
-
-document
-  .getElementById("shift")
-  .addEventListener(
-    "change",
-    async () => {
-
-      machines = {};
-
-      createMachineButtons();
-
-      await loadTurnData();
-
-    }
-  );
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-document
-  .getElementById("logoutBtn")
-  .addEventListener(
-    "click",
-    async () => {
-
-      await supabaseClient.auth.signOut();
-
-      window.location.href =
-        "index.html";
-
-    }
-  );
-
-
-/* =========================================================
-   INICIALIZAÇÃO
-========================================================= */
-
-async function init(){
-
-  const authenticated =
-    await checkAuth();
-
-
-  if(!authenticated){
-    return;
-  }
-
-
-  setToday();
-
-  createMachineButtons();
-
-  await loadTurnData();
-
-}
-
-
-init();
 
 </script>
 

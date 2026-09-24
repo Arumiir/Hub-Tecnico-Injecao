@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>Acessos • Controle de Produção</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        *{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+            -webkit-tap-highlight-color:transparent;
+        }
+
+        :root{
+            --bg:#f2f2f7;
+            --card:#fff;
+            --text:#111;
+            --muted:#6e6e73;
+            --border:#e5e5ea;
+            --blue:#007aff;
+            --green:#34c759;
+            --red:#ff3b30;
+        }
+
+        body{
+            min-height:100vh;
+            min-height:100dvh;
+            background:var(--bg);
+            color:var(--text);
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Display",
+                "SF Pro Text",
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+        }
+
+        .header{
+            position:sticky;
+            top:0;
+            z-index:10;
+
+            padding:
+                max(15px,env(safe-area-inset-top))
+                18px
+                14px;
+
+            background:rgba(242,242,247,.88);
+            backdrop-filter:blur(18px);
+            -webkit-backdrop-filter:blur(18px);
+
+            border-bottom:1px solid rgba(0,0,0,.05);
+        }
+
+        .header-inner{
+            width:100%;
+            max-width:760px;
+            margin:auto;
+
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+        }
+
+        .header-title{
+            min-width:0;
+        }
+
+        .eyebrow{
+            font-size:11px;
+            font-weight:700;
+            letter-spacing:.7px;
+            color:var(--muted);
+            text-transform:uppercase;
+        }
+
+        .header h1{
+            font-size:23px;
+            letter-spacing:-.5px;
+            margin-top:2px;
+        }
+
+        .back{
+            width:42px;
+            height:42px;
+            flex:0 0 42px;
+
+            border:0;
+            border-radius:50%;
+
+            background:#fff;
+            color:#111;
+
+            font-size:27px;
+            line-height:1;
+
+            cursor:pointer;
+
+            box-shadow:
+                0 3px 10px rgba(0,0,0,.06);
+        }
+
+        .app{
+            width:100%;
+            max-width:760px;
+            margin:auto;
+            padding:
+                20px
+                18px
+                max(30px,env(safe-area-inset-bottom));
+        }
+
+        .summary{
+            background:#fff;
+            border-radius:22px;
+            padding:18px;
+            margin-bottom:15px;
+
+            box-shadow:
+                0 7px 25px rgba(0,0,0,.055);
+        }
+
+        .summary-top{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+        }
+
+        .summary-title{
+            font-size:17px;
+            font-weight:700;
+        }
+
+        .summary-number{
+            font-size:27px;
+            font-weight:700;
+            letter-spacing:-1px;
+        }
+
+        .summary-text{
+            color:var(--muted);
+            font-size:13px;
+            margin-top:3px;
+        }
+
+        .refresh{
+            border:0;
+            background:#f2f2f7;
+            color:var(--blue);
+            height:40px;
+            padding:0 14px;
+            border-radius:12px;
+            font-family:inherit;
+            font-size:14px;
+            font-weight:600;
+            cursor:pointer;
+        }
+
+        .refresh:active{
+            background:#e5e5ea;
+        }
+
+        .message{
+            display:none;
+            border-radius:14px;
+            padding:12px 13px;
+            margin-bottom:14px;
+            font-size:14px;
+            line-height:1.4;
+        }
+
+        .message.show{
+            display:block;
+        }
+
+        .message.error{
+            background:#fff0ef;
+            color:#b42318;
+        }
+
+        .message.success{
+            background:#edf9f0;
+            color:#187a36;
+        }
+
+        .empty{
+            background:#fff;
+            border-radius:22px;
+            padding:35px 20px;
+            text-align:center;
+
+            box-shadow:
+                0 7px 25px rgba(0,0,0,.055);
+        }
+
+        .empty-icon{
+            font-size:34px;
+            margin-bottom:12px;
+        }
+
+        .empty h2{
+            font-size:19px;
+            margin-bottom:7px;
+        }
+
+        .empty p{
+            color:var(--muted);
+            font-size:14px;
+            line-height:1.5;
+        }
+
+        .request{
+            background:#fff;
+            border-radius:22px;
+            padding:18px;
+            margin-bottom:13px;
+
+            box-shadow:
+                0 7px 25px rgba(0,0,0,.055);
+        }
+
+        .request-head{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:15px;
+        }
+
+        .name{
+            font-size:18px;
+            font-weight:700;
+            letter-spacing:-.2px;
+        }
+
+        .username{
+            color:var(--muted);
+            font-size:14px;
+            margin-top:3px;
+        }
+
+        .badge{
+            flex:0 0 auto;
+            padding:6px 9px;
+            border-radius:9px;
+
+            background:#edf5ff;
+            color:var(--blue);
+
+            font-size:11px;
+            font-weight:700;
+            text-transform:uppercase;
+            letter-spacing:.3px;
+        }
+
+        .details{
+            border-top:1px solid var(--border);
+            border-bottom:1px solid var(--border);
+            padding:13px 0;
+            margin-bottom:14px;
+        }
+
+        .detail{
+            display:flex;
+            justify-content:space-between;
+            gap:15px;
+            font-size:14px;
+            padding:5px 0;
+        }
+
+        .detail-label{
+            color:var(--muted);
+        }
+
+        .detail-value{
+            text-align:right;
+            font-weight:500;
+            word-break:break-word;
+        }
+
+        .note{
+            background:#f8f8fa;
+            border-radius:13px;
+            padding:12px;
+            margin-bottom:14px;
+
+            font-size:13px;
+            line-height:1.45;
+        }
+
+        .note strong{
+            display:block;
+            margin-bottom:4px;
+            font-size:12px;
+            color:#555;
+        }
+
+        .actions{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
+        }
+
+        .action{
+            height:47px;
+            border:0;
+            border-radius:13px;
+
+            font-family:inherit;
+            font-size:15px;
+            font-weight:600;
+
+            cursor:pointer;
+        }
+
+        .approve{
+            background:#eaf8ee;
+            color:#18863c;
+        }
+
+        .reject{
+            background:#fff0ef;
+            color:#c62820;
+        }
+
+        .action:active{
+            transform:scale(.985);
+        }
+
+        .action:disabled{
+            opacity:.5;
+            cursor:not-allowed;
+        }
+
+        @media(max-width:380px){
+
+            .app{
+                padding-left:14px;
+                padding-right:14px;
+            }
+
+            .actions{
+                grid-template-columns:1fr;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <div class="header-title">
+
+            <div class="eyebrow">
+                Administração
+            </div>
+
+            <h1>
+                Acessos
+            </h1>
+
+        </div>
+
+        <button
+            class="back"
+            onclick="window.location.href='supervisor.html'"
+            aria-label="Voltar"
+        >
+            ‹
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="app">
+
+    <div
+        id="message"
+        class="message"
+    ></div>
+
+
+    <section class="summary">
+
+        <div class="summary-top">
+
+            <div>
+
+                <div class="summary-title">
+                    Solicitações pendentes
+                </div>
+
+                <div class="summary-text">
+                    Cadastros aguardando sua verificação.
+                </div>
+
+            </div>
+
+            <div
+                id="count"
+                class="summary-number"
+            >
+                0
+            </div>
+
+        </div>
+
+        <button
+            id="refreshButton"
+            class="refresh"
+            style="margin-top:14px;"
+            onclick="loadRequests()"
+        >
+            Atualizar
+        </button>
+
+    </section>
+
+
+    <div id="content"></div>
+
+</main>
+
+
+<script>
+
+    const SUPABASE_URL =
+        "https://icajmncojvidhrqlbevq.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
+
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+
+    let currentUser = null;
+
+
+    function showMessage(text,type){
+
+        const element =
+            document.getElementById("message");
+
+        element.textContent = text;
+
+        element.className =
+            "message show " + type;
+
+    }
+
+
+    function clearMessage(){
+
+        const element =
+            document.getElementById("message");
+
+        element.className = "message";
+
+        element.textContent = "";
+
+    }
+
+
+    async function checkAdmin(){
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.getSession();
+
+
+        const session =
+            data?.session;
+
+
+        if(error || !session){
+
+            window.location.href =
+                "index.html";
+
+            return false;
+
+        }
+
+
+        currentUser =
+            session.user;
+
+
+        const {
+            data: profile,
+            error: profileError
+        } =
+            await supabaseClient
+                .from("usuarios")
+                .select("nome, usuario, perfil, ativo, admin")
+                .eq("id", currentUser.id)
+                .single();
+
+
+        if(
+            profileError ||
+            !profile ||
+            !profile.ativo ||
+            !profile.admin
+        ){
+
+            window.location.href =
+                "index.html";
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }
+
+
+    async function loadRequests(){
+
+        clearMessage();
+
+
+        const button =
+            document.getElementById(
+                "refreshButton"
+            );
+
+        button.disabled = true;
+        button.textContent = "Atualizando...";
+
+
+        try{
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient.rpc(
+                    "listar_solicitacoes_pendentes"
+                );
+
+
+            if(error){
+
+                throw error;
+
+            }
+
+
+            const requests =
+                data || [];
+
+
+            document
+                .getElementById("count")
+                .textContent =
+                requests.length;
+
+
+            renderRequests(requests);
+
+
+        }catch(error){
+
+            console.error(error);
+
+            showMessage(
+                error.message ||
+                "Não foi possível carregar as solicitações.",
+                "error"
+            );
+
+        }finally{
+
+            button.disabled = false;
+            button.textContent = "Atualizar";
+
+        }
+
+    }
+
+
+    function renderRequests(requests){
+
+        const content =
+            document.getElementById("content");
+
+
+        if(!requests.length){
+
+            content.innerHTML = `
+                <section class="empty">
+
+                    <div class="empty-icon">
+                        ✓
+                    </div>
+
+                    <h2>
+                        Tudo em dia
+                    </h2>
+
+                    <p>
+                        Não existem solicitações de acesso aguardando aprovação.
+                    </p>
+
+                </section>
+            `;
+
+            return;
+
+        }
+
+
+        content.innerHTML =
+            requests.map(request => {
+
+                const perfil =
+                    request.perfil_solicitado === "supervisor"
+                        ? "Supervisor"
+                        : "Líder";
+
+
+                const data =
+                    request.criado_em
+                        ? new Date(
+                            request.criado_em
+                        ).toLocaleString(
+                            "pt-BR",
+                            {
+                                dateStyle:"short",
+                                timeStyle:"short"
+                            }
+                        )
+                        : "-";
+
+
+                const mensagem =
+                    request.mensagem
+                        ? `
+                            <div class="note">
+                                <strong>Mensagem</strong>
+                                ${escapeHtml(request.mensagem)}
+                            </div>
+                        `
+                        : "";
+
+
+                return `
+                    <article
+                        class="request"
+                        id="request-${request.id}"
+                    >
+
+                        <div class="request-head">
+
+                            <div>
+
+                                <div class="name">
+                                    ${escapeHtml(request.nome)}
+                                </div>
+
+                                <div class="username">
+                                    @${escapeHtml(request.usuario)}
+                                </div>
+
+                            </div>
+
+                            <div class="badge">
+                                ${perfil}
+                            </div>
+
+                        </div>
+
+
+                        <div class="details">
+
+                            <div class="detail">
+
+                                <span class="detail-label">
+                                    E-mail
+                                </span>
+
+                                <span class="detail-value">
+                                    ${escapeHtml(request.email)}
+                                </span>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <span class="detail-label">
+                                    Solicitado em
+                                </span>
+
+                                <span class="detail-value">
+                                    ${data}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        ${mensagem}
+
+
+                        <div class="actions">
+
+                            <button
+                                class="action approve"
+                                onclick="approveRequest(${request.id}, this)"
+                            >
+                                Aprovar
+                            </button>
+
+                            <button
+                                class="action reject"
+                                onclick="rejectRequest(${request.id}, this)"
+                            >
+                                Recusar
+                            </button>
+
+                        </div>
+
+                    </article>
+                `;
+
+            }).join("");
+
+    }
+
+
+    async function approveRequest(id, button){
+
+        const confirmed =
+            confirm(
+                "Aprovar este usuário?\n\n" +
+                "Depois da aprovação, ele poderá entrar no sistema."
+            );
+
+
+        if(!confirmed){
+
+            return;
+
+        }
+
+
+        const card =
+            document.getElementById(
+                "request-" + id
+            );
+
+
+        const buttons =
+            card.querySelectorAll(
+                ".action"
+            );
+
+
+        buttons.forEach(
+            item => item.disabled = true
+        );
+
+
+        button.textContent =
+            "Aprovando...";
+
+
+        try{
+
+            const {
+                error
+            } =
+                await supabaseClient.rpc(
+                    "aprovar_solicitacao_acesso",
+                    {
+                        p_solicitacao_id:id
+                    }
+                );
+
+
+            if(error){
+
+                throw error;
+
+            }
+
+
+            showMessage(
+                "Usuário aprovado com sucesso.",
+                "success"
+            );
+
+
+            await loadRequests();
+
+
+        }catch(error){
+
+            console.error(error);
+
+            showMessage(
+                error.message ||
+                "Não foi possível aprovar o usuário.",
+                "error"
+            );
+
+
+            buttons.forEach(
+                item => item.disabled = false
+            );
+
+            button.textContent =
+                "Aprovar";
+
+        }
+
+    }
+
+
+    async function rejectRequest(id, button){
+
+        const confirmed =
+            confirm(
+                "Recusar este cadastro?\n\n" +
+                "O usuário permanecerá sem acesso ao sistema."
+            );
+
+
+        if(!confirmed){
+
+            return;
+
+        }
+
+
+        const card =
+            document.getElementById(
+                "request-" + id
+            );
+
+
+        const buttons =
+            card.querySelectorAll(
+                ".action"
+            );
+
+
+        buttons.forEach(
+            item => item.disabled = true
+        );
+
+
+        button.textContent =
+            "Recusando...";
+
+
+        try{
+
+            const {
+                error
+            } =
+                await supabaseClient.rpc(
+                    "recusar_solicitacao_acesso",
+                    {
+                        p_solicitacao_id:id
+                    }
+                );
+
+
+            if(error){
+
+                throw error;
+
+            }
+
+
+            showMessage(
+                "Cadastro recusado.",
+                "success"
+            );
+
+
+            await loadRequests();
+
+
+        }catch(error){
+
+            console.error(error);
+
+            showMessage(
+                error.message ||
+                "Não foi possível recusar o cadastro.",
+                "error"
+            );
+
+
+            buttons.forEach(
+                item => item.disabled = false
+            );
+
+            button.textContent =
+                "Recusar";
+
+        }
+
+    }
+
+
+    function escapeHtml(value){
+
+        return String(value ?? "")
+            .replace(/&/g,"&amp;")
+            .replace(/</g,"&lt;")
+            .replace(/>/g,"&gt;")
+            .replace(/"/g,"&quot;")
+            .replace(/'/g,"&#039;");
+
+    }
+
+
+    async function init(){
+
+        const isAdmin =
+            await checkAdmin();
+
+
+        if(!isAdmin){
+
+            return;
+
+        }
+
+
+        await loadRequests();
+
+    }
+
+
+    init();
+
+</script>
+
+</body>
+</html>
