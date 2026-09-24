@@ -81,11 +81,6 @@ button:disabled{
     display:none !important;
 }
 
-
-/* =========================
-   APP
-========================= */
-
 .container{
     width:min(100%,760px);
     margin:0 auto;
@@ -95,11 +90,6 @@ button:disabled{
         16px
         calc(28px + env(safe-area-inset-bottom));
 }
-
-
-/* =========================
-   HEADER
-========================= */
 
 .header{
     position:sticky;
@@ -206,11 +196,6 @@ button:disabled{
     box-shadow:0 1px 4px rgba(0,0,0,.04);
 }
 
-
-/* =========================
-   CONTEXTO
-========================= */
-
 .controls{
     background:var(--card);
 
@@ -295,11 +280,6 @@ textarea:focus{
         0 0 0 3px rgba(0,122,255,.10);
 }
 
-
-/* =========================
-   MÁQUINAS
-========================= */
-
 .section-title{
     display:flex;
     align-items:center;
@@ -383,11 +363,6 @@ textarea:focus{
 
     color:var(--green);
 }
-
-
-/* =========================
-   TELA DA MÁQUINA
-========================= */
 
 .machine-screen{
     margin-top:14px;
@@ -521,11 +496,6 @@ textarea:focus{
     font-size:12px;
     font-weight:650;
 }
-
-
-/* =========================
-   OCORRÊNCIAS
-========================= */
 
 .occurrences-header{
     display:flex;
@@ -702,19 +672,9 @@ textarea:focus{
     font-size:13px;
 }
 
-
-/* =========================
-   OBSERVAÇÃO
-========================= */
-
 .observation{
     min-height:90px;
 }
-
-
-/* =========================
-   AÇÕES DA MÁQUINA
-========================= */
 
 .machine-actions{
     display:grid;
@@ -760,11 +720,6 @@ textarea:focus{
 
     font-weight:650;
 }
-
-
-/* =========================
-   FECHAMENTO
-========================= */
 
 .closing-card{
     background:var(--card);
@@ -837,11 +792,6 @@ textarea:focus{
     font-weight:700;
 }
 
-
-/* =========================
-   LOADING / EMPTY
-========================= */
-
 .loading,
 .empty{
     background:var(--card);
@@ -867,11 +817,6 @@ textarea:focus{
     align-items:center;
     justify-content:center;
 }
-
-
-/* =========================
-   TOAST
-========================= */
 
 .toast{
     position:fixed;
@@ -919,11 +864,6 @@ textarea:focus{
     transform:
         translate(-50%,0);
 }
-
-
-/* =========================
-   RESPONSIVO
-========================= */
 
 @media(max-width:520px){
 
@@ -1024,7 +964,6 @@ textarea:focus{
 
             </div>
 
-
             <div class="header-actions">
 
                 <button
@@ -1044,18 +983,12 @@ textarea:focus{
 
         </div>
 
-
         <div
             id="userName"
             class="user-name">
         </div>
 
     </header>
-
-
-    <!-- =========================
-         CONTEXTO
-    ========================= -->
 
     <section class="controls">
 
@@ -1072,7 +1005,6 @@ textarea:focus{
                     id="data">
 
             </div>
-
 
             <div class="field">
 
@@ -1097,7 +1029,6 @@ textarea:focus{
                 </select>
 
             </div>
-
 
             <div class="field">
 
@@ -1127,11 +1058,6 @@ textarea:focus{
 
     </section>
 
-
-    <!-- =========================
-         LISTA DE MÁQUINAS
-    ========================= -->
-
     <section id="machineListSection">
 
         <div class="section-title">
@@ -1146,18 +1072,12 @@ textarea:focus{
 
         </div>
 
-
         <div
             id="machineGrid"
             class="machine-grid">
         </div>
 
     </section>
-
-
-    <!-- =========================
-         TELA DA MÁQUINA
-    ========================= -->
 
     <section
         id="machineScreen"
@@ -1181,9 +1101,6 @@ textarea:focus{
 
             </div>
 
-
-            <!-- HORAS -->
-
             <div class="hours-grid">
 
                 <div class="field">
@@ -1200,7 +1117,6 @@ textarea:focus{
 
                 </div>
 
-
                 <div class="field">
 
                     <label for="reposicao">
@@ -1214,7 +1130,6 @@ textarea:focus{
                         placeholder="Ex.: 00:40">
 
                 </div>
-
 
                 <div
                     id="totalBox"
@@ -1234,9 +1149,6 @@ textarea:focus{
 
             </div>
 
-
-            <!-- SALDO -->
-
             <label
                 class="section-label"
                 for="saldo">
@@ -1248,9 +1160,6 @@ textarea:focus{
                 id="saldo"
                 inputmode="decimal"
                 placeholder="Ex.: 05:12">
-
-
-            <!-- OCORRÊNCIAS -->
 
             <div class="occurrences-header">
 
@@ -1265,7 +1174,6 @@ textarea:focus{
                 </button>
 
             </div>
-
 
             <div
                 id="occurrenceEditor"
@@ -1317,7 +1225,6 @@ textarea:focus{
 
                     </div>
 
-
                     <div class="field">
 
                         <label for="occurrenceDescription">
@@ -1333,7 +1240,6 @@ textarea:focus{
                     </div>
 
                 </div>
-
 
                 <div class="occurrence-editor-actions">
 
@@ -1353,14 +1259,10 @@ textarea:focus{
 
             </div>
 
-
             <div
                 id="occurrenceList"
                 class="occurrence-list">
             </div>
-
-
-            <!-- OBSERVAÇÃO -->
 
             <label
                 class="section-label"
@@ -1375,9 +1277,6 @@ textarea:focus{
                 placeholder="Observação geral da máquina">
             </textarea>
 
-
-            <!-- AÇÕES -->
-
             <div class="machine-actions">
 
                 <button
@@ -1386,7 +1285,6 @@ textarea:focus{
                     onclick="salvarMaquina()">
                     Salvar máquina
                 </button>
-
 
                 <button
                     id="deleteMachineButton"
@@ -1401,11 +1299,6 @@ textarea:focus{
 
     </section>
 
-
-    <!-- =========================
-         FECHAMENTO
-    ========================= -->
-
     <section
         id="closingCard"
         class="closing-card">
@@ -1418,13 +1311,11 @@ textarea:focus{
             Texto pronto para copiar e enviar.
         </p>
 
-
         <textarea
             id="closingText"
             class="closing-text"
             readonly>
         </textarea>
-
 
         <button
             class="copy-btn"
@@ -1436,18 +1327,12 @@ textarea:focus{
 
 </div>
 
-
 <div
     id="toast"
     class="toast">
 </div>
 
-
 <script>
-
-/* =========================================================
-   SUPABASE
-========================================================= */
 
 const SUPABASE_URL =
     "https://icajmncojvidhrqlbevq.supabase.co";
@@ -1461,10 +1346,6 @@ const supabaseClient =
         SUPABASE_KEY
     );
 
-
-/* =========================================================
-   CONFIGURAÇÕES
-========================================================= */
 
 const shiftTargets = {
 
@@ -1500,10 +1381,6 @@ const sectorMachines = {
 };
 
 
-/* =========================================================
-   ESTADO
-========================================================= */
-
 let session = null;
 
 let perfil = null;
@@ -1518,10 +1395,6 @@ let ocorrenciasLocais = [];
 
 let dadosApontamentos = [];
 
-
-/* =========================================================
-   INICIALIZAÇÃO
-========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -1550,14 +1423,12 @@ document.addEventListener(
                 contextoAlterado
             );
 
-
         document
             .getElementById("horaBoa")
             .addEventListener(
                 "input",
                 atualizarTotal
             );
-
 
         document
             .getElementById("reposicao")
@@ -1566,16 +1437,11 @@ document.addEventListener(
                 atualizarTotal
             );
 
-
         await verificarAcesso();
 
     }
 );
 
-
-/* =========================================================
-   DATA
-========================================================= */
 
 function definirDataHoje(){
 
@@ -1609,10 +1475,6 @@ function definirDataHoje(){
 }
 
 
-/* =========================================================
-   AUTENTICAÇÃO
-========================================================= */
-
 async function verificarAcesso(){
 
     const {
@@ -1624,7 +1486,6 @@ async function verificarAcesso(){
             .auth
             .getSession();
 
-
     if(
         !currentSession
     ){
@@ -1634,7 +1495,6 @@ async function verificarAcesso(){
 
         return;
     }
-
 
     session =
         currentSession;
@@ -1692,7 +1552,6 @@ async function verificarAcesso(){
             return;
         }
 
-
         alert(
             "Acesso restrito ao líder."
         );
@@ -1740,10 +1599,6 @@ async function verificarAcesso(){
 }
 
 
-/* =========================================================
-   MUDANÇA DE CONTEXTO
-========================================================= */
-
 async function contextoAlterado(){
 
     fecharTelaMaquina();
@@ -1754,10 +1609,6 @@ async function contextoAlterado(){
 
 }
 
-
-/* =========================================================
-   GRID DE MÁQUINAS
-========================================================= */
 
 function renderMachineGrid(){
 
@@ -1861,10 +1712,6 @@ function renderMachineGrid(){
 }
 
 
-/* =========================================================
-   CARREGAR DADOS
-========================================================= */
-
 async function carregarDados(){
 
     const data =
@@ -1887,17 +1734,6 @@ async function carregarDados(){
 
     dadosApontamentos = [];
 
-
-    /*
-       Primeiro localizamos somente
-       o turno do líder atual, na
-       combinação exata:
-
-       DATA
-       TURNO
-       SETOR
-       LÍDER
-    */
 
     const {
         data:turnos,
@@ -1957,6 +1793,8 @@ async function carregarDados(){
         !turnos.length
     ){
 
+        turnoAtual = null;
+
         renderMachineGrid();
 
         atualizarFechamento();
@@ -1965,17 +1803,16 @@ async function carregarDados(){
     }
 
 
+    turnoAtual =
+        turnos[0];
+
+
     const turnoIds =
         turnos.map(
             item =>
                 item.id
         );
 
-
-    /*
-       Busca os apontamentos somente
-       dos turnos encontrados.
-    */
 
     const {
         data:apontamentos,
@@ -2052,10 +1889,6 @@ async function carregarDados(){
 
 }
 
-
-/* =========================================================
-   ABRIR MÁQUINA
-========================================================= */
 
 async function abrirMaquina(
     numero
@@ -2140,10 +1973,6 @@ async function abrirMaquina(
 }
 
 
-/* =========================================================
-   PREENCHER FORMULÁRIO
-========================================================= */
-
 function preencherFormulario(
     item
 ){
@@ -2208,10 +2037,6 @@ function preencherFormulario(
 }
 
 
-/* =========================================================
-   LIMPAR FORMULÁRIO
-========================================================= */
-
 function limparFormulario(){
 
     document.getElementById(
@@ -2250,10 +2075,6 @@ function limparFormulario(){
 
 }
 
-
-/* =========================================================
-   TOTAL
-========================================================= */
 
 function atualizarTotal(){
 
@@ -2307,10 +2128,6 @@ function atualizarTotal(){
 
 }
 
-
-/* =========================================================
-   OCORRÊNCIAS
-========================================================= */
 
 function abrirEditorOcorrencia(){
 
@@ -2475,14 +2292,11 @@ function renderOcorrencias(){
 
                 </div>
 
-
                 <div class="occurrence-actions">
 
                     <button
                         class="occurrence-action delete"
-                        onclick="removerOcorrenciaLocal(
-                            ${index}
-                        )">
+                        onclick="removerOcorrenciaLocal(${index})">
                         Excluir
                     </button>
 
@@ -2518,13 +2332,13 @@ function removerOcorrenciaLocal(
 
 /* =========================================================
    SALVAR MÁQUINA
+   Agora utiliza a RPC transacional:
+   salvar_apontamento_lider
 ========================================================= */
 
 async function salvarMaquina(){
 
-    if(
-        !maquinaAtual
-    ){
+    if(!maquinaAtual){
 
         mostrarToast(
             "Selecione uma máquina."
@@ -2599,6 +2413,18 @@ async function salvarMaquina(){
         ).value.trim();
 
 
+    const ocorrencias =
+        ocorrenciasLocais.map(
+            ocorrencia => ({
+                categoria:
+                    ocorrencia.categoria,
+
+                descricao:
+                    ocorrencia.descricao
+            })
+        );
+
+
     button.disabled =
         true;
 
@@ -2609,328 +2435,65 @@ async function salvarMaquina(){
 
     try{
 
-        /* =========================================
-           1. LOCALIZAR OU CRIAR O TURNO
-        ========================================= */
-
         const {
-            data:turnosExistentes,
-            error:turnoBuscaError
+            data:apontamentoId,
+            error
         } =
             await supabaseClient
-                .from("turnos")
-                .select(`
-                    id,
-                    data,
-                    turno,
-                    setor,
-                    lider_id
-                `)
-                .eq(
-                    "data",
-                    data
-                )
-                .eq(
-                    "turno",
-                    turno
-                )
-                .eq(
-                    "setor",
-                    setor
-                )
-                .eq(
-                    "lider_id",
-                    session.user.id
-                )
-                .limit(1);
-
-
-        if(
-            turnoBuscaError
-        ){
-
-            throw turnoBuscaError;
-
-        }
-
-
-        if(
-            turnosExistentes &&
-            turnosExistentes.length
-        ){
-
-            turnoAtual =
-                turnosExistentes[0];
-
-        }else{
-
-            const {
-                data:novoTurno,
-                error:turnoInsertError
-            } =
-                await supabaseClient
-                    .from("turnos")
-                    .insert({
-
-                        data:
+                .rpc(
+                    "salvar_apontamento_lider",
+                    {
+                        p_data:
                             data,
 
-                        turno:
+                        p_turno:
                             turno,
 
-                        setor:
+                        p_setor:
                             setor,
 
-                        lider_id:
-                            session.user.id
+                        p_maquina:
+                            maquinaAtual,
 
-                    })
-                    .select()
-                    .single();
-
-
-            if(
-                turnoInsertError
-            ){
-
-                throw turnoInsertError;
-
-            }
-
-
-            turnoAtual =
-                novoTurno;
-
-        }
-
-
-        /* =========================================
-           2. LOCALIZAR APONTAMENTO EXISTENTE
-        ========================================= */
-
-        const {
-            data:apontamentosExistentes,
-            error:apontamentoBuscaError
-        } =
-            await supabaseClient
-                .from("apontamentos")
-                .select("*")
-                .eq(
-                    "turno_id",
-                    turnoAtual.id
-                )
-                .eq(
-                    "maquina",
-                    maquinaAtual
-                )
-                .limit(1);
-
-
-        if(
-            apontamentoBuscaError
-        ){
-
-            throw apontamentoBuscaError;
-
-        }
-
-
-        let apontamento;
-
-
-        /* =========================================
-           3. ATUALIZAR OU INSERIR
-        ========================================= */
-
-        const payload = {
-
-            turno_id:
-                turnoAtual.id,
-
-            maquina:
-                maquinaAtual,
-
-            hora_boa:
-                horaBoa,
-
-            reposicao:
-                reposicao,
-
-            total_baixado:
-                total,
-
-            saldo:
-                saldo,
-
-            observacao:
-                observacao ||
-                null
-
-        };
-
-
-        if(
-            apontamentosExistentes &&
-            apontamentosExistentes.length
-        ){
-
-            const existente =
-                apontamentosExistentes[0];
-
-
-            const {
-                data:atualizado,
-                error:updateError
-            } =
-                await supabaseClient
-                    .from("apontamentos")
-                    .update({
-
-                        hora_boa:
+                        p_hora_boa:
                             horaBoa,
 
-                        reposicao:
+                        p_reposicao:
                             reposicao,
 
-                        total_baixado:
+                        p_total_baixado:
                             total,
 
-                        saldo:
+                        p_saldo:
                             saldo,
 
-                        observacao:
+                        p_observacao:
                             observacao ||
-                            null
+                            null,
 
-                    })
-                    .eq(
-                        "id",
-                        existente.id
-                    )
-                    .select()
-                    .single();
-
-
-            if(
-                updateError
-            ){
-
-                throw updateError;
-
-            }
-
-
-            apontamento =
-                atualizado;
-
-        }else{
-
-            const {
-                data:novoApontamento,
-                error:insertError
-            } =
-                await supabaseClient
-                    .from("apontamentos")
-                    .insert(
-                        payload
-                    )
-                    .select()
-                    .single();
-
-
-            if(
-                insertError
-            ){
-
-                throw insertError;
-
-            }
-
-
-            apontamento =
-                novoApontamento;
-
-        }
-
-
-        /* =========================================
-           4. OCORRÊNCIAS
-        ========================================= */
-
-        /*
-           Primeiro excluímos as ocorrências
-           antigas deste apontamento.
-
-           Elas serão recriadas com o estado
-           atual da tela.
-        */
-
-        const {
-            error:deleteOccurrencesError
-        } =
-            await supabaseClient
-                .from("ocorrencias")
-                .delete()
-                .eq(
-                    "apontamento_id",
-                    apontamento.id
+                        p_ocorrencias:
+                            ocorrencias
+                    }
                 );
 
 
-        if(
-            deleteOccurrencesError
-        ){
+        if(error){
 
-            throw deleteOccurrencesError;
+            console.error(
+                "ERRO RPC SALVAR:",
+                error
+            );
 
-        }
-
-
-        if(
-            ocorrenciasLocais.length
-        ){
-
-            const ocorrenciasParaInserir =
-                ocorrenciasLocais.map(
-                    ocorrencia => ({
-
-                        apontamento_id:
-                            apontamento.id,
-
-                        categoria:
-                            ocorrencia.categoria,
-
-                        descricao:
-                            ocorrencia.descricao
-
-                    })
-                );
-
-
-            const {
-                error:occurrencesInsertError
-            } =
-                await supabaseClient
-                    .from("ocorrencias")
-                    .insert(
-                        ocorrenciasParaInserir
-                    );
-
-
-            if(
-                occurrencesInsertError
-            ){
-
-                throw occurrencesInsertError;
-
-            }
+            throw error;
 
         }
 
 
-        /* =========================================
-           5. RECARREGAR DADOS
-        ========================================= */
+        console.log(
+            "Apontamento salvo:",
+            apontamentoId
+        );
+
 
         mostrarToast(
             `${formatMachine(
@@ -2941,10 +2504,6 @@ async function salvarMaquina(){
 
         await carregarDados();
 
-
-        /* =========================================
-           6. VOLTAR PARA GRID
-        ========================================= */
 
         fecharTelaMaquina();
 
@@ -2961,6 +2520,7 @@ async function salvarMaquina(){
             "Não foi possível salvar",
             error
         );
+
 
     }finally{
 
@@ -3027,10 +2587,6 @@ async function excluirMaquina(){
 
     try{
 
-        /*
-           Ocorrências primeiro.
-        */
-
         const {
             error:occurrenceError
         } =
@@ -3082,7 +2638,6 @@ async function excluirMaquina(){
 
         await carregarDados();
 
-
         fecharTelaMaquina();
 
 
@@ -3113,10 +2668,6 @@ async function excluirMaquina(){
 }
 
 
-/* =========================================================
-   VOLTAR
-========================================================= */
-
 function voltarMaquinas(){
 
     fecharTelaMaquina();
@@ -3131,6 +2682,7 @@ function fecharTelaMaquina(){
 
     apontamentoAtual =
         null;
+
 
     document
         .getElementById(
@@ -3165,10 +2717,6 @@ function fecharTelaMaquina(){
 
 }
 
-
-/* =========================================================
-   FECHAMENTO
-========================================================= */
 
 function atualizarFechamento(){
 
@@ -3265,10 +2813,6 @@ function atualizarFechamento(){
 }
 
 
-/* =========================================================
-   COPIAR FECHAMENTO
-========================================================= */
-
 async function copiarFechamento(){
 
     const texto =
@@ -3304,10 +2848,6 @@ async function copiarFechamento(){
 
 }
 
-
-/* =========================================================
-   STATUS
-========================================================= */
 
 function getStatusClass(
     totalMinutes
@@ -3350,10 +2890,6 @@ function getStatusClass(
 }
 
 
-/* =========================================================
-   TEMPO
-========================================================= */
-
 function parseTime(
     value
 ){
@@ -3379,15 +2915,6 @@ function parseTime(
             ":"
         );
 
-
-    /*
-       Aceita:
-
-       07:41
-       0741
-       7:41
-       5
-    */
 
     if(
         /^\d{3,4}$/.test(
@@ -3549,10 +3076,6 @@ function formatMinutes(
 }
 
 
-/* =========================================================
-   MÁQUINAS
-========================================================= */
-
 function normalizarMaquina(
     valor
 ){
@@ -3635,10 +3158,6 @@ function formatMachine(
 }
 
 
-/* =========================================================
-   ERRO SUPABASE
-========================================================= */
-
 function mostrarErroSupabase(
     titulo,
     error
@@ -3659,13 +3178,18 @@ function mostrarErroSupabase(
         "";
 
 
+    const codigo =
+        error?.code ||
+        "";
+
+
     console.error(
         titulo,
         {
             message:mensagem,
             details:detalhe,
             hint:hint,
-            code:error?.code
+            code:codigo
         }
     );
 
@@ -3675,11 +3199,22 @@ function mostrarErroSupabase(
 
 
     if(
-        detalhe
+        detalhe &&
+        detalhe !== mensagem
     ){
 
         texto +=
             ` — ${detalhe}`;
+
+    }
+
+
+    if(
+        hint
+    ){
+
+        texto +=
+            ` — ${hint}`;
 
     }
 
@@ -3690,10 +3225,6 @@ function mostrarErroSupabase(
 
 }
 
-
-/* =========================================================
-   UTILITÁRIOS
-========================================================= */
 
 function escapeHtml(
     value
@@ -3769,15 +3300,11 @@ function mostrarToast(
                 );
 
             },
-            3000
+            3500
         );
 
 }
 
-
-/* =========================================================
-   ACESSOS
-========================================================= */
 
 function abrirAcessos(){
 
@@ -3786,10 +3313,6 @@ function abrirAcessos(){
 
 }
 
-
-/* =========================================================
-   LOGOUT
-========================================================= */
 
 async function logout(){
 
