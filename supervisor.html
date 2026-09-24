@@ -669,7 +669,10 @@ textarea:focus{
 
             <div class="header-brand">
                 <h1>CONTROLE DE PRODUÇÃO</h1>
-                <p class="header-subtitle">Setor de Injeção · Supervisor</p>
+
+                <p class="header-subtitle">
+                    Setor de Injeção · Supervisor
+                </p>
             </div>
 
             <button
@@ -688,12 +691,20 @@ textarea:focus{
     </header>
 
 
+    <!-- =========================
+         FILTROS
+    ========================= -->
+
     <section class="controls">
 
         <div class="control-grid">
 
+            <!-- DATA -->
+
             <div class="field">
-                <label for="data">Data</label>
+                <label for="data">
+                    Data
+                </label>
 
                 <input
                     type="date"
@@ -701,8 +712,12 @@ textarea:focus{
             </div>
 
 
+            <!-- TURNO -->
+
             <div class="field">
-                <label for="turno">Turno</label>
+                <label for="turno">
+                    Turno
+                </label>
 
                 <select id="turno">
 
@@ -721,10 +736,39 @@ textarea:focus{
                 </select>
             </div>
 
+
+            <!-- SETOR -->
+
+            <div class="field">
+                <label for="setor">
+                    Setor
+                </label>
+
+                <select id="setor">
+
+                    <option value="A">
+                        A
+                    </option>
+
+                    <option value="B">
+                        B
+                    </option>
+
+                    <option value="C">
+                        C
+                    </option>
+
+                </select>
+            </div>
+
         </div>
 
     </section>
 
+
+    <!-- =========================
+         ABAS
+    ========================= -->
 
     <div class="tabs">
 
@@ -748,6 +792,10 @@ textarea:focus{
 
     <main>
 
+        <!-- =========================
+             HORAS
+        ========================= -->
+
         <section id="abaHoras">
 
             <div
@@ -761,7 +809,9 @@ textarea:focus{
                 id="fechamento"
                 class="closing-card hidden">
 
-                <h2>Fechamento do turno</h2>
+                <h2>
+                    Fechamento do turno
+                </h2>
 
                 <p class="closing-subtitle">
                     Texto pronto para copiar e enviar.
@@ -784,6 +834,10 @@ textarea:focus{
 
         </section>
 
+
+        <!-- =========================
+             DRIVE
+        ========================= -->
 
         <section
             id="abaDrive"
@@ -824,9 +878,16 @@ const supabaseClient =
 
 
 const shiftTargets = {
-    "1º turno": 8 * 60 + 48,
-    "2º turno": 8 * 60 + 36,
-    "3º turno": 6 * 60 + 36
+
+    "1º turno":
+        8 * 60 + 48,
+
+    "2º turno":
+        8 * 60 + 36,
+
+    "3º turno":
+        6 * 60 + 36
+
 };
 
 
@@ -843,15 +904,19 @@ document.addEventListener(
     "DOMContentLoaded",
     async () => {
 
-        const hoje = new Date();
+        const hoje =
+            new Date();
+
 
         const ano =
             hoje.getFullYear();
+
 
         const mes =
             String(
                 hoje.getMonth() + 1
             ).padStart(2,"0");
+
 
         const dia =
             String(
@@ -859,7 +924,9 @@ document.addEventListener(
             ).padStart(2,"0");
 
 
-        document.getElementById("data").value =
+        document.getElementById(
+            "data"
+        ).value =
             `${ano}-${mes}-${dia}`;
 
 
@@ -879,7 +946,16 @@ document.addEventListener(
             );
 
 
+        document
+            .getElementById("setor")
+            .addEventListener(
+                "change",
+                carregarDados
+            );
+
+
         await verificarAcesso();
+
     }
 );
 
@@ -962,6 +1038,7 @@ async function verificarAcesso(){
 
 
     await carregarDados();
+
 }
 
 
@@ -983,6 +1060,22 @@ async function carregarDados(){
         ).value;
 
 
+    const setor =
+        document.getElementById(
+            "setor"
+        ).value;
+
+
+    if(!data || !turno || !setor){
+
+        return;
+    }
+
+
+    /* =========================
+       ESTADO DE CARREGAMENTO
+    ========================= */
+
     document.getElementById(
         "listaHoras"
     ).innerHTML =
@@ -999,12 +1092,23 @@ async function carregarDados(){
         </div>`;
 
 
-    /*
-       Buscamos os turnos do dia/turno.
+    document
+        .getElementById("fechamento")
+        .classList.add("hidden");
 
-       Um turno está ligado ao líder.
-       Depois buscamos os apontamentos
-       e suas ocorrências.
+
+    /*
+       IMPORTANTE:
+
+       A consulta agora filtra
+       simultaneamente:
+
+       DATA
+       TURNO
+       SETOR
+
+       Isso impede que apontamentos
+       de outro setor apareçam.
     */
 
     const {
@@ -1017,6 +1121,7 @@ async function carregarDados(){
                 id,
                 data,
                 turno,
+                setor,
                 lider_id,
                 usuarios (
                     nome
@@ -1037,13 +1142,26 @@ async function carregarDados(){
                     )
                 )
             `)
-            .eq("data",data)
-            .eq("turno",turno);
+            .eq(
+                "data",
+                data
+            )
+            .eq(
+                "turno",
+                turno
+            )
+            .eq(
+                "setor",
+                setor
+            );
 
 
     if(error){
 
-        console.error(error);
+        console.error(
+            "Erro Supabase:",
+            error
+        );
 
 
         document.getElementById(
@@ -1051,6 +1169,11 @@ async function carregarDados(){
         ).innerHTML =
             `<div class="empty">
                 Erro ao carregar os dados.
+                <br><br>
+                ${escapeHtml(
+                    error.message ||
+                    "Erro desconhecido."
+                )}
             </div>`;
 
 
@@ -1061,6 +1184,7 @@ async function carregarDados(){
                 Erro ao carregar os dados.
             </div>`;
 
+
         return;
     }
 
@@ -1068,10 +1192,31 @@ async function carregarDados(){
     dados = [];
 
 
+    /*
+       Cada turno retornado já pertence
+       ao setor selecionado.
+    */
+
     for(
         const turnoItem of
         (turnos || [])
     ){
+
+        /*
+           Proteção adicional no frontend.
+
+           Mesmo que futuramente a consulta
+           seja alterada, não deixamos passar
+           um turno de outro setor.
+        */
+
+        if(
+            turnoItem.setor !== setor
+        ){
+
+            continue;
+        }
+
 
         for(
             const apontamento of
@@ -1087,16 +1232,21 @@ async function carregarDados(){
                     "—",
 
                 turno_id:
-                    turnoItem.id
+                    turnoItem.id,
+
+                setor:
+                    turnoItem.setor
 
             });
+
         }
+
     }
 
 
     /*
        Caso mais de um líder tenha apontado
-       a mesma máquina no mesmo turno,
+       a mesma máquina no mesmo setor/turno,
        usamos o último registro encontrado.
     */
 
@@ -1108,10 +1258,29 @@ async function carregarDados(){
         const item of dados
     ){
 
+        const maquinaNumero =
+            normalizarMaquina(
+                item.maquina
+            );
+
+
+        if(
+            maquinaNumero === null
+        ){
+
+            continue;
+        }
+
+
         mapa.set(
-            item.maquina,
-            item
+            maquinaNumero,
+            {
+                ...item,
+                maquina:
+                    maquinaNumero
+            }
         );
+
     }
 
 
@@ -1121,12 +1290,15 @@ async function carregarDados(){
         )
         .sort(
             (a,b) =>
-                a.maquina - b.maquina
+                a.maquina -
+                b.maquina
         );
 
 
     renderHoras();
+
     renderDrive();
+
 }
 
 
@@ -1145,16 +1317,28 @@ function renderHoras(){
     if(!dados.length){
 
         container.innerHTML = `
+
             <div class="empty">
-                Nenhum apontamento encontrado
-                para esta data e turno.
+
+                Nenhum apontamento encontrado.
+
+                <br><br>
+
+                <strong>
+                    ${escapeHtml(
+                        getContextoTexto()
+                    )}
+                </strong>
+
             </div>
+
         `;
 
 
         document
             .getElementById("fechamento")
             .classList.add("hidden");
+
 
         return;
     }
@@ -1184,7 +1368,15 @@ function renderHoras(){
 
 
         const status =
-            getStatusClass(total);
+            getStatusClass(
+                total
+            );
+
+
+        const maquina =
+            formatMachine(
+                item.maquina
+            );
 
 
         card.innerHTML = `
@@ -1192,13 +1384,12 @@ function renderHoras(){
             <div class="machine-header">
 
                 <div class="machine-title">
-                    M${String(
-                        item.maquina
-                    ).padStart(2,"0")}
+                    ${maquina}
                 </div>
 
                 <div class="leader-name">
-                    Líder: ${escapeHtml(
+                    Líder:
+                    ${escapeHtml(
                         item.lider_nome
                     )}
                 </div>
@@ -1322,6 +1513,7 @@ function renderHoras(){
                 </button>
 
             </div>
+
         `;
 
 
@@ -1349,10 +1541,12 @@ function renderHoras(){
         container.appendChild(
             card
         );
+
     }
 
 
     gerarFechamento();
+
 }
 
 
@@ -1360,7 +1554,9 @@ function renderHoras(){
    ATUALIZA TOTAL NO CARD
 ========================= */
 
-function atualizarTotalCard(card){
+function atualizarTotalCard(
+    card
+){
 
     const horaBoa =
         parseTime(
@@ -1379,7 +1575,8 @@ function atualizarTotalCard(card){
 
 
     const total =
-        horaBoa + reposicao;
+        horaBoa +
+        reposicao;
 
 
     const totalBox =
@@ -1395,7 +1592,9 @@ function atualizarTotalCard(card){
 
 
     totalValue.textContent =
-        formatMinutes(total);
+        formatMinutes(
+            total
+        );
 
 
     totalBox.classList.remove(
@@ -1406,8 +1605,11 @@ function atualizarTotalCard(card){
 
 
     totalBox.classList.add(
-        getStatusClass(total)
+        getStatusClass(
+            total
+        )
     );
+
 }
 
 
@@ -1443,7 +1645,8 @@ async function salvarSupervisor(
 
 
     const total =
-        horaBoa + reposicao;
+        horaBoa +
+        reposicao;
 
 
     const saldo =
@@ -1462,6 +1665,7 @@ async function salvarSupervisor(
 
     button.disabled =
         true;
+
 
     button.textContent =
         "Salvando...";
@@ -1487,7 +1691,8 @@ async function salvarSupervisor(
                     saldo,
 
                 nota_supervisor:
-                    nota || null
+                    nota ||
+                    null
 
             })
             .eq(
@@ -1499,17 +1704,23 @@ async function salvarSupervisor(
     button.disabled =
         false;
 
+
     button.textContent =
         "Salvar alterações";
 
 
     if(error){
 
-        console.error(error);
+        console.error(
+            "Erro ao salvar:",
+            error
+        );
+
 
         mostrarToast(
             "Erro ao salvar alterações."
         );
+
 
         return;
     }
@@ -1521,6 +1732,7 @@ async function salvarSupervisor(
 
 
     await carregarDados();
+
 }
 
 
@@ -1540,11 +1752,17 @@ function gerarFechamento(){
     }
 
 
+    const setor =
+        document.getElementById(
+            "setor"
+        ).value;
+
+
     const linhas = [];
 
 
     linhas.push(
-        "Horas baixadas setor A"
+        `Horas baixadas setor ${setor}`
     );
 
 
@@ -1556,9 +1774,9 @@ function gerarFechamento(){
     ){
 
         const maquina =
-            `M${String(
+            formatMachine(
                 item.maquina
-            ).padStart(2,"0")}`;
+            );
 
 
         const total =
@@ -1581,31 +1799,41 @@ function gerarFechamento(){
                 ` (Saldo - ${formatMinutes(
                     item.saldo
                 )})`;
+
         }
 
 
-        if(item.nota_supervisor){
+        if(
+            item.nota_supervisor
+        ){
 
             linha +=
                 ` — ${item.nota_supervisor}`;
+
         }
 
 
         linhas.push(
             linha
         );
+
     }
 
 
     document.getElementById(
         "textoFechamento"
     ).value =
-        linhas.join("\n");
+        linhas.join(
+            "\n"
+        );
 
 
     document
         .getElementById("fechamento")
-        .classList.remove("hidden");
+        .classList.remove(
+            "hidden"
+        );
+
 }
 
 
@@ -1624,11 +1852,23 @@ function renderDrive(){
     if(!dados.length){
 
         container.innerHTML = `
+
             <div class="empty">
-                Nenhum apontamento encontrado
-                para esta data e turno.
+
+                Nenhum apontamento encontrado.
+
+                <br><br>
+
+                <strong>
+                    ${escapeHtml(
+                        getContextoTexto()
+                    )}
+                </strong>
+
             </div>
+
         `;
+
 
         return;
     }
@@ -1652,25 +1892,30 @@ function renderDrive(){
 
 
         const maquina =
-            `M${String(
+            formatMachine(
                 item.maquina
-            ).padStart(2,"0")}`;
+            );
 
 
         const ocorrencias =
-            item.ocorrencias || [];
+            item.ocorrencias ||
+            [];
 
 
         let problemasHTML =
             "";
 
 
-        if(!ocorrencias.length){
+        if(
+            !ocorrencias.length
+        ){
 
             problemasHTML = `
+
                 <div class="no-problems">
                     Nenhum problema registrado.
                 </div>
+
             `;
 
         }else{
@@ -1679,6 +1924,7 @@ function renderDrive(){
                 ocorrencias
                     .map(
                         oc => `
+
                             <div class="problem">
 
                                 •
@@ -1687,14 +1933,17 @@ function renderDrive(){
                                         oc.categoria
                                     )}
                                 </span>:
+
                                 ${escapeHtml(
                                     oc.descricao
                                 )}
 
                             </div>
+
                         `
                     )
                     .join("");
+
         }
 
 
@@ -1708,21 +1957,27 @@ function renderDrive(){
 
             </div>
 
+
             ${problemasHTML}
+
 
             ${
                 ocorrencias.length
                 ?
                 `
+
                 <button
                     class="copy-btn"
                     onclick="copiarProblemas(
                         ${item.maquina},
                         this
                     )">
+
                     Copiar problemas da
                     ${maquina}
+
                 </button>
+
                 `
                 :
                 ""
@@ -1734,7 +1989,9 @@ function renderDrive(){
         container.appendChild(
             card
         );
+
     }
+
 }
 
 
@@ -1747,11 +2004,21 @@ async function copiarProblemas(
     button
 ){
 
+    const numero =
+        normalizarMaquina(
+            maquinaNumero
+        );
+
+
     const item =
         dados.find(
             x =>
-                Number(x.maquina) ===
-                Number(maquinaNumero)
+                Number(
+                    x.maquina
+                ) ===
+                Number(
+                    numero
+                )
         );
 
 
@@ -1766,7 +2033,8 @@ async function copiarProblemas(
 
 
     const ocorrencias =
-        item.ocorrencias || [];
+        item.ocorrencias ||
+        [];
 
 
     if(!ocorrencias.length){
@@ -1780,9 +2048,9 @@ async function copiarProblemas(
 
 
     const maquina =
-        `M${String(
-            maquinaNumero
-        ).padStart(2,"0")}`;
+        formatMachine(
+            numero
+        );
 
 
     const linhas =
@@ -1799,11 +2067,14 @@ async function copiarProblemas(
         linhas.push(
             `• ${oc.categoria}: ${oc.descricao}`
         );
+
     }
 
 
     const texto =
-        linhas.join("\n");
+        linhas.join(
+            "\n"
+        );
 
 
     try{
@@ -1835,12 +2106,17 @@ async function copiarProblemas(
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         mostrarToast(
             "Não foi possível copiar."
         );
+
     }
+
 }
 
 
@@ -1870,12 +2146,17 @@ async function copiarFechamento(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         mostrarToast(
             "Não foi possível copiar."
         );
+
     }
+
 }
 
 
@@ -1883,7 +2164,9 @@ async function copiarFechamento(){
    ABAS
 ========================= */
 
-function mostrarAba(aba){
+function mostrarAba(
+    aba
+){
 
     const horas =
         document.getElementById(
@@ -1909,23 +2192,29 @@ function mostrarAba(aba){
         );
 
 
-    if(aba === "horas"){
+    if(
+        aba === "horas"
+    ){
 
         horas.classList.remove(
             "hidden"
         );
 
+
         drive.classList.add(
             "hidden"
         );
+
 
         tabHoras.classList.add(
             "active"
         );
 
+
         tabDrive.classList.remove(
             "active"
         );
+
 
     }else{
 
@@ -1933,18 +2222,23 @@ function mostrarAba(aba){
             "hidden"
         );
 
+
         drive.classList.remove(
             "hidden"
         );
+
 
         tabHoras.classList.remove(
             "active"
         );
 
+
         tabDrive.classList.add(
             "active"
         );
+
     }
+
 }
 
 
@@ -1963,23 +2257,33 @@ function getStatusClass(
 
 
     const target =
-        shiftTargets[turno];
+        shiftTargets[
+            turno
+        ];
 
 
     if(
-        totalMinutes >= target
-    )
+        totalMinutes >=
+        target
+    ){
+
         return "status-green";
+
+    }
 
 
     if(
         totalMinutes >=
         target - 48
-    )
+    ){
+
         return "status-yellow";
+
+    }
 
 
     return "status-red";
+
 }
 
 
@@ -1987,50 +2291,91 @@ function getStatusClass(
    TEMPO
 ========================= */
 
-function parseTime(value){
+function parseTime(
+    value
+){
 
-    if(!value)
+    if(
+        !value
+    ){
+
         return 0;
+
+    }
 
 
     value =
-        String(value)
-            .trim()
-            .replace(",",":");
+        String(
+            value
+        )
+        .trim()
+        .replace(
+            ",",
+            ":"
+        );
 
 
-    if(value.includes(":")){
+    if(
+        value.includes(":")
+    ){
 
         const parts =
             value.split(":");
 
 
         const horas =
-            Number(parts[0]) || 0;
+            Number(
+                parts[0]
+            ) || 0;
 
 
         const minutos =
-            Number(parts[1]) || 0;
+            Number(
+                parts[1]
+            ) || 0;
 
 
-        return horas * 60 + minutos;
+        return (
+            horas * 60 +
+            minutos
+        );
+
     }
 
 
     const numero =
-        Number(value);
+        Number(
+            value
+        );
 
 
-    return Number.isFinite(numero)
+    return Number.isFinite(
+        numero
+    )
         ? numero
         : 0;
+
 }
 
 
-function formatMinutes(minutes){
+function formatMinutes(
+    minutes
+){
 
     minutes =
-        Number(minutes) || 0;
+        Number(
+            minutes
+        ) || 0;
+
+
+    const negativo =
+        minutes < 0;
+
+
+    minutes =
+        Math.abs(
+            minutes
+        );
 
 
     const horas =
@@ -2040,16 +2385,168 @@ function formatMinutes(minutes){
 
 
     const mins =
-        Math.abs(
-            minutes % 60
+        minutes % 60;
+
+
+    const resultado =
+        `${String(
+            horas
+        ).padStart(2,"0")}:${String(
+            mins
+        ).padStart(2,"0")}`;
+
+
+    return negativo
+        ? `-${resultado}`
+        : resultado;
+
+}
+
+
+/* =========================
+   MÁQUINA
+========================= */
+
+function normalizarMaquina(
+    valor
+){
+
+    if(
+        valor === null ||
+        valor === undefined ||
+        valor === ""
+    ){
+
+        return null;
+
+    }
+
+
+    let texto =
+        String(
+            valor
+        )
+        .trim()
+        .toUpperCase();
+
+
+    /*
+       Aceita:
+
+       1
+       01
+       M1
+       M01
+       m01
+    */
+
+    texto =
+        texto.replace(
+            /^M/,
+            ""
         );
 
 
-    return `${String(
-        horas
-    ).padStart(2,"0")}:${String(
-        mins
+    const numero =
+        Number(
+            texto
+        );
+
+
+    if(
+        !Number.isInteger(
+            numero
+        ) ||
+        numero <= 0
+    ){
+
+        return null;
+
+    }
+
+
+    return numero;
+
+}
+
+
+function formatMachine(
+    valor
+){
+
+    const numero =
+        normalizarMaquina(
+            valor
+        );
+
+
+    if(
+        numero === null
+    ){
+
+        return "M--";
+
+    }
+
+
+    return `M${String(
+        numero
     ).padStart(2,"0")}`;
+
+}
+
+
+/* =========================
+   CONTEXTO ATUAL
+========================= */
+
+function getContextoTexto(){
+
+    const data =
+        document.getElementById(
+            "data"
+        ).value;
+
+
+    const turno =
+        document.getElementById(
+            "turno"
+        ).value;
+
+
+    const setor =
+        document.getElementById(
+            "setor"
+        ).value;
+
+
+    let dataFormatada =
+        data;
+
+
+    if(
+        data &&
+        data.includes("-")
+    ){
+
+        const partes =
+            data.split("-");
+
+
+        if(
+            partes.length === 3
+        ){
+
+            dataFormatada =
+                `${partes[2]}/${partes[1]}/${partes[0]}`;
+
+        }
+
+    }
+
+
+    return `${dataFormatada} · ${turno} · Setor ${setor}`;
+
 }
 
 
@@ -2057,40 +2554,50 @@ function formatMinutes(minutes){
    UTILITÁRIOS
 ========================= */
 
-function escapeHtml(value){
+function escapeHtml(
+    value
+){
 
     if(
         value === null ||
         value === undefined
-    )
+    ){
+
         return "";
 
+    }
 
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+
+    return String(
+        value
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
 }
 
 
-function mostrarToast(texto){
+function mostrarToast(
+    texto
+){
 
     const toast =
         document.getElementById(
@@ -2123,6 +2630,7 @@ function mostrarToast(texto){
             },
             2000
         );
+
 }
 
 
@@ -2136,6 +2644,7 @@ async function logout(){
 
     window.location.href =
         "index.html";
+
 }
 
 </script>
