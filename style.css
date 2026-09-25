@@ -12,24 +12,40 @@
     --radius:18px;
 }
 
+
 *{
     box-sizing:border-box;
     -webkit-tap-highlight-color:transparent;
 }
 
+
 html{
     scroll-behavior:smooth;
 }
+
 
 body{
     margin:0;
     background:var(--bg);
     color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
-        "SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "SF Pro Text",
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
     min-height:100vh;
-    padding-bottom:env(safe-area-inset-bottom);
+
+    padding-bottom:
+        env(safe-area-inset-bottom);
 }
+
 
 button,
 input,
@@ -38,40 +54,57 @@ textarea{
     font:inherit;
 }
 
+
 button{
     border:0;
     cursor:pointer;
 }
+
 
 .hidden{
     display:none !important;
 }
 
 
-/* HEADER */
+/* =========================================================
+   HEADER
+========================================================= */
 
 .app-header{
     position:sticky;
     top:0;
     z-index:50;
+
     padding:
         calc(12px + env(safe-area-inset-top))
         18px
         12px;
-    background:rgba(242,242,247,.88);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    border-bottom:1px solid rgba(0,0,0,.05);
+
+    background:
+        rgba(242,242,247,.88);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    border-bottom:
+        1px solid rgba(0,0,0,.05);
 }
+
 
 .header-inner{
     max-width:760px;
     margin:auto;
+
     display:flex;
     align-items:center;
     justify-content:space-between;
+
     gap:12px;
 }
+
 
 .app-title{
     font-size:17px;
@@ -79,11 +112,13 @@ button{
     letter-spacing:-.2px;
 }
 
+
 .app-subtitle{
     color:var(--secondary);
     font-size:12px;
     margin-top:2px;
 }
+
 
 .header-actions{
     display:flex;
@@ -92,143 +127,210 @@ button{
     flex-shrink:0;
 }
 
+
 .user-avatar{
     width:38px;
     height:38px;
+
     border-radius:50%;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     background:#111;
     color:#fff;
+
     font-size:13px;
     font-weight:700;
+
     flex-shrink:0;
 }
 
+
 .logout-button{
     min-height:38px;
+
     padding:0 13px;
+
     border-radius:12px;
+
     background:#FFFFFF;
     color:var(--red);
+
     font-size:13px;
     font-weight:650;
+
     box-shadow:var(--shadow);
 }
+
 
 .logout-button:active{
     transform:scale(.96);
 }
 
 
-/* MAIN */
+/* =========================================================
+   MAIN
+========================================================= */
 
 main{
     width:100%;
     max-width:760px;
+
     margin:0 auto;
+
     padding:18px;
 }
 
 
-/* CONTEXTO */
+/* =========================================================
+   CONTEXTO
+========================================================= */
 
 .leader-label{
     color:var(--secondary);
+
     font-size:12px;
     font-weight:600;
+
     text-transform:uppercase;
+
     letter-spacing:.5px;
 }
+
 
 .leader-name{
     font-size:22px;
     font-weight:700;
+
     letter-spacing:-.5px;
+
     margin-top:3px;
 }
 
+
 .context-grid{
     display:grid;
-    grid-template-columns:1fr 1fr;
+
+    grid-template-columns:
+        1fr 1fr;
+
     gap:12px;
+
     margin-top:18px;
 }
+
 
 .context-date{
     grid-column:1 / -1;
 }
 
+
 .field-card{
     background:var(--card);
+
     border-radius:var(--radius);
+
     padding:14px 15px;
+
     box-shadow:var(--shadow);
 }
 
+
 .field-label{
     color:var(--secondary);
+
     font-size:12px;
     font-weight:600;
+
     margin-bottom:7px;
 }
+
 
 .field-card input,
 .field-card select{
     width:100%;
+
     border:0;
     outline:0;
+
     background:transparent;
+
     color:var(--text);
+
     font-size:16px;
     font-weight:600;
+
     padding:0;
 }
+
 
 input[type="date"]{
     min-height:24px;
 }
 
 
-/* SECTION */
+/* =========================================================
+   SECTION
+========================================================= */
 
 .section{
     margin-top:22px;
 }
 
+
 .section-title{
     font-size:13px;
     font-weight:700;
+
     color:var(--secondary);
+
     text-transform:uppercase;
+
     letter-spacing:.5px;
-    margin:0 4px 10px;
+
+    margin:
+        0 4px 10px;
 }
 
 
-/* MACHINE GRID */
+/* =========================================================
+   GRID DE MÁQUINAS
+========================================================= */
 
 .machine-grid{
     display:grid;
-    grid-template-columns:repeat(4,1fr);
+
+    grid-template-columns:
+        repeat(4,1fr);
+
     gap:10px;
 }
 
+
 .machine-button{
     min-height:62px;
+
     border-radius:17px;
+
     background:#fff;
+
     box-shadow:var(--shadow);
+
     color:var(--text);
+
     font-size:16px;
     font-weight:700;
+
     transition:.15s ease;
 }
+
 
 .machine-button:active{
     transform:scale(.96);
 }
+
 
 .machine-button.saved{
     background:var(--green);
@@ -236,430 +338,773 @@ input[type="date"]{
 }
 
 
-/* MACHINE SCREEN */
+/* =========================================================
+   TELA DA MÁQUINA
+========================================================= */
 
 .machine-top{
     display:flex;
+
     align-items:center;
+
     gap:12px;
+
     margin-bottom:20px;
 }
+
 
 .back-button{
     width:42px;
     height:42px;
+
     border-radius:50%;
+
     background:#fff;
+
     box-shadow:var(--shadow);
+
     font-size:28px;
     line-height:1;
+
     color:#111;
 }
+
 
 .machine-title{
     font-size:26px;
     font-weight:750;
+
     letter-spacing:-.7px;
 }
 
+
 .machine-subtitle{
     color:var(--secondary);
+
     font-size:13px;
+
     margin-top:2px;
 }
 
 
-/* FORM */
+/* =========================================================
+   FORM
+========================================================= */
 
 .form-card{
     background:#fff;
+
     border-radius:var(--radius);
+
     padding:18px;
+
     box-shadow:var(--shadow);
+
     margin-bottom:14px;
 }
+
 
 .form-title{
     font-size:16px;
     font-weight:700;
+
     margin-bottom:14px;
 }
 
+
 .hours-grid{
     display:grid;
-    grid-template-columns:1fr 1fr;
+
+    grid-template-columns:
+        1fr 1fr;
+
     gap:12px;
 }
 
+
 .input-group label{
     display:block;
+
     color:var(--secondary);
+
     font-size:12px;
     font-weight:600;
-    margin:0 0 7px 2px;
+
+    margin:
+        0 0 7px 2px;
 }
 
 
-/* INPUTS DE HORA */
+/* =========================================================
+   CAMPOS DE HORA
+========================================================= */
 
 .time-input-wrapper{
     position:relative;
+
     width:100%;
+
+    display:flex;
+    align-items:center;
 }
+
 
 .input-group .time-input-wrapper input{
     width:100%;
-    border:1px solid var(--line);
+
+    height:46px;
+
+    border:
+        1px solid var(--line);
+
     background:#F8F8FA;
+
     border-radius:13px;
+
     outline:0;
-    padding:12px 44px 12px 12px;
+
+    padding:
+        12px 44px 12px 12px;
+
     color:var(--text);
+
     font-size:17px;
     font-weight:600;
+
     transition:.15s ease;
 }
 
+
 .time-input-wrapper input:focus{
     border-color:var(--blue);
+
     background:#fff;
 }
 
+
+/* =========================================================
+   BOTÃO DO RELÓGIO
+========================================================= */
+
 .time-picker-button{
     position:absolute;
+
     top:50%;
-    right:7px;
-    transform:translateY(-50%);
-    width:34px;
-    height:34px;
+    right:5px;
+
+    transform:
+        translateY(-50%);
+
+    width:36px;
+    height:36px;
+
+    min-width:36px;
+    min-height:36px;
+
+    padding:0;
+    margin:0;
+
     border-radius:10px;
+
     background:transparent;
+
     color:var(--secondary);
+
     display:flex;
+
     align-items:center;
     justify-content:center;
-    font-size:23px;
-    line-height:1;
-    padding:0;
+
+    z-index:2;
+
+    -webkit-appearance:none;
+    appearance:none;
 }
+
 
 .time-picker-button:active{
     background:#E5E5EA;
-    transform:translateY(-50%) scale(.94);
+
+    transform:
+        translateY(-50%)
+        scale(.94);
 }
 
-.time-picker-button span{
+
+/* =========================================================
+   ÍCONE DO RELÓGIO
+========================================================= */
+
+.clock-icon{
+    width:18px;
+    height:18px;
+
+    border:
+        2px solid currentColor;
+
+    border-radius:50%;
+
     display:block;
-    transform:translateY(-1px);
+
+    position:relative;
 }
 
 
-/* SELETOR NATIVO */
+.clock-icon::before{
+    content:"";
+
+    position:absolute;
+
+    width:2px;
+    height:6px;
+
+    background:currentColor;
+
+    left:6px;
+    top:3px;
+
+    border-radius:2px;
+}
+
+
+.clock-icon::after{
+    content:"";
+
+    position:absolute;
+
+    width:5px;
+    height:2px;
+
+    background:currentColor;
+
+    left:7px;
+    top:8px;
+
+    border-radius:2px;
+
+    transform:
+        rotate(25deg);
+
+    transform-origin:
+        left center;
+}
+
+
+/* =========================================================
+   SELETOR NATIVO
+========================================================= */
 
 .native-time-picker{
     position:fixed;
+
     width:1px;
     height:1px;
+
     opacity:0;
+
     pointer-events:none;
+
     left:-100px;
     top:-100px;
 }
 
 
-/* TOTAL */
+/* =========================================================
+   TOTAL
+========================================================= */
 
 .total-box{
     margin-top:14px;
+
     padding:15px;
+
     border-radius:15px;
+
     background:#F2F2F7;
+
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
+
     gap:12px;
 }
 
+
 .total-label{
     color:var(--secondary);
+
     font-size:13px;
     font-weight:600;
 }
 
+
 .total-value{
     font-size:22px;
     font-weight:750;
+
     letter-spacing:-.4px;
 }
 
 
-/* PERFORMANCE */
+/* =========================================================
+   PERFORMANCE
+========================================================= */
 
 .performance{
     height:7px;
+
     border-radius:10px;
+
     margin-top:12px;
+
     background:#E5E5EA;
+
     overflow:hidden;
 }
 
+
 .performance-bar{
     height:100%;
+
     width:0;
+
     border-radius:10px;
+
     transition:.2s ease;
 }
+
 
 .status-green{
     background:var(--green);
 }
 
+
 .status-yellow{
     background:var(--yellow);
 }
+
 
 .status-red{
     background:var(--red);
 }
 
 
-/* SALDO */
+/* =========================================================
+   SALDO
+========================================================= */
 
 .saldo-row{
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
+
     gap:12px;
+
     margin-top:15px;
 }
+
 
 .saldo-row label{
     font-size:14px;
     font-weight:600;
 }
 
+
 .saldo-time{
+    position:relative;
+
     width:120px;
+
     flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
 }
+
 
 .saldo-row .time-input-wrapper input{
     width:100%;
-    border:1px solid var(--line);
+
+    height:42px;
+
+    border:
+        1px solid var(--line);
+
     background:#F8F8FA;
+
     border-radius:12px;
-    padding:10px 38px 10px 10px;
+
+    padding:
+        10px 36px 10px 8px;
+
     text-align:center;
+
     outline:0;
+
     font-weight:600;
 }
+
 
 .saldo-row .time-picker-button{
     right:3px;
 }
 
 
-/* OCCURRENCES */
+/* =========================================================
+   OCORRÊNCIAS
+========================================================= */
 
 .occurrence-list{
     display:flex;
+
     flex-direction:column;
+
     gap:8px;
+
     margin-bottom:12px;
 }
 
+
 .occurrence-item{
     background:#F2F2F7;
+
     border-radius:13px;
+
     padding:11px 12px;
+
     display:flex;
+
     align-items:flex-start;
+
     gap:10px;
 }
 
+
 .occurrence-content{
     flex:1;
+
     min-width:0;
 }
 
+
 .occurrence-type{
     font-size:12px;
+
     color:var(--secondary);
+
     font-weight:700;
+
     margin-bottom:3px;
 }
 
+
 .occurrence-description{
     font-size:14px;
+
     line-height:1.35;
+
     word-break:break-word;
 }
 
+
 .occurrence-actions{
     display:flex;
+
     gap:5px;
+
     flex-shrink:0;
 }
+
 
 .mini-button{
     width:32px;
     height:32px;
+
     border-radius:9px;
+
     background:#fff;
+
     color:#111;
+
     font-size:14px;
 }
+
 
 .mini-button.delete{
     color:var(--red);
 }
 
+
 .add-occurrence{
     width:100%;
+
     padding:13px;
+
     border-radius:13px;
+
     background:#F2F2F7;
+
     color:var(--blue);
+
     font-weight:700;
+
     font-size:15px;
 }
 
 
-/* OCCURRENCE EDITOR */
+/* =========================================================
+   EDITOR DE OCORRÊNCIA
+========================================================= */
 
 .occurrence-editor{
     margin-top:12px;
+
     padding:14px;
+
     border-radius:15px;
+
     background:#F2F2F7;
 }
 
+
 .occurrence-editor select{
     width:100%;
-    border:1px solid var(--line);
+
+    border:
+        1px solid var(--line);
+
     border-radius:12px;
+
     background:#fff;
+
     padding:11px;
+
     outline:0;
+
     margin-bottom:9px;
 }
 
+
 .occurrence-editor textarea{
     width:100%;
+
     min-height:80px;
+
     resize:vertical;
-    border:1px solid var(--line);
+
+    border:
+        1px solid var(--line);
+
     border-radius:12px;
+
     background:#fff;
+
     padding:11px;
+
     outline:0;
+
+    font-size:15px;
 }
+
 
 .editor-actions{
     display:flex;
+
     gap:8px;
+
     margin-top:9px;
 }
 
+
 .editor-actions button{
     flex:1;
+
     padding:11px;
+
     border-radius:11px;
+
     font-weight:700;
 }
 
+
 .editor-cancel{
     background:#fff;
+
     color:#111;
 }
 
+
 .editor-save{
     background:var(--blue);
+
     color:#fff;
 }
 
 
-/* ACTIONS */
+/* =========================================================
+   AÇÕES
+========================================================= */
 
 .save-button{
     width:100%;
+
     min-height:54px;
+
     border-radius:16px;
+
     background:var(--green);
+
     color:#fff;
+
     font-size:16px;
     font-weight:750;
-    box-shadow:0 5px 16px rgba(52,199,89,.20);
+
+    box-shadow:
+        0 5px 16px
+        rgba(52,199,89,.20);
+
     margin-top:6px;
 }
+
 
 .save-button:active{
     transform:scale(.985);
 }
 
+
 .delete-machine{
     width:100%;
+
     margin-top:12px;
+
     padding:13px;
+
     border-radius:14px;
+
     background:transparent;
+
     color:var(--red);
+
     font-weight:650;
 }
 
 
-/* TOAST */
+/* =========================================================
+   TOAST
+========================================================= */
 
 .toast{
     position:fixed;
+
     left:50%;
-    bottom:calc(22px + env(safe-area-inset-bottom));
-    transform:translate(-50%,20px);
-    background:rgba(20,20,20,.94);
+
+    bottom:
+        calc(
+            22px +
+            env(safe-area-inset-bottom)
+        );
+
+    transform:
+        translate(
+            -50%,
+            20px
+        );
+
+    background:
+        rgba(20,20,20,.94);
+
     color:#fff;
-    padding:12px 17px;
+
+    padding:
+        12px 17px;
+
     border-radius:999px;
+
     font-size:14px;
     font-weight:600;
+
     z-index:100;
+
     opacity:0;
+
     pointer-events:none;
+
     transition:.22s ease;
+
     white-space:nowrap;
-    max-width:calc(100vw - 30px);
+
+    max-width:
+        calc(100vw - 30px);
+
     overflow:hidden;
+
     text-overflow:ellipsis;
 }
 
+
 .toast.show{
     opacity:1;
-    transform:translate(-50%,0);
+
+    transform:
+        translate(
+            -50%,
+            0
+        );
 }
 
 
-/* LOADING */
+/* =========================================================
+   LOADING
+========================================================= */
 
 .loading{
     position:fixed;
+
     inset:0;
-    background:rgba(242,242,247,.72);
-    backdrop-filter:blur(8px);
-    -webkit-backdrop-filter:blur(8px);
+
+    background:
+        rgba(242,242,247,.72);
+
+    backdrop-filter:
+        blur(8px);
+
+    -webkit-backdrop-filter:
+        blur(8px);
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
+
     z-index:200;
 }
 
+
 .loading-box{
     background:#fff;
-    padding:20px 24px;
+
+    padding:
+        20px 24px;
+
     border-radius:18px;
+
     box-shadow:var(--shadow);
+
     font-size:15px;
+
     font-weight:600;
 }
 
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
 
 @media(max-width:520px){
 
@@ -667,13 +1112,18 @@ input[type="date"]{
         padding:16px;
     }
 
+
     .machine-grid{
-        grid-template-columns:repeat(4,1fr);
+        grid-template-columns:
+            repeat(4,1fr);
+
         gap:8px;
     }
 
+
     .machine-button{
         min-height:58px;
+
         font-size:15px;
     }
 
@@ -686,17 +1136,21 @@ input[type="date"]{
         font-size:15px;
     }
 
+
     .logout-button{
         padding:0 10px;
     }
+
 
     .user-avatar{
         width:34px;
         height:34px;
     }
 
+
     .machine-grid{
-        grid-template-columns:repeat(3,1fr);
+        grid-template-columns:
+            repeat(3,1fr);
     }
 
 }
@@ -705,7 +1159,8 @@ input[type="date"]{
 @media(max-width:350px){
 
     .hours-grid{
-        grid-template-columns:1fr;
+        grid-template-columns:
+            1fr;
     }
 
 }
