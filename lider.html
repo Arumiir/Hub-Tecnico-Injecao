@@ -1,2065 +1,2898 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#f5f5f7">
-  <title>Controle de Produção</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    :root {
-      --bg: #f5f5f7;
-      --card: #ffffff;
-      --text: #111111;
-      --muted: #6e6e73;
-      --border: #e5e5ea;
-      --blue: #007aff;
-      --green: #34c759;
-      --yellow: #ffcc00;
-      --red: #ff3b30;
-      --shadow: 0 4px 20px rgba(0,0,0,.06);
-      --radius: 18px;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-        "SF Pro Text", Inter, Arial, sans-serif;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .app {
-      width: 100%;
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 16px;
-      padding-bottom: 40px;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -.4px;
-    }
-
-    .brand p {
-      margin: 3px 0 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .user-area {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #111;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .logout {
-      border: 0;
-      background: transparent;
-      color: var(--red);
-      font-size: 13px;
-      font-weight: 600;
-      padding: 8px;
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 18px;
-      margin-bottom: 14px;
-    }
-
-    .leader-name {
-      margin-bottom: 18px;
-    }
-
-    .label {
-      display: block;
-      margin-bottom: 7px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-    }
-
-    .leader-name strong {
-      font-size: 18px;
-    }
-
-    .context-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .context-date {
-      grid-column: 1 / -1;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      background: #fafafa;
-      color: var(--text);
-      padding: 13px 14px;
-      outline: none;
-      transition: .15s;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--blue);
-      background: #fff;
-      box-shadow: 0 0 0 3px rgba(0,122,255,.10);
-    }
-
-    .section-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 13px;
-    }
-
-    .section-title strong {
-      font-size: 16px;
-    }
-
-    .machine-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 9px;
-    }
-
-    .machine {
-      min-height: 62px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: #fafafa;
-      color: var(--text);
-      font-weight: 700;
-      font-size: 14px;
-      position: relative;
-      transition: .15s;
-    }
-
-    .machine:active {
-      transform: scale(.97);
-    }
-
-    .machine.saved {
-      background: rgba(52,199,89,.12);
-      border-color: rgba(52,199,89,.45);
-      color: #168a38;
-    }
-
-    .machine .check {
-      position: absolute;
-      right: 6px;
-      top: 5px;
-      font-size: 11px;
-      color: var(--green);
-    }
-
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 20px 8px;
-      font-size: 14px;
-    }
-
-    .screen {
-      display: none;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    .back {
-      border: 0;
-      background: transparent;
-      padding: 5px 0 15px;
-      color: var(--blue);
-      font-weight: 600;
-      font-size: 15px;
-    }
-
-    .machine-title {
-      margin: 0 0 18px;
-      font-size: 25px;
-      letter-spacing: -.5px;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .time-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .time-row input[type="text"] {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .time-picker-btn {
-      width: 48px;
-      flex: 0 0 48px;
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      background: #fafafa;
-      color: var(--text);
-      font-size: 20px;
-    }
-
-    .native-time {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .occurrences {
-      margin-top: 20px;
-    }
-
-    .occurrence-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .occurrence {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 11px;
-      background: #fafafa;
-    }
-
-    .occurrence-main {
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-    }
-
-    .occurrence-category {
-      flex: 0 0 auto;
-      padding: 5px 8px;
-      border-radius: 8px;
-      background: #e9e9ee;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .occurrence-description {
-      flex: 1;
-      font-size: 13px;
-      line-height: 1.35;
-      word-break: break-word;
-    }
-
-    .occurrence-actions {
-      display: flex;
-      gap: 6px;
-      margin-top: 8px;
-    }
-
-    .occurrence-actions button {
-      border: 0;
-      background: transparent;
-      padding: 4px 6px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .edit-occurrence {
-      color: var(--blue);
-    }
-
-    .delete-occurrence {
-      color: var(--red);
-    }
-
-    .add-occurrence {
-      width: 100%;
-      border: 1px dashed #b8b8bf;
-      background: transparent;
-      border-radius: 12px;
-      padding: 11px;
-      color: var(--blue);
-      font-weight: 600;
-    }
-
-    .occurrence-editor {
-      display: none;
-      margin-top: 10px;
-      padding: 13px;
-      border-radius: 13px;
-      background: #f5f5f7;
-    }
-
-    .occurrence-editor.active {
-      display: block;
-    }
-
-    .occurrence-editor-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .occurrence-editor-actions button {
-      flex: 1;
-      border: 0;
-      border-radius: 11px;
-      padding: 11px;
-      font-weight: 600;
-    }
-
-    .cancel-occurrence {
-      background: #e5e5ea;
-    }
-
-    .save-occurrence {
-      background: var(--blue);
-      color: #fff;
-    }
-
-    .actions {
-      display: flex;
-      gap: 9px;
-      margin-top: 20px;
-    }
-
-    .primary-btn,
-    .secondary-btn,
-    .danger-btn {
-      flex: 1;
-      border: 0;
-      border-radius: 14px;
-      padding: 14px;
-      font-weight: 700;
-    }
-
-    .primary-btn {
-      background: var(--blue);
-      color: #fff;
-    }
-
-    .secondary-btn {
-      background: #e5e5ea;
-      color: var(--text);
-    }
-
-    .danger-btn {
-      background: rgba(255,59,48,.10);
-      color: var(--red);
-    }
-
-    .primary-btn:disabled {
-      opacity: .55;
-    }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: calc(20px + env(safe-area-inset-bottom));
-      transform: translate(-50%, 20px);
-      background: #222;
-      color: #fff;
-      padding: 12px 17px;
-      border-radius: 13px;
-      font-size: 14px;
-      font-weight: 600;
-      opacity: 0;
-      pointer-events: none;
-      transition: .2s;
-      z-index: 1000;
-      max-width: calc(100vw - 30px);
-      text-align: center;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-
-    .loading {
-      opacity: .6;
-      pointer-events: none;
-    }
-
-    @media (min-width: 600px) {
-      .machine-grid {
-        grid-template-columns: repeat(6, 1fr);
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#F2F2F7">
+    <title>Controle de Produção</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root{
+            --bg:#F2F2F7;
+            --card:#FFFFFF;
+            --text:#111111;
+            --secondary:#6E6E73;
+            --line:#E5E5EA;
+            --blue:#007AFF;
+            --green:#34C759;
+            --red:#FF3B30;
+            --yellow:#FFCC00;
+            --shadow:0 2px 12px rgba(0,0,0,.06);
+            --radius:18px;
+        }
+
+        *{
+            box-sizing:border-box;
+            -webkit-tap-highlight-color:transparent;
+        }
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            margin:0;
+            background:var(--bg);
+            color:var(--text);
+            font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
+                "SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+            min-height:100vh;
+            padding-bottom:env(safe-area-inset-bottom);
+        }
+
+        button,
+        input,
+        select,
+        textarea{
+            font:inherit;
+        }
+
+        button{
+            border:0;
+            cursor:pointer;
+        }
+
+        .hidden{
+            display:none !important;
+        }
+
+        /* HEADER */
+
+        .app-header{
+            position:sticky;
+            top:0;
+            z-index:50;
+            padding:
+                calc(12px + env(safe-area-inset-top))
+                18px
+                12px;
+            background:rgba(242,242,247,.88);
+            backdrop-filter:blur(18px);
+            -webkit-backdrop-filter:blur(18px);
+            border-bottom:1px solid rgba(0,0,0,.05);
+        }
+
+        .header-inner{
+            max-width:760px;
+            margin:auto;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+        }
+
+        .app-title{
+            font-size:17px;
+            font-weight:700;
+            letter-spacing:-.2px;
+        }
+
+        .app-subtitle{
+            color:var(--secondary);
+            font-size:12px;
+            margin-top:2px;
+        }
+
+        .header-actions{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            flex-shrink:0;
+        }
+
+        .user-avatar{
+            width:38px;
+            height:38px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:#111;
+            color:#fff;
+            font-size:13px;
+            font-weight:700;
+            flex-shrink:0;
+        }
+
+        .logout-button{
+            min-height:38px;
+            padding:0 13px;
+            border-radius:12px;
+            background:#FFFFFF;
+            color:var(--red);
+            font-size:13px;
+            font-weight:650;
+            box-shadow:var(--shadow);
+        }
+
+        .logout-button:active{
+            transform:scale(.96);
+        }
+
+        /* MAIN */
+
+        main{
+            width:100%;
+            max-width:760px;
+            margin:0 auto;
+            padding:18px;
+        }
+
+        /* CONTEXTO */
+
+        .leader-label{
+            color:var(--secondary);
+            font-size:12px;
+            font-weight:600;
+            text-transform:uppercase;
+            letter-spacing:.5px;
+        }
+
+        .leader-name{
+            font-size:22px;
+            font-weight:700;
+            letter-spacing:-.5px;
+            margin-top:3px;
+        }
+
+        .context-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+            margin-top:18px;
+        }
+
+        .context-date{
+            grid-column:1 / -1;
+        }
+
+        .field-card{
+            background:var(--card);
+            border-radius:var(--radius);
+            padding:14px 15px;
+            box-shadow:var(--shadow);
+        }
+
+        .field-label{
+            color:var(--secondary);
+            font-size:12px;
+            font-weight:600;
+            margin-bottom:7px;
+        }
+
+        .field-card input,
+        .field-card select{
+            width:100%;
+            border:0;
+            outline:0;
+            background:transparent;
+            color:var(--text);
+            font-size:16px;
+            font-weight:600;
+            padding:0;
+        }
+
+        input[type="date"]{
+            min-height:24px;
+        }
+
+        /* SECTION */
+
+        .section{
+            margin-top:22px;
+        }
+
+        .section-title{
+            font-size:13px;
+            font-weight:700;
+            color:var(--secondary);
+            text-transform:uppercase;
+            letter-spacing:.5px;
+            margin:0 4px 10px;
+        }
+
+        /* MACHINE GRID */
+
+        .machine-grid{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:10px;
+        }
+
+        .machine-button{
+            min-height:62px;
+            border-radius:17px;
+            background:#fff;
+            box-shadow:var(--shadow);
+            color:var(--text);
+            font-size:16px;
+            font-weight:700;
+            transition:.15s ease;
+        }
+
+        .machine-button:active{
+            transform:scale(.96);
+        }
+
+        .machine-button.saved{
+            background:var(--green);
+            color:#fff;
+        }
+
+        /* MACHINE SCREEN */
+
+        .machine-top{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:20px;
+        }
+
+        .back-button{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            background:#fff;
+            box-shadow:var(--shadow);
+            font-size:28px;
+            line-height:1;
+            color:#111;
+        }
+
+        .machine-title{
+            font-size:26px;
+            font-weight:750;
+            letter-spacing:-.7px;
+        }
+
+        .machine-subtitle{
+            color:var(--secondary);
+            font-size:13px;
+            margin-top:2px;
+        }
+
+        /* FORM */
+
+        .form-card{
+            background:#fff;
+            border-radius:var(--radius);
+            padding:18px;
+            box-shadow:var(--shadow);
+            margin-bottom:14px;
+        }
+
+        .form-title{
+            font-size:16px;
+            font-weight:700;
+            margin-bottom:14px;
+        }
+
+        .hours-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+        }
+
+        .input-group label{
+            display:block;
+            color:var(--secondary);
+            font-size:12px;
+            font-weight:600;
+            margin:0 0 7px 2px;
+        }
+
+        .input-group input,
+        .input-group textarea{
+            width:100%;
+            border:1px solid var(--line);
+            background:#F8F8FA;
+            border-radius:13px;
+            outline:0;
+            padding:12px;
+            color:var(--text);
+            font-size:17px;
+            font-weight:600;
+            transition:.15s ease;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus{
+            border-color:var(--blue);
+            background:#fff;
+        }
+
+        .input-group textarea{
+            resize:vertical;
+            min-height:95px;
+            font-size:15px;
+            font-weight:500;
+        }
+
+        .total-box{
+            margin-top:14px;
+            padding:15px;
+            border-radius:15px;
+            background:#F2F2F7;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+        }
+
+        .total-label{
+            color:var(--secondary);
+            font-size:13px;
+            font-weight:600;
+        }
+
+        .total-value{
+            font-size:22px;
+            font-weight:750;
+            letter-spacing:-.4px;
+        }
+
+        /* PERFORMANCE */
+
+        .performance{
+            height:7px;
+            border-radius:10px;
+            margin-top:12px;
+            background:#E5E5EA;
+            overflow:hidden;
+        }
+
+        .performance-bar{
+            height:100%;
+            width:0;
+            border-radius:10px;
+            transition:.2s ease;
+        }
+
+        .status-green{
+            background:var(--green);
+        }
+
+        .status-yellow{
+            background:var(--yellow);
+        }
+
+        .status-red{
+            background:var(--red);
+        }
+
+        /* SALDO */
+
+        .saldo-row{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-top:15px;
+        }
+
+        .saldo-row label{
+            font-size:14px;
+            font-weight:600;
+        }
+
+        .saldo-row input{
+            width:120px;
+            border:1px solid var(--line);
+            background:#F8F8FA;
+            border-radius:12px;
+            padding:10px;
+            text-align:center;
+            outline:0;
+            font-weight:600;
+        }
+
+        /* OCCURRENCES */
+
+        .occurrence-list{
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+            margin-bottom:12px;
+        }
+
+        .occurrence-item{
+            background:#F2F2F7;
+            border-radius:13px;
+            padding:11px 12px;
+            display:flex;
+            align-items:flex-start;
+            gap:10px;
+        }
+
+        .occurrence-content{
+            flex:1;
+            min-width:0;
+        }
+
+        .occurrence-type{
+            font-size:12px;
+            color:var(--secondary);
+            font-weight:700;
+            margin-bottom:3px;
+        }
+
+        .occurrence-description{
+            font-size:14px;
+            line-height:1.35;
+            word-break:break-word;
+        }
+
+        .occurrence-actions{
+            display:flex;
+            gap:5px;
+            flex-shrink:0;
+        }
+
+        .mini-button{
+            width:32px;
+            height:32px;
+            border-radius:9px;
+            background:#fff;
+            color:#111;
+            font-size:14px;
+        }
+
+        .mini-button.delete{
+            color:var(--red);
+        }
+
+        .add-occurrence{
+            width:100%;
+            padding:13px;
+            border-radius:13px;
+            background:#F2F2F7;
+            color:var(--blue);
+            font-weight:700;
+            font-size:15px;
+        }
+
+        /* OCCURRENCE EDITOR */
+
+        .occurrence-editor{
+            margin-top:12px;
+            padding:14px;
+            border-radius:15px;
+            background:#F2F2F7;
+        }
+
+        .occurrence-editor select{
+            width:100%;
+            border:1px solid var(--line);
+            border-radius:12px;
+            background:#fff;
+            padding:11px;
+            outline:0;
+            margin-bottom:9px;
+        }
+
+        .occurrence-editor textarea{
+            width:100%;
+            min-height:80px;
+            resize:vertical;
+            border:1px solid var(--line);
+            border-radius:12px;
+            background:#fff;
+            padding:11px;
+            outline:0;
+        }
+
+        .editor-actions{
+            display:flex;
+            gap:8px;
+            margin-top:9px;
+        }
+
+        .editor-actions button{
+            flex:1;
+            padding:11px;
+            border-radius:11px;
+            font-weight:700;
+        }
+
+        .editor-cancel{
+            background:#fff;
+            color:#111;
+        }
+
+        .editor-save{
+            background:var(--blue);
+            color:#fff;
+        }
+
+        /* ACTIONS */
+
+        .save-button{
+            width:100%;
+            min-height:54px;
+            border-radius:16px;
+            background:var(--green);
+            color:#fff;
+            font-size:16px;
+            font-weight:750;
+            box-shadow:0 5px 16px rgba(52,199,89,.20);
+            margin-top:6px;
+        }
+
+        .save-button:active{
+            transform:scale(.985);
+        }
+
+        .delete-machine{
+            width:100%;
+            margin-top:12px;
+            padding:13px;
+            border-radius:14px;
+            background:transparent;
+            color:var(--red);
+            font-weight:650;
+        }
+
+        /* TOAST */
+
+        .toast{
+            position:fixed;
+            left:50%;
+            bottom:calc(22px + env(safe-area-inset-bottom));
+            transform:translate(-50%,20px);
+            background:rgba(20,20,20,.94);
+            color:#fff;
+            padding:12px 17px;
+            border-radius:999px;
+            font-size:14px;
+            font-weight:600;
+            z-index:100;
+            opacity:0;
+            pointer-events:none;
+            transition:.22s ease;
+            white-space:nowrap;
+            max-width:calc(100vw - 30px);
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        .toast.show{
+            opacity:1;
+            transform:translate(-50%,0);
+        }
+
+        /* LOADING */
+
+        .loading{
+            position:fixed;
+            inset:0;
+            background:rgba(242,242,247,.72);
+            backdrop-filter:blur(8px);
+            -webkit-backdrop-filter:blur(8px);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:200;
+        }
+
+        .loading-box{
+            background:#fff;
+            padding:20px 24px;
+            border-radius:18px;
+            box-shadow:var(--shadow);
+            font-size:15px;
+            font-weight:600;
+        }
+
+        @media(max-width:520px){
+
+            main{
+                padding:16px;
+            }
+
+            .machine-grid{
+                grid-template-columns:repeat(4,1fr);
+                gap:8px;
+            }
+
+            .machine-button{
+                min-height:58px;
+                font-size:15px;
+            }
+
+        }
+
+        @media(max-width:380px){
+
+            .app-title{
+                font-size:15px;
+            }
+
+            .logout-button{
+                padding:0 10px;
+            }
+
+            .user-avatar{
+                width:34px;
+                height:34px;
+            }
+
+            .machine-grid{
+                grid-template-columns:repeat(3,1fr);
+            }
+
+        }
+
+        @media(max-width:350px){
+
+            .hours-grid{
+                grid-template-columns:1fr;
+            }
+
+        }
+    </style>
 </head>
 
 <body>
-  <div class="app">
 
-    <header>
-      <div class="brand">
-        <h1>CONTROLE DE PRODUÇÃO</h1>
-        <p>Setor de Injeção</p>
-      </div>
+<header class="app-header" id="mainHeader">
 
-      <div class="user-area">
-        <div class="avatar" id="userInitials">--</div>
-        <button class="logout" id="logoutBtn">Sair</button>
-      </div>
-    </header>
+    <div class="header-inner">
 
-    <!-- TELA PRINCIPAL -->
-    <main id="gridScreen" class="screen active">
+        <div>
+            <div class="app-title">
+                CONTROLE DE PRODUÇÃO
+            </div>
 
-      <section class="card">
-        <div class="leader-name">
-          <span class="label">LÍDER</span>
-          <strong id="leaderName">Carregando...</strong>
+            <div class="app-subtitle">
+                Setor de Injeção
+            </div>
         </div>
+
+        <div class="header-actions">
+
+            <div
+                class="user-avatar"
+                id="userAvatar"
+            >
+                --
+            </div>
+
+            <button
+                class="logout-button"
+                onclick="sair()"
+                aria-label="Sair"
+            >
+                Sair
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main>
+
+    <!-- CONTEXTO -->
+
+    <section id="contextSection">
+
+        <div class="leader-label">
+            LÍDER
+        </div>
+
+        <div
+            class="leader-name"
+            id="leaderName"
+        >
+            Carregando...
+        </div>
+
 
         <div class="context-grid">
-          <div class="context-date">
-            <label class="label" for="dateInput">Data</label>
-            <input type="date" id="dateInput">
-          </div>
 
-          <div>
-            <label class="label" for="shiftInput">Turno</label>
-            <select id="shiftInput">
-              <option value="1º turno">1º turno</option>
-              <option value="2º turno">2º turno</option>
-              <option value="3º turno">3º turno</option>
-            </select>
-          </div>
+            <div class="field-card context-date">
 
-          <div>
-            <label class="label" for="sectorInput">Setor</label>
-            <select id="sectorInput">
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-            </select>
-          </div>
+                <div class="field-label">
+                    Data
+                </div>
+
+                <input
+                    type="date"
+                    id="date"
+                >
+
+            </div>
+
+
+            <div class="field-card">
+
+                <div class="field-label">
+                    Turno
+                </div>
+
+                <select id="shift">
+
+                    <option value="1º turno">
+                        1º turno
+                    </option>
+
+                    <option value="2º turno">
+                        2º turno
+                    </option>
+
+                    <option value="3º turno">
+                        3º turno
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field-card">
+
+                <div class="field-label">
+                    Setor
+                </div>
+
+                <select id="sector">
+
+                    <option value="A">
+                        A
+                    </option>
+
+                    <option value="B">
+                        B
+                    </option>
+
+                    <option value="C">
+                        C
+                    </option>
+
+                </select>
+
+            </div>
+
         </div>
-      </section>
 
-      <section class="card">
-        <div class="section-title">
-          <strong>Máquinas</strong>
-        </div>
 
-        <div class="machine-grid" id="machineGrid"></div>
-      </section>
+        <section
+            class="section"
+            id="machineListSection"
+        >
 
-    </main>
+            <div class="section-title">
+                Máquinas
+            </div>
+
+            <div
+                class="machine-grid"
+                id="machineGrid"
+            ></div>
+
+        </section>
+
+    </section>
+
 
     <!-- TELA DA MÁQUINA -->
-    <main id="machineScreen" class="screen">
 
-      <button class="back" id="backBtn">‹ Voltar para máquinas</button>
+    <section
+        id="machineScreen"
+        class="hidden"
+    >
 
-      <section class="card">
-
-        <h2 class="machine-title" id="machineTitle">M01</h2>
-
-        <div class="form-group">
-          <label class="label" for="goodHours">Hora boa</label>
-
-          <div class="time-row">
-            <input
-              type="text"
-              id="goodHours"
-              inputmode="text"
-              autocomplete="off"
-              autocapitalize="off"
-              spellcheck="false"
-              maxlength="5"
-              placeholder="HH:MM ou HHMM"
-            >
+        <div class="machine-top">
 
             <button
-              type="button"
-              class="time-picker-btn"
-              data-time-target="goodHours"
-              aria-label="Selecionar hora boa"
-            >🕘</button>
-          </div>
+                class="back-button"
+                onclick="fecharTelaMaquina()"
+                aria-label="Voltar"
+            >
+                ‹
+            </button>
 
-          <input type="time" class="native-time" id="goodHoursPicker">
+            <div>
+
+                <div
+                    class="machine-title"
+                    id="machineTitle"
+                >
+                    M01
+                </div>
+
+                <div
+                    class="machine-subtitle"
+                    id="machineSubtitle"
+                >
+                    Apontamento da máquina
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="form-group">
-          <label class="label" for="replacementHours">Reposição</label>
 
-          <div class="time-row">
-            <input
-              type="text"
-              id="replacementHours"
-              inputmode="text"
-              autocomplete="off"
-              autocapitalize="off"
-              spellcheck="false"
-              maxlength="5"
-              placeholder="HH:MM ou HHMM"
-            >
+        <!-- PRODUÇÃO -->
+
+        <div class="form-card">
+
+            <div class="form-title">
+                Produção
+            </div>
+
+
+            <div class="hours-grid">
+
+                <div class="input-group">
+
+                    <label for="goodHours">
+                        Hora boa
+                    </label>
+
+                    <input
+                        type="text"
+                        id="goodHours"
+                        inputmode="numeric"
+                        placeholder="00:00"
+                        maxlength="5"
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="replacementHours">
+                        Reposição
+                    </label>
+
+                    <input
+                        type="text"
+                        id="replacementHours"
+                        inputmode="numeric"
+                        placeholder="00:00"
+                        maxlength="5"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="total-box">
+
+                <div class="total-label">
+                    Total baixado
+                </div>
+
+                <div
+                    class="total-value"
+                    id="totalHours"
+                >
+                    00:00
+                </div>
+
+            </div>
+
+
+            <div class="performance">
+
+                <div
+                    class="performance-bar"
+                    id="performanceBar"
+                ></div>
+
+            </div>
+
+
+            <div class="saldo-row">
+
+                <label for="balance">
+                    Saldo
+                </label>
+
+                <input
+                    type="text"
+                    id="balance"
+                    inputmode="numeric"
+                    placeholder="00:00"
+                    maxlength="5"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- OCORRÊNCIAS -->
+
+        <div class="form-card">
+
+            <div class="form-title">
+                Ocorrências
+            </div>
+
+
+            <div
+                class="occurrence-list"
+                id="occurrenceList"
+            ></div>
+
 
             <button
-              type="button"
-              class="time-picker-btn"
-              data-time-target="replacementHours"
-              aria-label="Selecionar reposição"
-            >🕘</button>
-          </div>
+                class="add-occurrence"
+                onclick="abrirEditorOcorrencia()"
+            >
+                + Adicionar ocorrência
+            </button>
 
-          <input type="time" class="native-time" id="replacementHoursPicker">
-        </div>
 
-        <div class="form-group">
-          <label class="label" for="balance">Saldo</label>
-
-          <div class="time-row">
-            <input
-              type="text"
-              id="balance"
-              inputmode="text"
-              autocomplete="off"
-              autocapitalize="off"
-              spellcheck="false"
-              maxlength="5"
-              placeholder="HH:MM ou HHMM"
+            <div
+                class="occurrence-editor hidden"
+                id="occurrenceEditor"
             >
 
-            <button
-              type="button"
-              class="time-picker-btn"
-              data-time-target="balance"
-              aria-label="Selecionar saldo"
-            >🕘</button>
-          </div>
+                <select id="occurrenceType">
 
-          <input type="time" class="native-time" id="balancePicker">
-        </div>
+                    <option value="Mecânico">
+                        Mecânico
+                    </option>
 
-        <div class="form-group">
-          <label class="label" for="observation">Observação geral</label>
-          <textarea
-            id="observation"
-            placeholder="Digite uma observação, se necessário..."
-          ></textarea>
-        </div>
+                    <option value="Elétrico">
+                        Elétrico
+                    </option>
 
-        <div class="occurrences">
-          <div class="section-title">
-            <strong>Ocorrências</strong>
-          </div>
+                    <option value="Matriz">
+                        Matriz
+                    </option>
 
-          <div class="occurrence-list" id="occurrenceList"></div>
+                    <option value="Material">
+                        Material
+                    </option>
 
-          <button
-            type="button"
-            class="add-occurrence"
-            id="addOccurrenceBtn"
-          >
-            + Adicionar ocorrência
-          </button>
+                    <option value="Processo">
+                        Processo
+                    </option>
 
-          <div class="occurrence-editor" id="occurrenceEditor">
+                    <option value="Parada de máquina">
+                        Parada de máquina
+                    </option>
 
-            <div class="form-group">
-              <label class="label" for="occurrenceCategory">
-                Categoria
-              </label>
+                    <option value="Setup">
+                        Setup
+                    </option>
 
-              <select id="occurrenceCategory">
-                <option value="Mecânico">Mecânico</option>
-                <option value="Elétrico">Elétrico</option>
-                <option value="Matriz">Matriz</option>
-                <option value="Material">Material</option>
-                <option value="Processo">Processo</option>
-                <option value="Parada de máquina">Parada de máquina</option>
-                <option value="Setup">Setup</option>
-                <option value="Outro">Outro</option>
-              </select>
+                    <option value="Outro">
+                        Outro
+                    </option>
+
+                </select>
+
+
+                <textarea
+                    id="occurrenceDescription"
+                    placeholder="Descreva a ocorrência..."
+                ></textarea>
+
+
+                <div class="editor-actions">
+
+                    <button
+                        class="editor-cancel"
+                        onclick="cancelarEditorOcorrencia()"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        class="editor-save"
+                        onclick="salvarOcorrenciaLocal()"
+                    >
+                        Salvar
+                    </button>
+
+                </div>
+
             </div>
 
-            <div class="form-group">
-              <label class="label" for="occurrenceDescription">
-                Descrição
-              </label>
-
-              <textarea
-                id="occurrenceDescription"
-                placeholder="Descreva a ocorrência..."
-              ></textarea>
-            </div>
-
-            <div class="occurrence-editor-actions">
-              <button
-                type="button"
-                class="cancel-occurrence"
-                id="cancelOccurrenceBtn"
-              >
-                Cancelar
-              </button>
-
-              <button
-                type="button"
-                class="save-occurrence"
-                id="saveOccurrenceBtn"
-              >
-                Adicionar
-              </button>
-            </div>
-
-          </div>
         </div>
 
-        <div class="actions">
-          <button
-            type="button"
-            class="secondary-btn"
-            id="cancelMachineBtn"
-          >
-            Cancelar
-          </button>
 
-          <button
-            type="button"
-            class="primary-btn"
-            id="saveMachineBtn"
-          >
-            Salvar
-          </button>
+        <!-- OBSERVAÇÃO -->
+
+        <div class="form-card">
+
+            <div class="form-title">
+                Observação
+            </div>
+
+            <div class="input-group">
+
+                <textarea
+                    id="observation"
+                    placeholder="Observação geral da máquina..."
+                ></textarea>
+
+            </div>
+
         </div>
 
-        <div class="actions" id="deleteAction" style="display:none;">
-          <button
-            type="button"
-            class="danger-btn"
-            id="deleteMachineBtn"
-          >
+
+        <button
+            class="save-button"
+            onclick="salvarMaquina()"
+        >
+            Salvar máquina
+        </button>
+
+
+        <button
+            class="delete-machine hidden"
+            id="deleteMachineButton"
+            onclick="excluirMaquina()"
+        >
             Excluir apontamento
-          </button>
-        </div>
+        </button>
 
-      </section>
-    </main>
+    </section>
 
-  </div>
+</main>
 
-  <div class="toast" id="toast"></div>
 
-  <script>
-    const SUPABASE_URL =
-      "https://icajmncojvidhrqlbevq.supabase.co";
+<div
+    class="toast"
+    id="toast"
+></div>
 
-    const SUPABASE_KEY =
-      "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
 
-    const supabaseClient =
-      window.supabase.createClient(
+<div
+    class="loading hidden"
+    id="loading"
+>
+    <div class="loading-box">
+        Carregando...
+    </div>
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+    "https://icajmncojvidhrqlbevq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
+
+const supabaseClient =
+    supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
-      );
+    );
 
-    let currentUser = null;
-    let currentProfile = null;
 
-    let maquinaAtual = null;
-    let apontamentoAtual = null;
+/* =========================================================
+   ESTADO
+========================================================= */
 
-    let ocorrencias = [];
-    let ocorrenciaEditando = null;
+let currentUser = null;
+let currentProfile = null;
 
-    const dateInput = document.getElementById("dateInput");
-    const shiftInput = document.getElementById("shiftInput");
-    const sectorInput = document.getElementById("sectorInput");
+let machineAtual = null;
+let apontamentoAtual = null;
 
-    const gridScreen = document.getElementById("gridScreen");
-    const machineScreen = document.getElementById("machineScreen");
+let ocorrenciasAtuais = [];
 
-    const machineGrid = document.getElementById("machineGrid");
+let occurrenceEditIndex = null;
 
-    const machineTitle = document.getElementById("machineTitle");
 
-    const goodHours = document.getElementById("goodHours");
-    const replacementHours = document.getElementById("replacementHours");
-    const balance = document.getElementById("balance");
-    const observation = document.getElementById("observation");
+/* =========================================================
+   METAS
+========================================================= */
 
-    const occurrenceList =
-      document.getElementById("occurrenceList");
+const shiftTargets = {
 
-    const occurrenceEditor =
-      document.getElementById("occurrenceEditor");
+    "1º turno":
+        8 * 60 + 48,
 
-    const occurrenceCategory =
-      document.getElementById("occurrenceCategory");
+    "2º turno":
+        8 * 60 + 36,
 
-    const occurrenceDescription =
-      document.getElementById("occurrenceDescription");
+    "3º turno":
+        6 * 60 + 36
 
-    const addOccurrenceBtn =
-      document.getElementById("addOccurrenceBtn");
+};
 
-    const cancelOccurrenceBtn =
-      document.getElementById("cancelOccurrenceBtn");
 
-    const saveOccurrenceBtn =
-      document.getElementById("saveOccurrenceBtn");
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const dateInput =
+    document.getElementById("date");
+
+const shiftInput =
+    document.getElementById("shift");
+
+const sectorInput =
+    document.getElementById("sector");
+
+const leaderName =
+    document.getElementById("leaderName");
+
+const userAvatar =
+    document.getElementById("userAvatar");
+
+const machineGrid =
+    document.getElementById("machineGrid");
+
+const machineListSection =
+    document.getElementById("machineListSection");
+
+const machineScreen =
+    document.getElementById("machineScreen");
+
+const mainHeader =
+    document.getElementById("mainHeader");
+
+const contextSection =
+    document.getElementById("contextSection");
+
+const machineTitle =
+    document.getElementById("machineTitle");
+
+const machineSubtitle =
+    document.getElementById("machineSubtitle");
+
+const goodHoursInput =
+    document.getElementById("goodHours");
+
+const replacementHoursInput =
+    document.getElementById("replacementHours");
+
+const totalHours =
+    document.getElementById("totalHours");
+
+const performanceBar =
+    document.getElementById("performanceBar");
+
+const balanceInput =
+    document.getElementById("balance");
+
+const occurrenceList =
+    document.getElementById("occurrenceList");
+
+const occurrenceEditor =
+    document.getElementById("occurrenceEditor");
+
+const occurrenceType =
+    document.getElementById("occurrenceType");
+
+const occurrenceDescription =
+    document.getElementById("occurrenceDescription");
+
+const observationInput =
+    document.getElementById("observation");
+
+const deleteMachineButton =
+    document.getElementById("deleteMachineButton");
+
+
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
+
+function showLoading(show){
+
+    document
+        .getElementById("loading")
+        .classList.toggle(
+            "hidden",
+            !show
+        );
+
+}
+
+
+let toastTimer = null;
+
+function showToast(message){
 
     const toast =
-      document.getElementById("toast");
+        document.getElementById("toast");
 
-    function mostrarToast(message) {
-      toast.textContent = message;
-      toast.classList.add("show");
+    toast.textContent =
+        message;
 
-      clearTimeout(mostrarToast.timer);
+    toast.classList.add("show");
 
-      mostrarToast.timer = setTimeout(() => {
-        toast.classList.remove("show");
-      }, 2500);
-    }
+    clearTimeout(toastTimer);
 
-    function todayISO() {
-      const d = new Date();
-
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
-
-      return `${year}-${month}-${day}`;
-    }
-
-    function getMachineNumbers() {
-      if (sectorInput.value === "A") {
-        return Array.from(
-          { length: 29 },
-          (_, i) => i + 1
-        );
-      }
-
-      if (sectorInput.value === "B") {
-        return Array.from(
-          { length: 22 },
-          (_, i) => i + 30
-        );
-      }
-
-      return Array.from(
-        { length: 34 },
-        (_, i) => i + 52
-      );
-    }
-
-    function machineCode(number) {
-      return `M${String(number).padStart(2, "0")}`;
-    }
-
-    function minutesToHHMM(minutes) {
-      const value = Number(minutes);
-
-      if (!Number.isFinite(value) || value < 0) {
-        return "00:00";
-      }
-
-      const hours = Math.floor(value / 60);
-      const mins = value % 60;
-
-      return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
-    }
-
-    function parseMinutes(value) {
-      const raw = String(value ?? "").trim();
-
-      if (!raw) {
-        return {
-          valid: true,
-          minutes: 0
-        };
-      }
-
-      // HH:MM
-      if (raw.includes(":")) {
-        const parts = raw.split(":");
-
-        if (parts.length !== 2) {
-          return {
-            valid: false,
-            minutes: 0
-          };
-        }
-
-        const hours = Number(parts[0]);
-        const minutes = Number(parts[1]);
-
-        if (
-          !Number.isInteger(hours) ||
-          !Number.isInteger(minutes) ||
-          hours < 0 ||
-          minutes < 0 ||
-          minutes > 59
-        ) {
-          return {
-            valid: false,
-            minutes: 0
-          };
-        }
-
-        return {
-          valid: true,
-          minutes: hours * 60 + minutes
-        };
-      }
-
-      // HHMM
-      if (/^\d{3,4}$/.test(raw)) {
-        const padded = raw.padStart(4, "0");
-
-        const hours = Number(
-          padded.slice(0, 2)
+    toastTimer =
+        setTimeout(
+            () => {
+                toast.classList.remove(
+                    "show"
+                );
+            },
+            2400
         );
 
-        const minutes = Number(
-          padded.slice(2, 4)
-        );
+}
 
-        if (minutes > 59) {
-          return {
-            valid: false,
-            minutes: 0
-          };
-        }
 
-        return {
-          valid: true,
-          minutes: hours * 60 + minutes
-        };
-      }
+function formatMachine(value){
 
-      return {
-        valid: false,
-        minutes: 0
-      };
+    const number =
+        Number(value);
+
+    if(
+        !Number.isFinite(number)
+    ){
+        return String(value);
     }
 
-    function normalizeTimeInput(input) {
-      const result = parseMinutes(input.value);
+    return "M" +
+        String(number).padStart(2,"0");
 
-      if (!result.valid) {
-        input.setCustomValidity(
-          "Informe a hora como HH:MM ou HHMM."
-        );
-        return false;
-      }
+}
 
-      input.setCustomValidity("");
 
-      if (input.value.trim()) {
-        input.value =
-          minutesToHHMM(result.minutes);
-      }
+function machineNumber(value){
 
-      return true;
-    }
+    const match =
+        String(value || "")
+            .trim()
+            .toUpperCase()
+            .match(/^M(\d+)$/);
 
-    function setupTimeInput(input) {
-      input.addEventListener("blur", () => {
-        normalizeTimeInput(input);
-      });
-
-      input.addEventListener("input", () => {
-        input.setCustomValidity("");
-      });
-    }
-
-    setupTimeInput(goodHours);
-    setupTimeInput(replacementHours);
-    setupTimeInput(balance);
-
-    function getPickerForTarget(targetId) {
-      if (targetId === "goodHours") {
-        return document.getElementById(
-          "goodHoursPicker"
-        );
-      }
-
-      if (targetId === "replacementHours") {
-        return document.getElementById(
-          "replacementHoursPicker"
-        );
-      }
-
-      return document.getElementById(
-        "balancePicker"
-      );
-    }
-
-    document
-      .querySelectorAll(".time-picker-btn")
-      .forEach(button => {
-
-        button.addEventListener("click", () => {
-
-          const targetId =
-            button.dataset.timeTarget;
-
-          const textInput =
-            document.getElementById(targetId);
-
-          const picker =
-            getPickerForTarget(targetId);
-
-          const parsed =
-            parseMinutes(textInput.value);
-
-          if (parsed.valid && textInput.value.trim()) {
-            picker.value =
-              minutesToHHMM(parsed.minutes);
-          } else {
-            picker.value = "";
-          }
-
-          try {
-            if (
-              typeof picker.showPicker === "function"
-            ) {
-              picker.showPicker();
-            } else {
-              picker.click();
-            }
-          } catch (error) {
-            picker.click();
-          }
-        });
-      });
-
-    [
-      ["goodHoursPicker", "goodHours"],
-      ["replacementHoursPicker", "replacementHours"],
-      ["balancePicker", "balance"]
-    ].forEach(([pickerId, inputId]) => {
-
-      const picker =
-        document.getElementById(pickerId);
-
-      const input =
-        document.getElementById(inputId);
-
-      picker.addEventListener("change", () => {
-        if (picker.value) {
-          input.value = picker.value;
-          input.setCustomValidity("");
-        }
-      });
-    });
-
-    function getPerformanceTarget() {
-      if (shiftInput.value === "1º turno") {
-        return 528;
-      }
-
-      if (shiftInput.value === "2º turno") {
-        return 516;
-      }
-
-      return 396;
-    }
-
-    function performanceClass(total) {
-      const target = getPerformanceTarget();
-
-      if (total >= target) {
-        return "green";
-      }
-
-      if (total >= target - 48) {
-        return "yellow";
-      }
-
-      return "red";
-    }
-
-    function performanceBackground(machine, status) {
-      machine.classList.remove(
-        "green",
-        "yellow",
-        "red"
-      );
-
-      if (status) {
-        machine.classList.add(status);
-      }
-    }
-
-    async function obterTurnoAtual() {
-      if (!currentUser) {
+    if(!match){
         return null;
-      }
-
-      const {
-        data,
-        error
-      } = await supabaseClient
-        .from("turnos")
-        .select("id, data, turno, setor, lider_id")
-        .eq("data", dateInput.value)
-        .eq("turno", shiftInput.value)
-        .eq("setor", sectorInput.value)
-        .eq("lider_id", currentUser.id)
-        .maybeSingle();
-
-      if (error) {
-        console.error(
-          "Erro ao localizar turno:",
-          error
-        );
-
-        throw error;
-      }
-
-      return data;
     }
 
-    async function carregarApontamentosDoTurno() {
-      const turno = await obterTurnoAtual();
+    const number =
+        Number(match[1]);
 
-      if (!turno) {
-        return [];
-      }
-
-      const {
-        data,
-        error
-      } = await supabaseClient
-        .from("apontamentos")
-        .select(`
-          id,
-          turno_id,
-          maquina,
-          hora_boa,
-          reposicao,
-          total_baixado,
-          saldo,
-          observacao,
-          data,
-          turno,
-          setor,
-          lider_id
-        `)
-        .eq("turno_id", turno.id)
-        .eq("lider_id", currentUser.id);
-
-      if (error) {
-        console.error(
-          "Erro ao carregar apontamentos:",
-          error
-        );
-
-        throw error;
-      }
-
-      return data || [];
+    if(
+        !Number.isInteger(number) ||
+        number <= 0
+    ){
+        return null;
     }
 
-    async function renderMachineGrid() {
-      machineGrid.innerHTML = "";
+    return number;
+}
 
-      try {
-        const apontamentos =
-          await carregarApontamentosDoTurno();
 
-        const savedMap = new Map();
+function normalizeMachine(value){
 
-        apontamentos.forEach(item => {
-          savedMap.set(
-            Number(item.maquina),
-            item
-          );
-        });
+    if(
+        typeof value === "number"
+    ){
+        return formatMachine(value);
+    }
 
-        getMachineNumbers().forEach(number => {
+    const text =
+        String(value || "")
+            .trim()
+            .toUpperCase();
 
-          const button =
-            document.createElement("button");
+    if(
+        /^M\d+$/.test(text)
+    ){
 
-          button.type = "button";
-          button.className = "machine";
+        return formatMachine(
+            Number(
+                text.substring(1)
+            )
+        );
 
-          const code =
-            machineCode(number);
+    }
 
-          button.textContent = code;
+    if(
+        /^\d+$/.test(text)
+    ){
 
-          const saved =
-            savedMap.get(number);
+        return formatMachine(
+            Number(text)
+        );
 
-          if (saved) {
-            button.classList.add("saved");
+    }
 
-            const check =
-              document.createElement("span");
+    return text;
+}
 
-            check.className = "check";
-            check.textContent = "✓";
 
-            button.appendChild(check);
+function parseMinutes(value){
 
-            const total =
-              Number(saved.total_baixado) || 0;
+    if(
+        value === null ||
+        value === undefined
+    ){
+        return 0;
+    }
 
-            performanceBackground(
-              button,
-              performanceClass(total)
+    const text =
+        String(value).trim();
+
+    if(!text){
+        return 0;
+    }
+
+    if(
+        /^\d{1,3}:\d{2}$/.test(text)
+    ){
+
+        const parts =
+            text.split(":");
+
+        const hours =
+            Number(parts[0]);
+
+        const minutes =
+            Number(parts[1]);
+
+        if(
+            !Number.isInteger(hours) ||
+            !Number.isInteger(minutes) ||
+            minutes > 59
+        ){
+            return 0;
+        }
+
+        return hours * 60 + minutes;
+    }
+
+    if(
+        /^\d+$/.test(text)
+    ){
+
+        return Number(text);
+
+    }
+
+    return 0;
+}
+
+
+function minutesToHHMM(minutes){
+
+    const total =
+        Math.max(
+            0,
+            Math.round(
+                Number(minutes) || 0
+            )
+        );
+
+    const hours =
+        Math.floor(
+            total / 60
+        );
+
+    const mins =
+        total % 60;
+
+    return (
+        String(hours).padStart(2,"0") +
+        ":" +
+        String(mins).padStart(2,"0")
+    );
+}
+
+
+function getSectorMachines(sector){
+
+    if(sector === "A"){
+
+        return Array.from(
+            {length:29},
+            (_,index) =>
+                index + 1
+        );
+
+    }
+
+    if(sector === "B"){
+
+        return Array.from(
+            {length:22},
+            (_,index) =>
+                index + 30
+        );
+
+    }
+
+    if(sector === "C"){
+
+        return Array.from(
+            {length:34},
+            (_,index) =>
+                index + 52
+        );
+
+    }
+
+    return [];
+}
+
+
+function getStatusClass(totalMinutes){
+
+    const target =
+        shiftTargets[
+            shiftInput.value
+        ];
+
+    if(
+        totalMinutes >= target
+    ){
+        return "status-green";
+    }
+
+    if(
+        totalMinutes >= target - 48
+    ){
+        return "status-yellow";
+    }
+
+    return "status-red";
+}
+
+
+function todayLocal(){
+
+    const now =
+        new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(2,"0");
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(2,"0");
+
+    return `${year}-${month}-${day}`;
+}
+
+
+/* =========================================================
+   PERFIL
+========================================================= */
+
+async function carregarPerfil(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("usuarios")
+            .select("*")
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .eq(
+                "ativo",
+                true
+            )
+            .single();
+
+    if(error){
+
+        console.error(error);
+
+        throw new Error(
+            "Não foi possível carregar seu perfil."
+        );
+
+    }
+
+    currentProfile =
+        data;
+
+    leaderName.textContent =
+        data.nome ||
+        "Líder";
+
+
+    const initials =
+        String(
+            data.nome || "U"
+        )
+        .split(" ")
+        .filter(Boolean)
+        .slice(0,2)
+        .map(
+            name =>
+                name[0].toUpperCase()
+        )
+        .join("");
+
+    userAvatar.textContent =
+        initials || "U";
+}
+
+
+/* =========================================================
+   CARREGAR APONTAMENTOS
+========================================================= */
+
+async function carregarDados(){
+
+    showLoading(true);
+
+    try{
+
+        await renderMachineGrid();
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            error.message ||
+            "Erro ao carregar dados."
+        );
+
+    }finally{
+
+        showLoading(false);
+
+    }
+
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+async function renderMachineGrid(){
+
+    machineGrid.innerHTML = "";
+
+    const machines =
+        getSectorMachines(
+            sectorInput.value
+        );
+
+    const savedMachines =
+        new Set();
+
+
+    /*
+     * A busca usa exatamente:
+     * data + turno + setor + líder.
+     */
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("apontamentos")
+            .select("maquina")
+            .eq(
+                "data",
+                dateInput.value
+            )
+            .eq(
+                "turno",
+                shiftInput.value
+            )
+            .eq(
+                "setor",
+                sectorInput.value
+            )
+            .eq(
+                "lider_id",
+                currentUser.id
             );
-          }
 
-          button.addEventListener(
-            "click",
-            () => abrirMaquina(number)
-          );
 
-          machineGrid.appendChild(button);
-        });
+    if(error){
 
-      } catch (error) {
         console.error(error);
 
-        machineGrid.innerHTML = `
-          <div class="empty" style="grid-column:1/-1;">
-            Não foi possível carregar os apontamentos.
-          </div>
-        `;
-      }
-    }
+    }else{
 
-    function abrirTelaMaquina() {
-      gridScreen.classList.remove("active");
-      machineScreen.classList.add("active");
+        (data || []).forEach(
+            item => {
 
-      window.scrollTo({
-        top: 0,
-        behavior: "instant"
-      });
-    }
+                savedMachines.add(
+                    normalizeMachine(
+                        item.maquina
+                    )
+                );
 
-    function fecharTelaMaquina() {
-      machineScreen.classList.remove("active");
-      gridScreen.classList.add("active");
-
-      maquinaAtual = null;
-      apontamentoAtual = null;
-      ocorrencias = [];
-      ocorrenciaEditando = null;
-
-      limparFormulario();
-
-      renderMachineGrid();
-    }
-
-    function limparFormulario() {
-      goodHours.value = "";
-      replacementHours.value = "";
-      balance.value = "";
-      observation.value = "";
-
-      occurrenceList.innerHTML = "";
-
-      occurrenceEditor.classList.remove("active");
-
-      occurrenceCategory.value = "Mecânico";
-      occurrenceDescription.value = "";
-
-      ocorrenciaEditando = null;
-
-      saveOccurrenceBtn.textContent = "Adicionar";
-    }
-
-    async function abrirMaquina(numero) {
-      maquinaAtual = numero;
-
-      machineTitle.textContent =
-        machineCode(numero);
-
-      limparFormulario();
-
-      abrirTelaMaquina();
-
-      await carregarFormulario(numero);
-    }
-
-    async function carregarFormulario(numero) {
-      try {
-        const turno =
-          await obterTurnoAtual();
-
-        if (!turno) {
-          return;
-        }
-
-        const {
-          data,
-          error
-        } = await supabaseClient
-          .from("apontamentos")
-          .select(`
-            id,
-            turno_id,
-            maquina,
-            hora_boa,
-            reposicao,
-            total_baixado,
-            saldo,
-            observacao,
-            data,
-            turno,
-            setor,
-            lider_id
-          `)
-          .eq("turno_id", turno.id)
-          .eq("maquina", numero)
-          .eq("lider_id", currentUser.id)
-          .maybeSingle();
-
-        if (error) {
-          console.error(
-            "Erro ao carregar apontamento:",
-            error
-          );
-
-          mostrarToast(
-            "Erro ao carregar apontamento."
-          );
-
-          return;
-        }
-
-        if (!data) {
-          apontamentoAtual = null;
-          document.getElementById(
-            "deleteAction"
-          ).style.display = "none";
-
-          renderOccurrences();
-
-          return;
-        }
-
-        apontamentoAtual = data;
-
-        goodHours.value =
-          minutesToHHMM(
-            Number(data.hora_boa) || 0
-          );
-
-        replacementHours.value =
-          minutesToHHMM(
-            Number(data.reposicao) || 0
-          );
-
-        balance.value =
-          minutesToHHMM(
-            Number(data.saldo) || 0
-          );
-
-        observation.value =
-          data.observacao || "";
-
-        document.getElementById(
-          "deleteAction"
-        ).style.display = "flex";
-
-        await carregarOcorrencias(
-          data.id
+            }
         );
 
-      } catch (error) {
-        console.error(error);
-
-        mostrarToast(
-          "Erro ao carregar os dados."
-        );
-      }
     }
 
-    async function carregarOcorrencias(
-      apontamentoId
-    ) {
-      const {
+
+    machines.forEach(
+        number => {
+
+            const machine =
+                formatMachine(number);
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.className =
+                "machine-button";
+
+            if(
+                savedMachines.has(machine)
+            ){
+
+                button.classList.add(
+                    "saved"
+                );
+
+            }
+
+            button.textContent =
+                machine;
+
+            button.onclick =
+                () =>
+                    abrirMaquina(machine);
+
+            machineGrid.appendChild(
+                button
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ABRIR MÁQUINA
+========================================================= */
+
+async function abrirMaquina(machine){
+
+    machineAtual =
+        normalizeMachine(machine);
+
+    machineTitle.textContent =
+        machineAtual;
+
+
+    const parts =
+        dateInput.value
+            .split("-")
+            .reverse()
+            .join("/");
+
+
+    machineSubtitle.textContent =
+        `${parts} • ${shiftInput.value} • Setor ${sectorInput.value}`;
+
+
+    mainHeader.classList.add(
+        "hidden"
+    );
+
+    contextSection.classList.add(
+        "hidden"
+    );
+
+    machineListSection.classList.add(
+        "hidden"
+    );
+
+    machineScreen.classList.remove(
+        "hidden"
+    );
+
+
+    await carregarFormulario();
+
+}
+
+
+/* =========================================================
+   FECHAR MÁQUINA
+========================================================= */
+
+async function fecharTelaMaquina(){
+
+    machineScreen.classList.add(
+        "hidden"
+    );
+
+    mainHeader.classList.remove(
+        "hidden"
+    );
+
+    contextSection.classList.remove(
+        "hidden"
+    );
+
+    machineListSection.classList.remove(
+        "hidden"
+    );
+
+
+    machineAtual =
+        null;
+
+    apontamentoAtual =
+        null;
+
+    ocorrenciasAtuais =
+        [];
+
+    occurrenceEditIndex =
+        null;
+
+    occurrenceEditor.classList.add(
+        "hidden"
+    );
+
+
+    await renderMachineGrid();
+
+}
+
+
+/* =========================================================
+   CARREGAR FORMULÁRIO
+========================================================= */
+
+async function carregarFormulario(){
+
+    apontamentoAtual =
+        null;
+
+    ocorrenciasAtuais =
+        [];
+
+    occurrenceEditIndex =
+        null;
+
+
+    goodHoursInput.value =
+        "";
+
+    replacementHoursInput.value =
+        "";
+
+    balanceInput.value =
+        "";
+
+    observationInput.value =
+        "";
+
+    occurrenceEditor.classList.add(
+        "hidden"
+    );
+
+    deleteMachineButton.classList.add(
+        "hidden"
+    );
+
+
+    totalHours.textContent =
+        "00:00";
+
+    performanceBar.style.width =
+        "0%";
+
+    performanceBar.className =
+        "performance-bar";
+
+
+    const maquinaNumero =
+        machineNumber(
+            machineAtual
+        );
+
+
+    if(
+        !maquinaNumero
+    ){
+        return;
+    }
+
+
+    const {
         data,
         error
-      } = await supabaseClient
-        .from("ocorrencias")
-        .select(`
-          id,
-          apontamento_id,
-          categoria,
-          descricao,
-          criado_em
-        `)
-        .eq("apontamento_id", apontamentoId)
-        .order("id", {
-          ascending: true
-        });
+    } =
+        await supabaseClient
+            .from("apontamentos")
+            .select("*")
+            .eq(
+                "data",
+                dateInput.value
+            )
+            .eq(
+                "turno",
+                shiftInput.value
+            )
+            .eq(
+                "setor",
+                sectorInput.value
+            )
+            .eq(
+                "lider_id",
+                currentUser.id
+            )
+            .eq(
+                "maquina",
+                maquinaNumero
+            )
+            .maybeSingle();
 
-      if (error) {
-        console.error(
-          "Erro ao carregar ocorrências:",
-          error
+
+    if(error){
+
+        console.error(error);
+
+        showToast(
+            "Erro ao carregar máquina."
         );
-
-        mostrarToast(
-          "Erro ao carregar ocorrências."
-        );
-
-        ocorrencias = [];
-        renderOccurrences();
 
         return;
-      }
-
-      ocorrencias = data || [];
-
-      renderOccurrences();
     }
 
-    function renderOccurrences() {
-      occurrenceList.innerHTML = "";
 
-      if (!ocorrencias.length) {
-        return;
-      }
+    if(data){
 
-      ocorrencias.forEach(
-        (item, index) => {
+        apontamentoAtual =
+            data;
 
-          const wrapper =
-            document.createElement("div");
 
-          wrapper.className =
-            "occurrence";
+        goodHoursInput.value =
+            data.hora_boa != null
+                ? minutesToHHMM(
+                    data.hora_boa
+                )
+                : "";
 
-          const main =
-            document.createElement("div");
 
-          main.className =
-            "occurrence-main";
+        replacementHoursInput.value =
+            data.reposicao != null
+                ? minutesToHHMM(
+                    data.reposicao
+                )
+                : "";
 
-          const category =
-            document.createElement("div");
 
-          category.className =
-            "occurrence-category";
+        balanceInput.value =
+            data.saldo != null
+                ? minutesToHHMM(
+                    data.saldo
+                )
+                : "";
 
-          category.textContent =
-            item.categoria || "Outro";
 
-          const description =
-            document.createElement("div");
+        observationInput.value =
+            data.observacao ||
+            "";
 
-          description.className =
-            "occurrence-description";
 
-          description.textContent =
-            item.descricao || "";
+        deleteMachineButton.classList.remove(
+            "hidden"
+        );
 
-          main.appendChild(category);
-          main.appendChild(description);
 
-          const actions =
-            document.createElement("div");
+        /*
+         * A RPC já grava ocorrências
+         * como JSONB dentro do apontamento.
+         */
 
-          actions.className =
-            "occurrence-actions";
+        if(
+            Array.isArray(
+                data.ocorrencias
+            )
+        ){
 
-          const edit =
-            document.createElement("button");
+            ocorrenciasAtuais =
+                data.ocorrencias.map(
+                    item => ({
 
-          edit.type = "button";
-          edit.className =
-            "edit-occurrence";
+                        tipo:
+                            item.tipo ||
+                            "Outro",
 
-          edit.textContent = "Editar";
+                        descricao:
+                            item.descricao ||
+                            ""
 
-          edit.addEventListener(
-            "click",
-            () => editarOcorrencia(index)
-          );
+                    })
+                );
 
-          const remove =
-            document.createElement("button");
+        }else{
 
-          remove.type = "button";
-          remove.className =
-            "delete-occurrence";
+            ocorrenciasAtuais =
+                [];
 
-          remove.textContent = "Excluir";
-
-          remove.addEventListener(
-            "click",
-            () => excluirOcorrencia(index)
-          );
-
-          actions.appendChild(edit);
-          actions.appendChild(remove);
-
-          wrapper.appendChild(main);
-          wrapper.appendChild(actions);
-
-          occurrenceList.appendChild(wrapper);
         }
-      );
+
     }
 
-    function abrirEditorOcorrencia(
-      index = null
-    ) {
-      ocorrenciaEditando = index;
 
-      if (index === null) {
-        occurrenceCategory.value =
-          "Mecânico";
+    atualizarTotal();
 
-        occurrenceDescription.value = "";
+    renderOccurrences();
 
-        saveOccurrenceBtn.textContent =
-          "Adicionar";
-      } else {
-        const item =
-          ocorrencias[index];
+}
 
-        occurrenceCategory.value =
-          item.categoria || "Outro";
 
-        occurrenceDescription.value =
-          item.descricao || "";
+/* =========================================================
+   OCORRÊNCIAS
+========================================================= */
 
-        saveOccurrenceBtn.textContent =
-          "Salvar alteração";
-      }
+function renderOccurrences(){
 
-      occurrenceEditor.classList.add(
-        "active"
-      );
+    occurrenceList.innerHTML = "";
 
-      occurrenceDescription.focus();
-    }
 
-    function editarOcorrencia(index) {
-      abrirEditorOcorrencia(index);
-    }
+    ocorrenciasAtuais.forEach(
+        (item,index) => {
 
-    function excluirOcorrencia(index) {
-      ocorrencias.splice(index, 1);
+            const row =
+                document.createElement(
+                    "div"
+                );
 
-      renderOccurrences();
-    }
+            row.className =
+                "occurrence-item";
 
-    function fecharEditorOcorrencia() {
-      occurrenceEditor.classList.remove(
-        "active"
-      );
 
-      ocorrenciaEditando = null;
+            const content =
+                document.createElement(
+                    "div"
+                );
 
-      occurrenceCategory.value =
+            content.className =
+                "occurrence-content";
+
+
+            const type =
+                document.createElement(
+                    "div"
+                );
+
+            type.className =
+                "occurrence-type";
+
+            type.textContent =
+                item.tipo ||
+                "Outro";
+
+
+            const description =
+                document.createElement(
+                    "div"
+                );
+
+            description.className =
+                "occurrence-description";
+
+            description.textContent =
+                item.descricao ||
+                "";
+
+
+            content.appendChild(
+                type
+            );
+
+            content.appendChild(
+                description
+            );
+
+
+            const actions =
+                document.createElement(
+                    "div"
+                );
+
+            actions.className =
+                "occurrence-actions";
+
+
+            const edit =
+                document.createElement(
+                    "button"
+                );
+
+            edit.className =
+                "mini-button";
+
+            edit.textContent =
+                "✎";
+
+            edit.onclick =
+                () =>
+                    editarOcorrencia(index);
+
+
+            const del =
+                document.createElement(
+                    "button"
+                );
+
+            del.className =
+                "mini-button delete";
+
+            del.textContent =
+                "×";
+
+            del.onclick =
+                () =>
+                    removerOcorrencia(index);
+
+
+            actions.appendChild(
+                edit
+            );
+
+            actions.appendChild(
+                del
+            );
+
+
+            row.appendChild(
+                content
+            );
+
+            row.appendChild(
+                actions
+            );
+
+
+            occurrenceList.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+function abrirEditorOcorrencia(){
+
+    occurrenceEditIndex =
+        null;
+
+    occurrenceType.value =
         "Mecânico";
 
-      occurrenceDescription.value = "";
+    occurrenceDescription.value =
+        "";
 
-      saveOccurrenceBtn.textContent =
-        "Adicionar";
+    occurrenceEditor.classList.remove(
+        "hidden"
+    );
+
+    occurrenceDescription.focus();
+
+}
+
+
+function cancelarEditorOcorrencia(){
+
+    occurrenceEditIndex =
+        null;
+
+    occurrenceDescription.value =
+        "";
+
+    occurrenceEditor.classList.add(
+        "hidden"
+    );
+
+}
+
+
+function editarOcorrencia(index){
+
+    const item =
+        ocorrenciasAtuais[index];
+
+    if(!item){
+        return;
     }
 
-    addOccurrenceBtn.addEventListener(
-      "click",
-      () => abrirEditorOcorrencia()
+    occurrenceEditIndex =
+        index;
+
+    occurrenceType.value =
+        item.tipo ||
+        "Outro";
+
+    occurrenceDescription.value =
+        item.descricao ||
+        "";
+
+    occurrenceEditor.classList.remove(
+        "hidden"
     );
 
-    cancelOccurrenceBtn.addEventListener(
-      "click",
-      fecharEditorOcorrencia
-    );
+    occurrenceDescription.focus();
 
-    saveOccurrenceBtn.addEventListener(
-      "click",
-      () => {
+}
 
-        const categoria =
-          occurrenceCategory.value;
 
-        const descricao =
-          occurrenceDescription.value.trim();
+function salvarOcorrenciaLocal(){
 
-        if (!descricao) {
-          mostrarToast(
-            "Informe a descrição da ocorrência."
-          );
+    const tipo =
+        occurrenceType.value;
 
-          occurrenceDescription.focus();
+    const descricao =
+        occurrenceDescription.value
+            .trim();
 
-          return;
-        }
 
-        const item = {
-          categoria:
-            categoria || "Outro",
-          descricao
-        };
+    if(!descricao){
 
-        if (
-          ocorrenciaEditando === null
-        ) {
-          ocorrencias.push(item);
-        } else {
-          ocorrencias[
-            ocorrenciaEditando
-          ] = {
-            ...ocorrencias[
-              ocorrenciaEditando
-            ],
-            ...item
-          };
-        }
+        showToast(
+            "Descreva a ocorrência."
+        );
 
-        renderOccurrences();
-
-        fecharEditorOcorrencia();
-      }
-    );
-
-    function validarHoras() {
-      const fields = [
-        goodHours,
-        replacementHours,
-        balance
-      ];
-
-      for (const field of fields) {
-        if (!normalizeTimeInput(field)) {
-          mostrarToast(
-            `Hora inválida: ${field.id === "goodHours"
-              ? "hora boa"
-              : field.id === "replacementHours"
-                ? "reposição"
-                : "saldo"}`
-          );
-
-          field.focus();
-
-          return false;
-        }
-      }
-
-      return true;
+        return;
     }
 
-    async function salvarMaquina() {
-      if (!maquinaAtual) {
+
+    const item = {
+
+        tipo:tipo,
+
+        descricao:descricao
+
+    };
+
+
+    if(
+        occurrenceEditIndex === null
+    ){
+
+        ocorrenciasAtuais.push(
+            item
+        );
+
+    }else{
+
+        ocorrenciasAtuais[
+            occurrenceEditIndex
+        ] = item;
+
+    }
+
+
+    occurrenceEditIndex =
+        null;
+
+    occurrenceDescription.value =
+        "";
+
+    occurrenceEditor.classList.add(
+        "hidden"
+    );
+
+
+    renderOccurrences();
+
+}
+
+
+function removerOcorrencia(index){
+
+    if(
+        !confirm(
+            "Excluir esta ocorrência?"
+        )
+    ){
         return;
-      }
+    }
 
-      if (!validarHoras()) {
-        return;
-      }
 
-      const horaBoaResult =
-        parseMinutes(goodHours.value);
+    ocorrenciasAtuais.splice(
+        index,
+        1
+    );
 
-      const reposicaoResult =
+
+    renderOccurrences();
+
+}
+
+
+/* =========================================================
+   HORAS
+========================================================= */
+
+function atualizarTotal(){
+
+    const good =
         parseMinutes(
-          replacementHours.value
+            goodHoursInput.value
         );
 
-      const saldoResult =
-        parseMinutes(balance.value);
+    const replacement =
+        parseMinutes(
+            replacementHoursInput.value
+        );
 
-      if (
-        !horaBoaResult.valid ||
-        !reposicaoResult.valid ||
-        !saldoResult.valid
-      ) {
-        mostrarToast(
-          "Verifique os horários."
+    const total =
+        good + replacement;
+
+
+    totalHours.textContent =
+        minutesToHHMM(total);
+
+
+    const target =
+        shiftTargets[
+            shiftInput.value
+        ] || 0;
+
+
+    let percent =
+        target > 0
+            ? (total / target) * 100
+            : 0;
+
+
+    percent =
+        Math.min(
+            100,
+            Math.max(
+                0,
+                percent
+            )
+        );
+
+
+    performanceBar.style.width =
+        `${percent}%`;
+
+
+    performanceBar.className =
+        "performance-bar " +
+        getStatusClass(total);
+
+}
+
+
+/* =========================================================
+   SALVAR
+========================================================= */
+
+async function salvarMaquina(){
+
+    if(!machineAtual){
+
+        showToast(
+            "Nenhuma máquina selecionada."
         );
 
         return;
-      }
-
-      const horaBoa =
-        horaBoaResult.minutes;
-
-      const reposicao =
-        reposicaoResult.minutes;
-
-      const saldo =
-        saldoResult.minutes;
-
-      const totalBaixado =
-        horaBoa + reposicao;
-
-      const ocorrenciasPayload =
-        ocorrencias.map(item => ({
-          categoria:
-            item.categoria || "Outro",
-          descricao:
-            item.descricao || ""
-        }));
-
-      const button =
-        document.getElementById(
-          "saveMachineBtn"
-        );
-
-      button.disabled = true;
-      button.textContent = "Salvando...";
-
-      try {
-        const {
-          data,
-          error
-        } = await supabaseClient
-          .rpc(
-            "salvar_apontamento_lider",
-            {
-              p_data:
-                dateInput.value,
-
-              p_turno:
-                shiftInput.value,
-
-              p_setor:
-                sectorInput.value,
-
-              p_maquina:
-                Number(maquinaAtual),
-
-              p_hora_boa:
-                horaBoa,
-
-              p_reposicao:
-                reposicao,
-
-              p_total_baixado:
-                totalBaixado,
-
-              p_saldo:
-                saldo,
-
-              p_observacao:
-                observation.value.trim() ||
-                null,
-
-              p_ocorrencias:
-                ocorrenciasPayload
-            }
-          );
-
-        if (error) {
-          console.error(
-            "Erro ao salvar:",
-            error
-          );
-
-          mostrarToast(
-            error.message ||
-            "Não foi possível salvar."
-          );
-
-          return;
-        }
-
-        apontamentoAtual = {
-          id: data
-        };
-
-        mostrarToast(
-          `${machineCode(maquinaAtual)} salvo ✓`
-        );
-
-        await renderMachineGrid();
-
-        fecharTelaMaquina();
-
-      } catch (error) {
-        console.error(error);
-
-        mostrarToast(
-          "Erro inesperado ao salvar."
-        );
-
-      } finally {
-        button.disabled = false;
-        button.textContent = "Salvar";
-      }
     }
 
-    async function excluirMaquina() {
-      if (!apontamentoAtual?.id) {
-        return;
-      }
 
-      const confirmar =
-        confirm(
-          `Excluir o apontamento da ${machineCode(maquinaAtual)}?`
-        );
+    showLoading(true);
 
-      if (!confirmar) {
-        return;
-      }
 
-      try {
-        const {
-          error: occurrenceError
-        } = await supabaseClient
-          .from("ocorrencias")
-          .delete()
-          .eq(
-            "apontamento_id",
-            apontamentoAtual.id
-          );
+    try{
 
-        if (occurrenceError) {
-          console.error(
-            occurrenceError
-          );
+        /*
+         * M02 -> 2
+         */
+        const maquinaNumero =
+            Number(
+                machineAtual.replace(
+                    "M",
+                    ""
+                )
+            );
 
-          mostrarToast(
-            "Não foi possível excluir as ocorrências."
-          );
 
-          return;
-        }
+        if(
+            !Number.isInteger(
+                maquinaNumero
+            ) ||
+            maquinaNumero <= 0
+        ){
 
-        const {
-          error
-        } = await supabaseClient
-          .from("apontamentos")
-          .delete()
-          .eq(
-            "id",
-            apontamentoAtual.id
-          )
-          .eq(
-            "lider_id",
-            currentUser.id
-          );
-
-        if (error) {
-          console.error(error);
-
-          mostrarToast(
-            error.message ||
-            "Não foi possível excluir."
-          );
-
-          return;
-        }
-
-        mostrarToast(
-          `${machineCode(maquinaAtual)} excluído ✓`
-        );
-
-        fecharTelaMaquina();
-
-      } catch (error) {
-        console.error(error);
-
-        mostrarToast(
-          "Erro ao excluir apontamento."
-        );
-      }
-    }
-
-    document
-      .getElementById("saveMachineBtn")
-      .addEventListener(
-        "click",
-        salvarMaquina
-      );
-
-    document
-      .getElementById("deleteMachineBtn")
-      .addEventListener(
-        "click",
-        excluirMaquina
-      );
-
-    document
-      .getElementById("backBtn")
-      .addEventListener(
-        "click",
-        fecharTelaMaquina
-      );
-
-    document
-      .getElementById("cancelMachineBtn")
-      .addEventListener(
-        "click",
-        fecharTelaMaquina
-      );
-
-    async function carregarPerfil() {
-      if (!currentUser) {
-        return;
-      }
-
-      const {
-        data,
-        error
-      } = await supabaseClient
-        .from("usuarios")
-        .select(`
-          id,
-          nome,
-          usuario,
-          perfil,
-          ativo,
-          admin
-        `)
-        .eq("id", currentUser.id)
-        .maybeSingle();
-
-      if (error) {
-        console.error(
-          "Erro ao carregar perfil:",
-          error
-        );
-
-        throw error;
-      }
-
-      if (!data) {
-        throw new Error(
-          "Perfil de usuário não encontrado."
-        );
-      }
-
-      if (
-        data.perfil !== "lider" ||
-        data.ativo !== true
-      ) {
-        throw new Error(
-          "Usuário não autorizado como líder."
-        );
-      }
-
-      currentProfile = data;
-
-      document.getElementById(
-        "leaderName"
-      ).textContent = data.nome;
-
-      const initials =
-        data.nome
-          .trim()
-          .split(/\s+/)
-          .slice(0, 2)
-          .map(
-            name => name.charAt(0)
-          )
-          .join("")
-          .toUpperCase();
-
-      document.getElementById(
-        "userInitials"
-      ).textContent = initials;
-    }
-
-    async function verificarSessao() {
-      const {
-        data,
-        error
-      } = await supabaseClient
-        .auth
-        .getSession();
-
-      if (error) {
-        throw error;
-      }
-
-      if (!data.session) {
-        window.location.href =
-          "index.html";
-
-        return false;
-      }
-
-      currentUser =
-        data.session.user;
-
-      return true;
-    }
-
-    async function init() {
-      try {
-        const autenticado =
-          await verificarSessao();
-
-        if (!autenticado) {
-          return;
-        }
-
-        await carregarPerfil();
-
-        dateInput.value =
-          todayISO();
-
-        shiftInput.value =
-          "1º turno";
-
-        sectorInput.value =
-          "A";
-
-        await renderMachineGrid();
-
-      } catch (error) {
-        console.error(error);
-
-        mostrarToast(
-          error.message ||
-          "Erro ao iniciar o sistema."
-        );
-      }
-    }
-
-    dateInput.addEventListener(
-      "change",
-      async () => {
-        await renderMachineGrid();
-      }
-    );
-
-    shiftInput.addEventListener(
-      "change",
-      async () => {
-        await renderMachineGrid();
-      }
-    );
-
-    sectorInput.addEventListener(
-      "change",
-      async () => {
-        await renderMachineGrid();
-      }
-    );
-
-    document
-      .getElementById("logoutBtn")
-      .addEventListener(
-        "click",
-        async () => {
-
-          const {
-            error
-          } = await supabaseClient
-            .auth
-            .signOut();
-
-          if (error) {
-            mostrarToast(
-              "Erro ao sair."
+            showToast(
+                "Máquina inválida."
             );
 
             return;
-          }
-
-          window.location.href =
-            "index.html";
-        }
-      );
-
-    supabaseClient.auth.onAuthStateChange(
-      async (event, session) => {
-
-        if (event === "SIGNED_OUT") {
-          window.location.href =
-            "index.html";
-
-          return;
         }
 
-        if (
-          session &&
-          !currentUser
-        ) {
-          currentUser =
+
+        /*
+         * Todos os tempos são enviados
+         * em minutos, conforme a função
+         * existente no Supabase.
+         */
+
+        const horaBoa =
+            parseMinutes(
+                goodHoursInput.value
+            );
+
+
+        const reposicao =
+            parseMinutes(
+                replacementHoursInput.value
+            );
+
+
+        const totalBaixado =
+            horaBoa +
+            reposicao;
+
+
+        const saldo =
+            parseMinutes(
+                balanceInput.value
+            );
+
+
+        const observacao =
+            observationInput.value
+                .trim();
+
+
+        const ocorrencias =
+            ocorrenciasAtuais
+                .map(
+                    item => ({
+
+                        tipo:
+                            item.tipo ||
+                            "Outro",
+
+                        descricao:
+                            item.descricao ||
+                            ""
+
+                    })
+                )
+                .filter(
+                    item =>
+                        item.descricao
+                            .trim()
+                            .length > 0
+                );
+
+
+        /*
+         * RPC EXISTENTE:
+         *
+         * salvar_apontamento_lider(
+         *   p_data date,
+         *   p_turno text,
+         *   p_setor text,
+         *   p_maquina integer,
+         *   p_hora_boa integer,
+         *   p_reposicao integer,
+         *   p_total_baixado integer,
+         *   p_saldo integer,
+         *   p_observacao text,
+         *   p_ocorrencias jsonb
+         * )
+         */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .rpc(
+                    "salvar_apontamento_lider",
+                    {
+
+                        p_data:
+                            dateInput.value,
+
+                        p_turno:
+                            shiftInput.value,
+
+                        p_setor:
+                            sectorInput.value,
+
+                        p_maquina:
+                            maquinaNumero,
+
+                        p_hora_boa:
+                            horaBoa,
+
+                        p_reposicao:
+                            reposicao,
+
+                        p_total_baixado:
+                            totalBaixado,
+
+                        p_saldo:
+                            saldo,
+
+                        p_observacao:
+                            observacao ||
+                            null,
+
+                        p_ocorrencias:
+                            ocorrencias
+
+                    }
+                );
+
+
+        if(error){
+
+            console.error(
+                "Erro RPC:",
+                error
+            );
+
+            throw error;
+
+        }
+
+
+        /*
+         * A função retorna bigint.
+         */
+
+        if(data){
+
+            apontamentoAtual = {
+                id:data
+            };
+
+        }
+
+
+        showToast(
+            `${machineAtual} salvo ✓`
+        );
+
+
+        await renderMachineGrid();
+
+
+        fecharTelaMaquina();
+
+
+    }catch(error){
+
+        console.error(
+            "Erro ao salvar:",
+            error
+        );
+
+
+        showToast(
+            "Não foi possível salvar. " +
+            (
+                error.message ||
+                "Erro desconhecido."
+            )
+        );
+
+
+    }finally{
+
+        showLoading(false);
+
+    }
+
+}
+
+
+/* =========================================================
+   EXCLUIR
+========================================================= */
+
+async function excluirMaquina(){
+
+    if(
+        !apontamentoAtual ||
+        !apontamentoAtual.id
+    ){
+
+        showToast(
+            "Não há apontamento para excluir."
+        );
+
+        return;
+    }
+
+
+    if(
+        !confirm(
+            `Excluir o apontamento da ${machineAtual}?`
+        )
+    ){
+
+        return;
+
+    }
+
+
+    showLoading(true);
+
+
+    try{
+
+        /*
+         * A exclusão é feita pela RPC segura
+         * no Supabase, que verifica se o
+         * apontamento pertence ao líder atual.
+         */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .rpc(
+                    "excluir_apontamento_lider",
+                    {
+                        p_apontamento_id:
+                            apontamentoAtual.id
+                    }
+                );
+
+
+        if(error){
+
+            console.error(
+                "Erro RPC de exclusão:",
+                error
+            );
+
+            throw error;
+
+        }
+
+
+        /*
+         * A RPC retorna o ID realmente excluído.
+         * Sem esse retorno, não mostramos sucesso.
+         */
+
+        if(
+            data === null ||
+            data === undefined
+        ){
+
+            throw new Error(
+                "O apontamento não foi excluído."
+            );
+
+        }
+
+
+        showToast(
+            `${machineAtual} excluído ✓`
+        );
+
+
+        await fecharTelaMaquina();
+
+
+    }catch(error){
+
+        console.error(
+            "Erro ao excluir:",
+            error
+        );
+
+        showToast(
+            "Não foi possível excluir. " +
+            (
+                error.message ||
+                "Erro desconhecido."
+            )
+        );
+
+
+    }finally{
+
+        showLoading(false);
+
+    }
+
+}
+
+
+/* =========================================================
+   SAIR
+========================================================= */
+
+async function sair(){
+
+    const confirmar =
+        confirm(
+            "Deseja sair do sistema?"
+        );
+
+
+    if(!confirmar){
+        return;
+    }
+
+
+    showLoading(true);
+
+
+    try{
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .auth
+                .signOut();
+
+
+        if(error){
+            throw error;
+        }
+
+
+        window.location.href =
+            "index.html";
+
+
+    }catch(error){
+
+        console.error(
+            "Erro ao sair:",
+            error
+        );
+
+
+        showToast(
+            "Não foi possível sair."
+        );
+
+
+    }finally{
+
+        showLoading(false);
+
+    }
+
+}
+
+
+/* =========================================================
+   EVENTOS
+========================================================= */
+
+goodHoursInput.addEventListener(
+    "input",
+    atualizarTotal
+);
+
+
+replacementHoursInput.addEventListener(
+    "input",
+    atualizarTotal
+);
+
+
+shiftInput.addEventListener(
+    "change",
+    async () => {
+
+        if(
+            machineScreen.classList.contains(
+                "hidden"
+            )
+        ){
+
+            await carregarDados();
+
+        }
+
+    }
+);
+
+
+sectorInput.addEventListener(
+    "change",
+    async () => {
+
+        if(
+            machineScreen.classList.contains(
+                "hidden"
+            )
+        ){
+
+            await carregarDados();
+
+        }
+
+    }
+);
+
+
+dateInput.addEventListener(
+    "change",
+    async () => {
+
+        if(
+            machineScreen.classList.contains(
+                "hidden"
+            )
+        ){
+
+            await carregarDados();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+supabaseClient.auth.onAuthStateChange(
+    async (
+        event,
+        session
+    ) => {
+
+        if(
+            !session ||
+            !session.user
+        ){
+
+            window.location.href =
+                "index.html";
+
+            return;
+        }
+
+        currentUser =
             session.user;
 
-          try {
-            await carregarPerfil();
-            await renderMachineGrid();
-          } catch (error) {
-            console.error(error);
-          }
-        }
-      }
-    );
+    }
+);
 
-    init();
-  </script>
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+async function init(){
+
+    showLoading(true);
+
+
+    try{
+
+        const {
+            data:{
+                session
+            }
+        } =
+            await supabaseClient
+                .auth
+                .getSession();
+
+
+        if(
+            !session ||
+            !session.user
+        ){
+
+            window.location.href =
+                "index.html";
+
+            return;
+
+        }
+
+
+        currentUser =
+            session.user;
+
+
+        await carregarPerfil();
+
+
+        if(!dateInput.value){
+
+            dateInput.value =
+                todayLocal();
+
+        }
+
+
+        shiftInput.value =
+            "1º turno";
+
+
+        sectorInput.value =
+            "A";
+
+
+        await carregarDados();
+
+
+    }catch(error){
+
+        console.error(
+            "Erro na inicialização:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Não foi possível carregar o sistema."
+        );
+
+
+    }finally{
+
+        showLoading(false);
+
+    }
+
+}
+
+
+init();
+
+</script>
+
 </body>
 </html>
