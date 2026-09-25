@@ -20,9 +20,11 @@ const supabaseClient =
 ========================================================= */
 
 let currentUser = null;
+
 let currentProfile = null;
 
 let machineAtual = null;
+
 let apontamentoAtual = null;
 
 let ocorrenciasAtuais = [];
@@ -55,80 +57,123 @@ const shiftTargets = {
 ========================================================= */
 
 const dateInput =
-    document.getElementById("date");
+    document.getElementById(
+        "date"
+    );
 
 const shiftInput =
-    document.getElementById("shift");
+    document.getElementById(
+        "shift"
+    );
 
 const sectorInput =
-    document.getElementById("sector");
+    document.getElementById(
+        "sector"
+    );
 
 const leaderName =
-    document.getElementById("leaderName");
+    document.getElementById(
+        "leaderName"
+    );
 
 const userAvatar =
-    document.getElementById("userAvatar");
+    document.getElementById(
+        "userAvatar"
+    );
 
 const machineGrid =
-    document.getElementById("machineGrid");
+    document.getElementById(
+        "machineGrid"
+    );
 
 const machineListSection =
-    document.getElementById("machineListSection");
+    document.getElementById(
+        "machineListSection"
+    );
 
 const machineScreen =
-    document.getElementById("machineScreen");
+    document.getElementById(
+        "machineScreen"
+    );
 
 const mainHeader =
-    document.getElementById("mainHeader");
+    document.getElementById(
+        "mainHeader"
+    );
 
 const contextSection =
-    document.getElementById("contextSection");
+    document.getElementById(
+        "contextSection"
+    );
 
 const machineTitle =
-    document.getElementById("machineTitle");
+    document.getElementById(
+        "machineTitle"
+    );
 
 const machineSubtitle =
-    document.getElementById("machineSubtitle");
+    document.getElementById(
+        "machineSubtitle"
+    );
 
 const goodHoursInput =
-    document.getElementById("goodHours");
+    document.getElementById(
+        "goodHours"
+    );
 
 const replacementHoursInput =
-    document.getElementById("replacementHours");
+    document.getElementById(
+        "replacementHours"
+    );
 
 const totalHours =
-    document.getElementById("totalHours");
+    document.getElementById(
+        "totalHours"
+    );
 
 const performanceBar =
-    document.getElementById("performanceBar");
+    document.getElementById(
+        "performanceBar"
+    );
 
 const balanceInput =
-    document.getElementById("balance");
+    document.getElementById(
+        "balance"
+    );
 
 const occurrenceList =
-    document.getElementById("occurrenceList");
+    document.getElementById(
+        "occurrenceList"
+    );
 
 const occurrenceEditor =
-    document.getElementById("occurrenceEditor");
+    document.getElementById(
+        "occurrenceEditor"
+    );
 
 const occurrenceType =
-    document.getElementById("occurrenceType");
+    document.getElementById(
+        "occurrenceType"
+    );
 
 const occurrenceDescription =
-    document.getElementById("occurrenceDescription");
-
-const observationInput =
-    document.getElementById("observation");
+    document.getElementById(
+        "occurrenceDescription"
+    );
 
 const deleteMachineButton =
-    document.getElementById("deleteMachineButton");
+    document.getElementById(
+        "deleteMachineButton"
+    );
 
 const nativeTimePicker =
-    document.getElementById("nativeTimePicker");
+    document.getElementById(
+        "nativeTimePicker"
+    );
 
 
 /* =========================================================
-   UTILITÁRIOS
+   LOADING
 ========================================================= */
 
 function showLoading(show){
@@ -143,32 +188,48 @@ function showLoading(show){
 }
 
 
+/* =========================================================
+   TOAST
+========================================================= */
+
 let toastTimer = null;
 
 function showToast(message){
 
     const toast =
-        document.getElementById("toast");
+        document.getElementById(
+            "toast"
+        );
 
     toast.textContent =
         message;
 
-    toast.classList.add("show");
+    toast.classList.add(
+        "show"
+    );
 
-    clearTimeout(toastTimer);
+    clearTimeout(
+        toastTimer
+    );
 
     toastTimer =
         setTimeout(
             () => {
+
                 toast.classList.remove(
                     "show"
                 );
+
             },
             2400
         );
 
 }
 
+
+/* =========================================================
+   MÁQUINAS
+========================================================= */
 
 function formatMachine(value){
 
@@ -178,11 +239,16 @@ function formatMachine(value){
     if(
         !Number.isFinite(number)
     ){
+
         return String(value);
+
     }
 
-    return "M" +
-        String(number).padStart(2,"0");
+    return (
+        "M" +
+        String(number)
+            .padStart(2,"0")
+    );
 
 }
 
@@ -193,23 +259,32 @@ function machineNumber(value){
         String(value || "")
             .trim()
             .toUpperCase()
-            .match(/^M(\d+)$/);
+            .match(
+                /^M(\d+)$/
+            );
 
     if(!match){
+
         return null;
+
     }
 
     const number =
-        Number(match[1]);
+        Number(
+            match[1]
+        );
 
     if(
         !Number.isInteger(number) ||
         number <= 0
     ){
+
         return null;
+
     }
 
     return number;
+
 }
 
 
@@ -218,7 +293,11 @@ function normalizeMachine(value){
     if(
         typeof value === "number"
     ){
-        return formatMachine(value);
+
+        return formatMachine(
+            value
+        );
+
     }
 
     const text =
@@ -249,6 +328,58 @@ function normalizeMachine(value){
     }
 
     return text;
+
+}
+
+
+function getSectorMachines(
+    sector
+){
+
+    if(
+        sector === "A"
+    ){
+
+        return Array.from(
+            {
+                length:29
+            },
+            (_,index) =>
+                index + 1
+        );
+
+    }
+
+    if(
+        sector === "B"
+    ){
+
+        return Array.from(
+            {
+                length:22
+            },
+            (_,index) =>
+                index + 30
+        );
+
+    }
+
+    if(
+        sector === "C"
+    ){
+
+        return Array.from(
+            {
+                length:34
+            },
+            (_,index) =>
+                index + 52
+        );
+
+    }
+
+    return [];
+
 }
 
 
@@ -262,7 +393,9 @@ function parseMinutes(value){
         value === null ||
         value === undefined
     ){
+
         return 0;
+
     }
 
 
@@ -272,7 +405,9 @@ function parseMinutes(value){
 
 
     if(!text){
+
         return 0;
+
     }
 
 
@@ -287,9 +422,10 @@ function parseMinutes(value){
         8
     */
 
-
     if(
-        /^\d{1,3}:\d{2}$/.test(text)
+        /^\d{1,3}:\d{2}$/.test(
+            text
+        )
     ){
 
         const parts =
@@ -297,16 +433,24 @@ function parseMinutes(value){
 
 
         const hours =
-            Number(parts[0]);
+            Number(
+                parts[0]
+            );
 
 
         const minutes =
-            Number(parts[1]);
+            Number(
+                parts[1]
+            );
 
 
         if(
-            !Number.isInteger(hours) ||
-            !Number.isInteger(minutes) ||
+            !Number.isInteger(
+                hours
+            ) ||
+            !Number.isInteger(
+                minutes
+            ) ||
             hours < 0 ||
             minutes < 0 ||
             minutes > 59
@@ -326,7 +470,9 @@ function parseMinutes(value){
 
 
     if(
-        /^\d{3,4}$/.test(text)
+        /^\d{3,4}$/.test(
+            text
+        )
     ){
 
         let digits =
@@ -379,7 +525,9 @@ function parseMinutes(value){
 
 
     if(
-        /^\d{1,2}$/.test(text)
+        /^\d{1,2}$/.test(
+            text
+        )
     ){
 
         const hours =
@@ -392,38 +540,67 @@ function parseMinutes(value){
 
 
     return 0;
+
 }
 
 
-function normalizeTimeInput(input){
+function minutesToHHMM(
+    minutes
+){
 
-    if(!input){
+    const total =
+        Math.max(
+            0,
+            Math.round(
+                Number(minutes) || 0
+            )
+        );
+
+
+    const hours =
+        Math.floor(
+            total / 60
+        );
+
+
+    const mins =
+        total % 60;
+
+
+    return (
+        String(hours)
+            .padStart(2,"0") +
+        ":" +
+        String(mins)
+            .padStart(2,"0")
+    );
+
+}
+
+
+/* =========================================================
+   NORMALIZAÇÃO DOS CAMPOS DE HORA
+========================================================= */
+
+function normalizarCampoHora(
+    input
+){
+
+    const value =
+        input.value.trim();
+
+
+    if(!value){
+
         return;
-    }
 
-
-    const text =
-        String(input.value || "")
-            .trim();
-
-
-    if(!text){
-        return;
     }
 
 
     const minutes =
-        parseMinutes(text);
-
-
-    if(
-        minutes <= 0 &&
-        !/^0(?::0{1,2})?$/.test(text)
-    ){
-
-        return;
-
-    }
+        parseMinutes(
+            value
+        );
 
 
     input.value =
@@ -434,38 +611,49 @@ function normalizeTimeInput(input){
 }
 
 
-function minutesToHHMM(minutes){
+goodHoursInput.addEventListener(
+    "blur",
+    () => {
 
-    const total =
-        Math.max(
-            0,
-            Math.round(
-                Number(minutes) || 0
-            )
+        normalizarCampoHora(
+            goodHoursInput
         );
 
-    const hours =
-        Math.floor(
-            total / 60
+    }
+);
+
+
+replacementHoursInput.addEventListener(
+    "blur",
+    () => {
+
+        normalizarCampoHora(
+            replacementHoursInput
         );
 
-    const mins =
-        total % 60;
+    }
+);
 
-    return (
-        String(hours).padStart(2,"0") +
-        ":" +
-        String(mins).padStart(2,"0")
-    );
 
-}
+balanceInput.addEventListener(
+    "blur",
+    () => {
+
+        normalizarCampoHora(
+            balanceInput
+        );
+
+    }
+);
 
 
 /* =========================================================
-   SELETOR NATIVO DE HORA
+   SELETOR NATIVO DE HORÁRIO
 ========================================================= */
 
-function abrirSeletorHora(targetId){
+function abrirSeletorHora(
+    targetId
+){
 
     const target =
         document.getElementById(
@@ -474,7 +662,9 @@ function abrirSeletorHora(targetId){
 
 
     if(!target){
+
         return;
+
     }
 
 
@@ -498,14 +688,10 @@ function abrirSeletorHora(targetId){
                 minutes / 60
             );
 
+
         const mins =
             minutes % 60;
 
-
-        /*
-            input type=time trabalha
-            normalmente com HH:MM.
-        */
 
         if(
             hours <= 23
@@ -533,13 +719,6 @@ function abrirSeletorHora(targetId){
     }
 
 
-    /*
-        showPicker() é o caminho ideal
-        nos navegadores que suportam.
-
-        O fallback usa click().
-    */
-
     try{
 
         if(
@@ -558,6 +737,7 @@ function abrirSeletorHora(targetId){
     }catch(error){
 
         nativeTimePicker.focus();
+
         nativeTimePicker.click();
 
     }
@@ -569,13 +749,21 @@ nativeTimePicker.addEventListener(
     "change",
     () => {
 
-        if(!nativeTimeTarget){
+        if(
+            !nativeTimeTarget
+        ){
+
             return;
+
         }
 
 
-        if(!nativeTimePicker.value){
+        if(
+            !nativeTimePicker.value
+        ){
+
             return;
+
         }
 
 
@@ -623,80 +811,18 @@ document
 
 
 /* =========================================================
-   FORMATAÇÃO DOS CAMPOS DE HORA
+   METAS / DESEMPENHO
 ========================================================= */
 
-[
-    goodHoursInput,
-    replacementHoursInput,
-    balanceInput
-].forEach(
-    input => {
-
-        input.addEventListener(
-            "blur",
-            () => {
-
-                normalizeTimeInput(
-                    input
-                );
-
-                atualizarTotal();
-
-            }
-        );
-
-    }
-);
-
-
-/* =========================================================
-   OUTRAS UTILIDADES
-========================================================= */
-
-function getSectorMachines(sector){
-
-    if(sector === "A"){
-
-        return Array.from(
-            {length:29},
-            (_,index) =>
-                index + 1
-        );
-
-    }
-
-    if(sector === "B"){
-
-        return Array.from(
-            {length:22},
-            (_,index) =>
-                index + 30
-        );
-
-    }
-
-    if(sector === "C"){
-
-        return Array.from(
-            {length:34},
-            (_,index) =>
-                index + 52
-        );
-
-    }
-
-    return [];
-
-}
-
-
-function getStatusClass(totalMinutes){
+function getStatusClass(
+    totalMinutes
+){
 
     const target =
         shiftTargets[
             shiftInput.value
         ];
+
 
     if(
         totalMinutes >= target
@@ -706,38 +832,57 @@ function getStatusClass(totalMinutes){
 
     }
 
+
     if(
-        totalMinutes >= target - 48
+        totalMinutes >=
+        target - 48
     ){
 
         return "status-yellow";
 
     }
 
+
     return "status-red";
 
 }
 
+
+/* =========================================================
+   DATA
+========================================================= */
 
 function todayLocal(){
 
     const now =
         new Date();
 
+
     const year =
         now.getFullYear();
+
 
     const month =
         String(
             now.getMonth() + 1
-        ).padStart(2,"0");
+        )
+        .padStart(2,"0");
+
 
     const day =
         String(
             now.getDate()
-        ).padStart(2,"0");
+        )
+        .padStart(2,"0");
 
-    return `${year}-${month}-${day}`;
+
+    return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+    );
 
 }
 
@@ -768,7 +913,9 @@ async function carregarPerfil(){
 
     if(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         throw new Error(
             "Não foi possível carregar seu perfil."
@@ -795,24 +942,27 @@ async function carregarPerfil(){
         .slice(0,2)
         .map(
             name =>
-                name[0].toUpperCase()
+                name[0]
+                    .toUpperCase()
         )
         .join("");
 
 
     userAvatar.textContent =
-        initials || "U";
+        initials ||
+        "U";
 
 }
 
 
 /* =========================================================
-   CARREGAR APONTAMENTOS
+   CARREGAR DADOS
 ========================================================= */
 
 async function carregarDados(){
 
     showLoading(true);
+
 
     try{
 
@@ -820,7 +970,9 @@ async function carregarDados(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         showToast(
             error.message ||
@@ -842,7 +994,8 @@ async function carregarDados(){
 
 async function renderMachineGrid(){
 
-    machineGrid.innerHTML = "";
+    machineGrid.innerHTML =
+        "";
 
 
     const machines =
@@ -882,11 +1035,15 @@ async function renderMachineGrid(){
 
     if(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
 
     }else{
 
-        (data || []).forEach(
+        (
+            data || []
+        ).forEach(
             item => {
 
                 savedMachines.add(
@@ -905,7 +1062,9 @@ async function renderMachineGrid(){
         number => {
 
             const machine =
-                formatMachine(number);
+                formatMachine(
+                    number
+                );
 
 
             const button =
@@ -919,7 +1078,9 @@ async function renderMachineGrid(){
 
 
             if(
-                savedMachines.has(machine)
+                savedMachines.has(
+                    machine
+                )
             ){
 
                 button.classList.add(
@@ -935,7 +1096,9 @@ async function renderMachineGrid(){
 
             button.onclick =
                 () =>
-                    abrirMaquina(machine);
+                    abrirMaquina(
+                        machine
+                    );
 
 
             machineGrid.appendChild(
@@ -952,10 +1115,14 @@ async function renderMachineGrid(){
    ABRIR MÁQUINA
 ========================================================= */
 
-async function abrirMaquina(machine){
+async function abrirMaquina(
+    machine
+){
 
     machineAtual =
-        normalizeMachine(machine);
+        normalizeMachine(
+            machine
+        );
 
 
     machineTitle.textContent =
@@ -1080,10 +1247,6 @@ async function carregarFormulario(){
         "";
 
 
-    observationInput.value =
-        "";
-
-
     occurrenceEditor.classList.add(
         "hidden"
     );
@@ -1112,9 +1275,7 @@ async function carregarFormulario(){
         );
 
 
-    if(
-        !maquinaNumero
-    ){
+    if(!maquinaNumero){
 
         return;
 
@@ -1153,7 +1314,9 @@ async function carregarFormulario(){
 
     if(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         showToast(
             "Erro ao carregar máquina."
@@ -1164,82 +1327,107 @@ async function carregarFormulario(){
     }
 
 
-    if(data){
+    if(!data){
 
-        apontamentoAtual =
-            data;
+        renderOccurrences();
 
+        atualizarTotal();
 
-        goodHoursInput.value =
-            data.hora_boa != null
-                ? minutesToHHMM(
-                    data.hora_boa
-                )
-                : "";
+        return;
+
+    }
 
 
-        replacementHoursInput.value =
-            data.reposicao != null
-                ? minutesToHHMM(
-                    data.reposicao
-                )
-                : "";
+    apontamentoAtual =
+        data;
 
 
-        balanceInput.value =
-            data.saldo != null
-                ? minutesToHHMM(
-                    data.saldo
-                )
-                : "";
+    goodHoursInput.value =
+        data.hora_boa != null
+            ? minutesToHHMM(
+                data.hora_boa
+            )
+            : "";
 
 
-        observationInput.value =
-            data.observacao ||
-            "";
+    replacementHoursInput.value =
+        data.reposicao != null
+            ? minutesToHHMM(
+                data.reposicao
+            )
+            : "";
 
 
-        deleteMachineButton.classList.remove(
-            "hidden"
+    balanceInput.value =
+        data.saldo != null
+            ? minutesToHHMM(
+                data.saldo
+            )
+            : "";
+
+
+    deleteMachineButton.classList.remove(
+        "hidden"
+    );
+
+
+    /*
+     * As ocorrências ficam na tabela
+     * public.ocorrencias.
+     */
+
+    const {
+        data:ocorrencias,
+        error:ocorrenciasError
+    } =
+        await supabaseClient
+            .from("ocorrencias")
+            .select(
+                "id, apontamento_id, categoria, descricao, criado_em"
+            )
+            .eq(
+                "apontamento_id",
+                data.id
+            )
+            .order(
+                "id",
+                {
+                    ascending:true
+                }
+            );
+
+
+    if(
+        ocorrenciasError
+    ){
+
+        console.error(
+            "Erro ao carregar ocorrências:",
+            ocorrenciasError
         );
 
+        ocorrenciasAtuais =
+            [];
 
-        /*
-            Compatibilidade com registros
-            antigos e novos.
+    }else{
 
-            O RPC novo trabalha com
-            "categoria".
-        */
+        ocorrenciasAtuais =
+            (
+                ocorrencias || []
+            ).map(
+                item => ({
 
-        if(
-            Array.isArray(
-                data.ocorrencias
-            )
-        ){
+                    tipo:
+                        item.categoria ||
+                        item.tipo ||
+                        "Outro",
 
-            ocorrenciasAtuais =
-                data.ocorrencias.map(
-                    item => ({
+                    descricao:
+                        item.descricao ||
+                        ""
 
-                        tipo:
-                            item.categoria ||
-                            item.tipo ||
-                            "Outro",
-
-                        descricao:
-                            item.descricao ||
-                            ""
-
-                    })
-                );
-
-        }else{
-
-            ocorrenciasAtuais =
-                [];
-
-        }
+                })
+            );
 
     }
 
@@ -1257,11 +1445,15 @@ async function carregarFormulario(){
 
 function renderOccurrences(){
 
-    occurrenceList.innerHTML = "";
+    occurrenceList.innerHTML =
+        "";
 
 
     ocorrenciasAtuais.forEach(
-        (item,index) => {
+        (
+            item,
+            index
+        ) => {
 
             const row =
                 document.createElement(
@@ -1343,13 +1535,19 @@ function renderOccurrences(){
                 "mini-button";
 
 
+            edit.type =
+                "button";
+
+
             edit.textContent =
                 "✎";
 
 
             edit.onclick =
                 () =>
-                    editarOcorrencia(index);
+                    editarOcorrencia(
+                        index
+                    );
 
 
             const del =
@@ -1362,13 +1560,19 @@ function renderOccurrences(){
                 "mini-button delete";
 
 
+            del.type =
+                "button";
+
+
             del.textContent =
                 "×";
 
 
             del.onclick =
                 () =>
-                    removerOcorrencia(index);
+                    removerOcorrencia(
+                        index
+                    );
 
 
             actions.appendChild(
@@ -1442,14 +1646,20 @@ function cancelarEditorOcorrencia(){
 }
 
 
-function editarOcorrencia(index){
+function editarOcorrencia(
+    index
+){
 
     const item =
-        ocorrenciasAtuais[index];
+        ocorrenciasAtuais[
+            index
+        ];
 
 
     if(!item){
+
         return;
+
     }
 
 
@@ -1501,15 +1711,18 @@ function salvarOcorrenciaLocal(){
 
     const item = {
 
-        tipo:tipo,
+        tipo:
+            tipo,
 
-        descricao:descricao
+        descricao:
+            descricao
 
     };
 
 
     if(
-        occurrenceEditIndex === null
+        occurrenceEditIndex ===
+        null
     ){
 
         ocorrenciasAtuais.push(
@@ -1520,7 +1733,8 @@ function salvarOcorrenciaLocal(){
 
         ocorrenciasAtuais[
             occurrenceEditIndex
-        ] = item;
+        ] =
+            item;
 
     }
 
@@ -1543,7 +1757,9 @@ function salvarOcorrenciaLocal(){
 }
 
 
-function removerOcorrencia(index){
+function removerOcorrencia(
+    index
+){
 
     if(
         !confirm(
@@ -1568,7 +1784,7 @@ function removerOcorrencia(index){
 
 
 /* =========================================================
-   HORAS / TOTAL
+   TOTAL
 ========================================================= */
 
 function atualizarTotal(){
@@ -1586,11 +1802,14 @@ function atualizarTotal(){
 
 
     const total =
-        good + replacement;
+        good +
+        replacement;
 
 
     totalHours.textContent =
-        minutesToHHMM(total);
+        minutesToHHMM(
+            total
+        );
 
 
     const target =
@@ -1601,7 +1820,10 @@ function atualizarTotal(){
 
     let percent =
         target > 0
-            ? (total / target) * 100
+            ? (
+                total /
+                target
+            ) * 100
             : 0;
 
 
@@ -1621,7 +1843,9 @@ function atualizarTotal(){
 
     performanceBar.className =
         "performance-bar " +
-        getStatusClass(total);
+        getStatusClass(
+            total
+        );
 
 }
 
@@ -1696,16 +1920,14 @@ async function salvarMaquina(){
             );
 
 
-        const observacao =
-            observationInput.value
-                .trim();
-
-
         /*
-            IMPORTANTE:
-            O RPC espera "categoria",
-            não "tipo".
-        */
+         * IMPORTANTE:
+         *
+         * A RPC espera:
+         *
+         * categoria
+         * descricao
+         */
 
         const ocorrencias =
             ocorrenciasAtuais
@@ -1763,8 +1985,16 @@ async function salvarMaquina(){
                         p_saldo:
                             saldo,
 
+                        /*
+                         * Não existe mais
+                         * observação geral.
+                         *
+                         * A RPC atual ainda possui
+                         * esse parâmetro, então ele
+                         * recebe null.
+                         */
+
                         p_observacao:
-                            observacao ||
                             null,
 
                         p_ocorrencias:
@@ -1786,10 +2016,16 @@ async function salvarMaquina(){
         }
 
 
-        if(data){
+        if(
+            data !== null &&
+            data !== undefined
+        ){
 
             apontamentoAtual = {
-                id:data
+
+                id:
+                    data
+
             };
 
         }
@@ -1803,7 +2039,7 @@ async function salvarMaquina(){
         await renderMachineGrid();
 
 
-        fecharTelaMaquina();
+        await fecharTelaMaquina();
 
 
     }catch(error){
@@ -1876,8 +2112,10 @@ async function excluirMaquina(){
                 .rpc(
                     "excluir_apontamento_lider",
                     {
+
                         p_apontamento_id:
                             apontamentoAtual.id
+
                     }
                 );
 
@@ -1953,7 +2191,9 @@ async function sair(){
 
 
     if(!confirmar){
+
         return;
+
     }
 
 
@@ -1971,7 +2211,9 @@ async function sair(){
 
 
         if(error){
+
             throw error;
+
         }
 
 
@@ -2148,7 +2390,9 @@ async function init(){
         await carregarPerfil();
 
 
-        if(!dateInput.value){
+        if(
+            !dateInput.value
+        ){
 
             dateInput.value =
                 todayLocal();
