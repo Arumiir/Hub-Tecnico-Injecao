@@ -1723,47 +1723,44 @@ async function carregarDados(){
          */
 
         const {
-            data:apontamentos,
-            error
-        } =
-            await supabaseClient
-                .from("apontamentos")
-                .select(`
-                    id,
-                    data,
-                    turno,
-                    setor,
-                    maquina,
-                    lider_id,
-                    hora_boa,
-                    reposicao,
-                    total_baixado,
-                    saldo,
-                    observacao,
-                    nota_supervisor,
-                    ocorrencias,
-                    usuarios (
-                        nome
-                    )
-                `)
-                .eq(
-                    "data",
-                    data
-                )
-                .eq(
-                    "turno",
-                    turno
-                )
-                .eq(
-                    "setor",
-                    setor
-                )
-                .order(
-                    "maquina",
-                    {
-                        ascending:true
-                    }
-                );
+    data:apontamentos,
+    error
+} =
+    await supabaseClient
+        .from("apontamentos")
+        .select(`
+            id,
+            data,
+            turno,
+            setor,
+            maquina,
+            lider_id,
+            hora_boa,
+            reposicao,
+            total_baixado,
+            saldo,
+            observacao,
+            nota_supervisor,
+            ocorrencias
+        `)
+        .eq(
+            "data",
+            data
+        )
+        .eq(
+            "turno",
+            turno
+        )
+        .eq(
+            "setor",
+            setor
+        )
+        .order(
+            "maquina",
+            {
+                ascending:true
+            }
+        );
 
 
         if(error){
