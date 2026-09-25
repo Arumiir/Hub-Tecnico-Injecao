@@ -299,32 +299,75 @@ input[type="date"]{
     margin:0 0 7px 2px;
 }
 
-.input-group input,
-.input-group textarea{
+
+/* INPUTS DE HORA */
+
+.time-input-wrapper{
+    position:relative;
+    width:100%;
+}
+
+.input-group .time-input-wrapper input{
     width:100%;
     border:1px solid var(--line);
     background:#F8F8FA;
     border-radius:13px;
     outline:0;
-    padding:12px;
+    padding:12px 44px 12px 12px;
     color:var(--text);
     font-size:17px;
     font-weight:600;
     transition:.15s ease;
 }
 
-.input-group input:focus,
-.input-group textarea:focus{
+.time-input-wrapper input:focus{
     border-color:var(--blue);
     background:#fff;
 }
 
-.input-group textarea{
-    resize:vertical;
-    min-height:95px;
-    font-size:15px;
-    font-weight:500;
+.time-picker-button{
+    position:absolute;
+    top:50%;
+    right:7px;
+    transform:translateY(-50%);
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    background:transparent;
+    color:var(--secondary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+    line-height:1;
+    padding:0;
 }
+
+.time-picker-button:active{
+    background:#E5E5EA;
+    transform:translateY(-50%) scale(.94);
+}
+
+.time-picker-button span{
+    display:block;
+    transform:translateY(-1px);
+}
+
+
+/* SELETOR NATIVO */
+
+.native-time-picker{
+    position:fixed;
+    width:1px;
+    height:1px;
+    opacity:0;
+    pointer-events:none;
+    left:-100px;
+    top:-100px;
+}
+
+
+/* TOTAL */
 
 .total-box{
     margin-top:14px;
@@ -395,15 +438,24 @@ input[type="date"]{
     font-weight:600;
 }
 
-.saldo-row input{
+.saldo-time{
     width:120px;
+    flex-shrink:0;
+}
+
+.saldo-row .time-input-wrapper input{
+    width:100%;
     border:1px solid var(--line);
     background:#F8F8FA;
     border-radius:12px;
-    padding:10px;
+    padding:10px 38px 10px 10px;
     text-align:center;
     outline:0;
     font-weight:600;
+}
+
+.saldo-row .time-picker-button{
+    right:3px;
 }
 
 
