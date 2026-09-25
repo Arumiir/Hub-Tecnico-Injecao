@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta
+        name="theme-color"
+        content="#F2F2F7"
+    >
+
+    <title>Controle de Produção</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body>
+
+<div class="login-app">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            CP
+        </div>
+
+        <h1>
+            Controle de Produção
+        </h1>
+
+        <p>
+            Setor de Injeção
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+
+        <!-- LOGIN -->
+
+        <section
+            id="loginScreen"
+            class="screen active"
+        >
+
+            <div class="screen-title">
+                Entrar
+            </div>
+
+            <div class="screen-subtitle">
+                Acesse o sistema com seu usuário e senha.
+            </div>
+
+
+            <div
+                id="loginMessage"
+                class="message"
+            ></div>
+
+
+            <div class="field">
+
+                <label for="loginUsuario">
+                    Usuário
+                </label>
+
+                <input
+                    type="text"
+                    id="loginUsuario"
+                    autocomplete="username"
+                    autocapitalize="none"
+                    spellcheck="false"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="loginSenha">
+                    Senha
+                </label>
+
+                <div class="input-wrap">
+
+                    <input
+                        type="password"
+                        id="loginSenha"
+                        class="password-input"
+                        autocomplete="current-password"
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="toggleSenha('loginSenha', this)"
+                        aria-label="Mostrar senha"
+                    >
+                        ◉
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="primary"
+                id="loginButton"
+                onclick="entrar()"
+            >
+                Entrar
+            </button>
+
+
+            <div class="links">
+
+                <button
+                    class="link"
+                    onclick="mostrarTela('cadastroScreen')"
+                >
+                    Criar acesso
+                </button>
+
+                <button
+                    class="link"
+                    onclick="mostrarTela('recuperacaoScreen')"
+                >
+                    Esqueci a senha
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- CADASTRO -->
+
+        <section
+            id="cadastroScreen"
+            class="screen"
+        >
+
+            <button
+                class="back"
+                onclick="mostrarTela('loginScreen')"
+            >
+                <span>‹</span>
+                Voltar
+            </button>
+
+
+            <div class="screen-title">
+                Solicitar acesso
+            </div>
+
+            <div class="screen-subtitle">
+                Preencha os dados para solicitar seu acesso ao sistema.
+            </div>
+
+
+            <div
+                id="cadastroMessage"
+                class="message"
+            ></div>
+
+
+            <div class="field">
+
+                <label for="cadastroNome">
+                    Nome completo
+                </label>
+
+                <input
+                    type="text"
+                    id="cadastroNome"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="cadastroUsuario">
+                    Usuário
+                </label>
+
+                <input
+                    type="text"
+                    id="cadastroUsuario"
+                    autocomplete="username"
+                    autocapitalize="none"
+                    spellcheck="false"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="cadastroEmail">
+                    E-mail
+                </label>
+
+                <input
+                    type="email"
+                    id="cadastroEmail"
+                    autocomplete="email"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Perfil
+                </label>
+
+                <div class="profile-options">
+
+                    <div class="profile-option">
+
+                        <input
+                            type="radio"
+                            id="perfilLider"
+                            name="perfil"
+                            value="lider"
+                            checked
+                        >
+
+                        <label for="perfilLider">
+                            Líder
+                        </label>
+
+                    </div>
+
+
+                    <div class="profile-option">
+
+                        <input
+                            type="radio"
+                            id="perfilSupervisor"
+                            name="perfil"
+                            value="supervisor"
+                        >
+
+                        <label for="perfilSupervisor">
+                            Supervisor
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="cadastroSenha">
+                    Senha
+                </label>
+
+                <div class="input-wrap">
+
+                    <input
+                        type="password"
+                        id="cadastroSenha"
+                        class="password-input"
+                        autocomplete="new-password"
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="toggleSenha('cadastroSenha', this)"
+                    >
+                        ◉
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="primary"
+                id="cadastroButton"
+                onclick="solicitarCadastro()"
+            >
+                Solicitar acesso
+            </button>
+
+        </section>
+
+
+        <!-- RECUPERAÇÃO -->
+
+        <section
+            id="recuperacaoScreen"
+            class="screen"
+        >
+
+            <button
+                class="back"
+                onclick="mostrarTela('loginScreen')"
+            >
+                <span>‹</span>
+                Voltar
+            </button>
+
+
+            <div class="screen-title">
+                Recuperar senha
+            </div>
+
+            <div class="screen-subtitle">
+                Informe seu e-mail para receber as instruções de recuperação.
+            </div>
+
+
+            <div
+                id="recuperacaoMessage"
+                class="message"
+            ></div>
+
+
+            <div class="field">
+
+                <label for="recuperacaoEmail">
+                    E-mail
+                </label>
+
+                <input
+                    type="email"
+                    id="recuperacaoEmail"
+                    autocomplete="email"
+                >
+
+            </div>
+
+
+            <button
+                class="primary"
+                id="recuperacaoButton"
+                onclick="recuperarSenha()"
+            >
+                Enviar instruções
+            </button>
+
+        </section>
+
+
+        <!-- SUCESSO -->
+
+        <section
+            id="successScreen"
+            class="screen"
+        >
+
+            <div class="success-box">
+
+                <div class="success-icon">
+                    ✓
+                </div>
+
+                <h2>
+                    Solicitação enviada
+                </h2>
+
+                <p>
+                    Seu acesso foi registrado e ficará disponível
+                    após a aprovação do responsável pelo sistema.
+                </p>
+
+                <button
+                    class="secondary"
+                    onclick="mostrarTela('loginScreen')"
+                >
+                    Voltar para o login
+                </button>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+
+    <div class="footer">
+        Controle de Produção · Setor de Injeção
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+    "https://icajmncojvidhrqlbevq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================================
+   TELA
+========================================================= */
+
+function mostrarTela(id){
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(
+            tela => tela.classList.remove("active")
+        );
+
+    const tela =
+        document.getElementById(id);
+
+    if(tela){
+        tela.classList.add("active");
+    }
+
+}
+
+
+/* =========================================================
+   SENHA
+========================================================= */
+
+function toggleSenha(
+    inputId,
+    button
+){
+
+    const input =
+        document.getElementById(inputId);
+
+    if(!input){
+        return;
+    }
+
+    if(input.type === "password"){
+
+        input.type = "text";
+        button.textContent = "◉";
+
+    }else{
+
+        input.type = "password";
+        button.textContent = "◉";
+
+    }
+
+}
+
+
+/* =========================================================
+   MENSAGENS
+========================================================= */
+
+function mostrarMensagem(
+    id,
+    mensagem,
+    tipo = "error"
+){
+
+    const elemento =
+        document.getElementById(id);
+
+    if(!elemento){
+        return;
+    }
+
+    elemento.textContent =
+        mensagem;
+
+    elemento.className =
+        `message show ${tipo}`;
+
+}
+
+
+function limparMensagem(id){
+
+    const elemento =
+        document.getElementById(id);
+
+    if(!elemento){
+        return;
+    }
+
+    elemento.textContent = "";
+
+    elemento.className =
+        "message";
+
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function entrar(){
+
+    const usuario =
+        document
+            .getElementById("loginUsuario")
+            .value
+            .trim()
+            .toLowerCase();
+
+    const senha =
+        document
+            .getElementById("loginSenha")
+            .value;
+
+    limparMensagem("loginMessage");
+
+    if(!usuario || !senha){
+
+        mostrarMensagem(
+            "loginMessage",
+            "Informe usuário e senha."
+        );
+
+        return;
+
+    }
+
+    const botao =
+        document.getElementById("loginButton");
+
+    botao.disabled = true;
+    botao.textContent = "Entrando...";
+
+
+    try{
+
+        const {
+            data:usuarioData,
+            error:usuarioError
+        } =
+            await supabaseClient
+                .from("usuarios")
+                .select("*")
+                .eq("usuario", usuario)
+                .eq("ativo", true)
+                .maybeSingle();
+
+
+        if(usuarioError){
+            throw usuarioError;
+        }
+
+
+        if(!usuarioData){
+
+            mostrarMensagem(
+                "loginMessage",
+                "Usuário ou senha inválidos."
+            );
+
+            return;
+
+        }
+
+
+        const email =
+            usuarioData.email_auth;
+
+
+        if(!email){
+
+            mostrarMensagem(
+                "loginMessage",
+                "Usuário sem e-mail de autenticação cadastrado."
+            );
+
+            return;
+
+        }
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .auth
+                .signInWithPassword({
+                    email,
+                    password:senha
+                });
+
+
+        if(error){
+
+            mostrarMensagem(
+                "loginMessage",
+                "Usuário ou senha inválidos."
+            );
+
+            return;
+
+        }
+
+
+        if(usuarioData.perfil === "supervisor"){
+
+            window.location.href =
+                "supervisor.html";
+
+        }else{
+
+            window.location.href =
+                "lider.html";
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "Erro no login:",
+            error
+        );
+
+        mostrarMensagem(
+            "loginMessage",
+            "Não foi possível realizar o login."
+        );
+
+    }finally{
+
+        botao.disabled = false;
+        botao.textContent = "Entrar";
+
+    }
+
+}
+
+
+/* =========================================================
+   CADASTRO
+========================================================= */
+
+async function solicitarCadastro(){
+
+    const nome =
+        document
+            .getElementById("cadastroNome")
+            .value
+            .trim();
+
+    const usuario =
+        document
+            .getElementById("cadastroUsuario")
+            .value
+            .trim()
+            .toLowerCase();
+
+    const email =
+        document
+            .getElementById("cadastroEmail")
+            .value
+            .trim()
+            .toLowerCase();
+
+    const perfil =
+        document
+            .querySelector(
+                'input[name="perfil"]:checked'
+            )
+            ?.value;
+
+    const senha =
+        document
+            .getElementById("cadastroSenha")
+            .value;
+
+
+    limparMensagem("cadastroMessage");
+
+
+    if(
+        !nome ||
+        !usuario ||
+        !email ||
+        !perfil ||
+        !senha
+    ){
+
+        mostrarMensagem(
+            "cadastroMessage",
+            "Preencha todos os campos."
+        );
+
+        return;
+
+    }
+
+
+    if(senha.length < 6){
+
+        mostrarMensagem(
+            "cadastroMessage",
+            "A senha deve possuir pelo menos 6 caracteres."
+        );
+
+        return;
+
+    }
+
+
+    const botao =
+        document.getElementById(
+            "cadastroButton"
+        );
+
+    botao.disabled = true;
+    botao.textContent = "Enviando...";
+
+
+    try{
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("solicitacoes_acesso")
+                .insert({
+                    nome,
+                    usuario,
+                    email,
+                    perfil
+                });
+
+
+        if(error){
+            throw error;
+        }
+
+
+        mostrarTela(
+            "successScreen"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Erro ao solicitar acesso:",
+            error
+        );
+
+
+        mostrarMensagem(
+            "cadastroMessage",
+            error.message ||
+            "Não foi possível enviar a solicitação."
+        );
+
+    }finally{
+
+        botao.disabled = false;
+        botao.textContent = "Solicitar acesso";
+
+    }
+
+}
+
+
+/* =========================================================
+   RECUPERAÇÃO
+========================================================= */
+
+async function recuperarSenha(){
+
+    const email =
+        document
+            .getElementById("recuperacaoEmail")
+            .value
+            .trim()
+            .toLowerCase();
+
+
+    limparMensagem(
+        "recuperacaoMessage"
+    );
+
+
+    if(!email){
+
+        mostrarMensagem(
+            "recuperacaoMessage",
+            "Informe seu e-mail."
+        );
+
+        return;
+
+    }
+
+
+    const botao =
+        document.getElementById(
+            "recuperacaoButton"
+        );
+
+    botao.disabled = true;
+    botao.textContent = "Enviando...";
+
+
+    try{
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .auth
+                .resetPasswordForEmail(
+                    email,
+                    {
+                        redirectTo:
+                            `${window.location.origin}/index.html`
+                    }
+                );
+
+
+        if(error){
+            throw error;
+        }
+
+
+        mostrarMensagem(
+            "recuperacaoMessage",
+            "Se o e-mail estiver cadastrado, as instruções foram enviadas.",
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Erro na recuperação:",
+            error
+        );
+
+
+        mostrarMensagem(
+            "recuperacaoMessage",
+            "Não foi possível enviar a recuperação."
+        );
+
+    }finally{
+
+        botao.disabled = false;
+        botao.textContent =
+            "Enviar instruções";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
