@@ -1,1165 +1,948 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Controle de Produção — Líder</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-:root{
-    --bg:#f2f2f7;
-    --card:#ffffff;
-    --text:#111111;
-    --muted:#6e6e73;
-    --line:#e5e5ea;
-    --blue:#007aff;
-    --green:#34c759;
-    --red:#ff3b30;
-    --yellow:#ffcc00;
-    --shadow:0 8px 30px rgba(0,0,0,.06);
-    --radius:20px;
-}
-
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
-}
-
-html{
-    scroll-behavior:smooth;
-}
-
-body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
-}
-
-button,
-input,
-select,
-textarea{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-.hidden{
-    display:none !important;
-}
-
-/* HEADER */
-
-.header{
-    position:sticky;
-    top:0;
-    z-index:20;
-    padding:
-        calc(14px + env(safe-area-inset-top))
-        18px
-        14px;
-    background:rgba(242,242,247,.88);
-    backdrop-filter:blur(20px);
-    -webkit-backdrop-filter:blur(20px);
-    border-bottom:1px solid rgba(0,0,0,.06);
-}
-
-.header-inner{
-    max-width:760px;
-    margin:auto;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:14px;
-}
-
-.brand-title{
-    font-size:18px;
-    font-weight:800;
-    letter-spacing:-.4px;
-}
-
-.brand-subtitle{
-    margin-top:2px;
-    color:var(--muted);
-    font-size:13px;
-}
-
-.user-badge{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    background:#111;
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:13px;
-    font-weight:700;
-    flex-shrink:0;
-}
-
-/* MAIN */
-
-main{
-    width:min(760px,100%);
-    margin:auto;
-    padding:
-        22px
-        16px
-        calc(32px + env(safe-area-inset-bottom));
-}
-
-/* CONTEXTO */
-
-#contextSection{
-    transition:.2s ease;
-}
-
-.leader-block{
-    margin-bottom:20px;
-}
-
-.eyebrow{
-    font-size:12px;
-    font-weight:700;
-    color:var(--muted);
-    text-transform:uppercase;
-    letter-spacing:.08em;
-}
-
-.leader-name{
-    margin-top:4px;
-    font-size:25px;
-    line-height:1.15;
-    font-weight:800;
-    letter-spacing:-.7px;
-}
-
-.context-card{
-    background:var(--card);
-    border-radius:var(--radius);
-    padding:18px;
-    box-shadow:var(--shadow);
-    margin-bottom:18px;
-}
-
-.context-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    margin-top:18px;
-}
-
-.context-date{
-    grid-column:1 / -1;
-}
-
-.field{
-    display:flex;
-    flex-direction:column;
-    gap:7px;
-}
-
-.field label{
-    font-size:12px;
-    color:var(--muted);
-    font-weight:700;
-}
-
-input,
-select,
-textarea{
-    width:100%;
-    border:1px solid var(--line);
-    background:#f8f8fa;
-    color:var(--text);
-    border-radius:14px;
-    outline:none;
-    transition:.18s ease;
-}
-
-input,
-select{
-    min-height:48px;
-    padding:0 13px;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-    border-color:rgba(0,122,255,.45);
-    box-shadow:0 0 0 4px rgba(0,122,255,.10);
-    background:white;
-}
-
-.access-row{
-    margin-top:14px;
-}
-
-.access-btn{
-    width:100%;
-    min-height:44px;
-    border:0;
-    border-radius:14px;
-    background:#e9e9ee;
-    color:#111;
-    font-weight:700;
-}
-
-/* LISTA */
-
-.section-title{
-    display:flex;
-    align-items:end;
-    justify-content:space-between;
-    gap:12px;
-    margin:24px 2px 12px;
-}
-
-.section-title h2{
-    margin:0;
-    font-size:20px;
-    letter-spacing:-.4px;
-}
-
-.section-title p{
-    margin:0;
-    color:var(--muted);
-    font-size:13px;
-}
-
-.machine-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-}
-
-.machine-btn{
-    min-height:64px;
-    border:0;
-    border-radius:17px;
-    background:white;
-    color:#111;
-    box-shadow:0 4px 18px rgba(0,0,0,.055);
-    font-weight:800;
-    font-size:16px;
-    transition:.16s ease;
-    position:relative;
-}
-
-.machine-btn:active{
-    transform:scale(.96);
-}
-
-.machine-btn.saved{
-    background:#e9f9ed;
-    color:#16803a;
-    box-shadow:inset 0 0 0 1px rgba(52,199,89,.22);
-}
-
-.machine-btn.saved::after{
-    content:"✓";
-    position:absolute;
-    top:6px;
-    right:8px;
-    font-size:12px;
-    font-weight:900;
-}
-
-/* TELA DA MÁQUINA */
-
-.machine-screen{
-    animation:slideIn .2s ease;
-}
-
-@keyframes slideIn{
-    from{
-        opacity:0;
-        transform:translateY(8px);
-    }
-    to{
-        opacity:1;
-        transform:none;
-    }
-}
-
-.machine-top{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    margin-bottom:16px;
-}
-
-.back-btn{
-    width:44px;
-    height:44px;
-    border:0;
-    border-radius:14px;
-    background:white;
-    box-shadow:0 4px 18px rgba(0,0,0,.06);
-    font-size:25px;
-    line-height:1;
-}
-
-.machine-heading{
-    flex:1;
-}
-
-.machine-heading .small{
-    color:var(--muted);
-    font-size:12px;
-    font-weight:700;
-    text-transform:uppercase;
-}
-
-.machine-heading h2{
-    margin:2px 0 0;
-    font-size:25px;
-    letter-spacing:-.6px;
-}
-
-/* FORMULÁRIOS */
-
-.form-card{
-    background:white;
-    border-radius:var(--radius);
-    padding:18px;
-    margin-bottom:14px;
-    box-shadow:var(--shadow);
-}
-
-.form-card h3{
-    margin:0 0 14px;
-    font-size:17px;
-    letter-spacing:-.2px;
-}
-
-.hours-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-}
-
-.hours-total{
-    margin-top:12px;
-    padding:14px;
-    border-radius:14px;
-    background:#f5f5f7;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-}
-
-.hours-total span:first-child{
-    color:var(--muted);
-    font-size:13px;
-    font-weight:600;
-}
-
-.hours-total strong{
-    font-size:18px;
-}
-
-.performance-status{
-    margin-top:10px;
-    min-height:8px;
-    border-radius:99px;
-    background:#e5e5ea;
-    transition:.2s ease;
-}
-
-.performance-status.status-red{
-    background:var(--red);
-}
-
-.performance-status.status-yellow{
-    background:var(--yellow);
-}
-
-.performance-status.status-green{
-    background:var(--green);
-}
-
-/* OCORRÊNCIAS */
-
-.occurrences-list{
-    display:flex;
-    flex-direction:column;
-    gap:9px;
-    margin-bottom:12px;
-}
-
-.occurrence-item{
-    display:grid;
-    grid-template-columns:auto 1fr auto;
-    align-items:center;
-    gap:10px;
-    padding:12px;
-    border:1px solid var(--line);
-    border-radius:14px;
-    background:#fafafa;
-}
-
-.occurrence-type{
-    padding:6px 9px;
-    border-radius:9px;
-    background:#eeeeF3;
-    font-size:11px;
-    font-weight:800;
-    white-space:nowrap;
-}
-
-.occurrence-description{
-    font-size:14px;
-    line-height:1.3;
-    overflow-wrap:anywhere;
-}
-
-.occurrence-actions{
-    display:flex;
-    gap:5px;
-}
-
-.icon-btn{
-    width:32px;
-    height:32px;
-    border:0;
-    border-radius:9px;
-    background:#ededf2;
-    font-size:14px;
-}
-
-.icon-btn.delete{
-    color:var(--red);
-}
-
-.add-occurrence{
-    width:100%;
-    min-height:46px;
-    border:1px dashed #b8b8bf;
-    border-radius:14px;
-    background:#fafafa;
-    font-weight:700;
-    color:#333;
-}
-
-.occurrence-editor{
-    margin-top:12px;
-    padding:14px;
-    background:#f5f5f7;
-    border-radius:15px;
-}
-
-.occurrence-editor-grid{
-    display:grid;
-    grid-template-columns:1fr;
-    gap:10px;
-}
-
-.editor-actions{
-    display:flex;
-    gap:8px;
-    margin-top:10px;
-}
-
-.editor-actions button{
-    flex:1;
-    min-height:44px;
-    border:0;
-    border-radius:13px;
-    font-weight:700;
-}
-
-.cancel-btn{
-    background:#e5e5ea;
-}
-
-.confirm-btn{
-    background:#007aff;
-    color:white;
-}
-
-/* OBSERVAÇÃO */
-
-textarea{
-    min-height:110px;
-    padding:13px;
-    resize:vertical;
-    line-height:1.4;
-}
-
-/* BOTÕES */
-
-.save-btn{
-    width:100%;
-    min-height:54px;
-    border:0;
-    border-radius:17px;
-    background:var(--green);
-    color:white;
-    font-size:16px;
-    font-weight:800;
-    box-shadow:0 7px 20px rgba(52,199,89,.22);
-}
-
-.save-btn:active{
-    transform:scale(.98);
-}
-
-.save-btn:disabled{
-    opacity:.65;
-}
-
-.delete-machine-btn{
-    width:100%;
-    min-height:46px;
-    border:0;
-    border-radius:15px;
-    background:#ffeceb;
-    color:var(--red);
-    font-weight:700;
-    margin-top:10px;
-}
-
-/* TOAST */
-
-.toast{
-    position:fixed;
-    left:50%;
-    bottom:calc(22px + env(safe-area-inset-bottom));
-    transform:translate(-50%,20px);
-    z-index:100;
-    padding:12px 17px;
-    border-radius:14px;
-    background:rgba(20,20,20,.92);
-    color:white;
-    font-size:14px;
-    font-weight:700;
-    opacity:0;
-    pointer-events:none;
-    transition:.2s ease;
-    max-width:calc(100% - 32px);
-    text-align:center;
-}
-
-.toast.show{
-    opacity:1;
-    transform:translate(-50%,0);
-}
-
-/* MODAL */
-
-.modal{
-    position:fixed;
-    inset:0;
-    z-index:80;
-    display:flex;
-    align-items:flex-end;
-    justify-content:center;
-    background:rgba(0,0,0,.35);
-    padding:16px;
-}
-
-.modal-card{
-    width:min(520px,100%);
-    background:white;
-    border-radius:24px;
-    padding:20px;
-    box-shadow:0 20px 60px rgba(0,0,0,.22);
-}
-
-.modal-card h3{
-    margin:0 0 15px;
-    font-size:20px;
-}
-
-.modal-actions{
-    display:flex;
-    gap:8px;
-    margin-top:15px;
-}
-
-.modal-actions button{
-    flex:1;
-    min-height:46px;
-    border:0;
-    border-radius:14px;
-    font-weight:700;
-}
-
-.modal-cancel{
-    background:#e5e5ea;
-}
-
-.modal-save{
-    background:#007aff;
-    color:white;
-}
-
-@media(max-width:380px){
-
-    main{
-        padding-left:12px;
-        padding-right:12px;
-    }
-
-    .machine-grid{
-        gap:8px;
-    }
-
-    .machine-btn{
-        min-height:58px;
-    }
-
-    .context-card,
-    .form-card{
-        padding:15px;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#F2F2F7">
+    <title>Controle de Produção</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root{
+            --bg:#F2F2F7;
+            --card:#FFFFFF;
+            --text:#111111;
+            --secondary:#6E6E73;
+            --line:#E5E5EA;
+            --blue:#007AFF;
+            --green:#34C759;
+            --red:#FF3B30;
+            --yellow:#FFCC00;
+            --shadow:0 2px 12px rgba(0,0,0,.06);
+            --radius:18px;
+        }
+
+        *{
+            box-sizing:border-box;
+            -webkit-tap-highlight-color:transparent;
+        }
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            margin:0;
+            background:var(--bg);
+            color:var(--text);
+            font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
+                "SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+            min-height:100vh;
+            padding-bottom:env(safe-area-inset-bottom);
+        }
+
+        button,
+        input,
+        select,
+        textarea{
+            font:inherit;
+        }
+
+        button{
+            border:0;
+            cursor:pointer;
+        }
+
+        .hidden{
+            display:none !important;
+        }
+
+        /* HEADER */
+
+        .app-header{
+            position:sticky;
+            top:0;
+            z-index:50;
+            padding:
+                calc(12px + env(safe-area-inset-top))
+                18px
+                12px;
+            background:rgba(242,242,247,.88);
+            backdrop-filter:blur(18px);
+            -webkit-backdrop-filter:blur(18px);
+            border-bottom:1px solid rgba(0,0,0,.05);
+        }
+
+        .header-inner{
+            max-width:760px;
+            margin:auto;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+        }
+
+        .app-title{
+            font-size:17px;
+            font-weight:700;
+            letter-spacing:-.2px;
+        }
+
+        .app-subtitle{
+            color:var(--secondary);
+            font-size:12px;
+            margin-top:2px;
+        }
+
+        .user-avatar{
+            width:38px;
+            height:38px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:#111;
+            color:#fff;
+            font-size:13px;
+            font-weight:700;
+            flex-shrink:0;
+        }
+
+        /* MAIN */
+
+        main{
+            width:100%;
+            max-width:760px;
+            margin:0 auto;
+            padding:18px;
+        }
+
+        /* CONTEXT */
+
+        .leader-label{
+            color:var(--secondary);
+            font-size:12px;
+            font-weight:600;
+            text-transform:uppercase;
+            letter-spacing:.5px;
+        }
+
+        .leader-name{
+            font-size:22px;
+            font-weight:700;
+            letter-spacing:-.5px;
+            margin-top:3px;
+        }
+
+        .context-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+            margin-top:18px;
+        }
+
+        .context-date{
+            grid-column:1 / -1;
+        }
+
+        .field-card{
+            background:var(--card);
+            border-radius:var(--radius);
+            padding:14px 15px;
+            box-shadow:var(--shadow);
+        }
+
+        .field-label{
+            color:var(--secondary);
+            font-size:12px;
+            font-weight:600;
+            margin-bottom:7px;
+        }
+
+        .field-card input,
+        .field-card select{
+            width:100%;
+            border:0;
+            outline:0;
+            background:transparent;
+            color:var(--text);
+            font-size:16px;
+            font-weight:600;
+            padding:0;
+        }
+
+        input[type="date"]{
+            min-height:24px;
+        }
+
+        /* SECTION */
+
+        .section{
+            margin-top:22px;
+        }
+
+        .section-title{
+            font-size:13px;
+            font-weight:700;
+            color:var(--secondary);
+            text-transform:uppercase;
+            letter-spacing:.5px;
+            margin:0 4px 10px;
+        }
+
+        /* MACHINE GRID */
+
+        .machine-grid{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:10px;
+        }
+
+        .machine-button{
+            min-height:62px;
+            border-radius:17px;
+            background:#fff;
+            box-shadow:var(--shadow);
+            color:var(--text);
+            font-size:16px;
+            font-weight:700;
+            transition:.15s ease;
+        }
+
+        .machine-button:active{
+            transform:scale(.96);
+        }
+
+        .machine-button.saved{
+            background:var(--green);
+            color:#fff;
+        }
+
+        /* MACHINE SCREEN */
+
+        .machine-top{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:20px;
+        }
+
+        .back-button{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            background:#fff;
+            box-shadow:var(--shadow);
+            font-size:28px;
+            line-height:1;
+            color:#111;
+        }
+
+        .machine-title{
+            font-size:26px;
+            font-weight:750;
+            letter-spacing:-.7px;
+        }
+
+        .machine-subtitle{
+            color:var(--secondary);
+            font-size:13px;
+            margin-top:2px;
+        }
+
+        /* FORM */
+
+        .form-card{
+            background:#fff;
+            border-radius:var(--radius);
+            padding:18px;
+            box-shadow:var(--shadow);
+            margin-bottom:14px;
+        }
+
+        .form-title{
+            font-size:16px;
+            font-weight:700;
+            margin-bottom:14px;
+        }
+
+        .hours-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+        }
+
+        .input-group label{
+            display:block;
+            color:var(--secondary);
+            font-size:12px;
+            font-weight:600;
+            margin:0 0 7px 2px;
+        }
+
+        .input-group input,
+        .input-group textarea{
+            width:100%;
+            border:1px solid var(--line);
+            background:#F8F8FA;
+            border-radius:13px;
+            outline:0;
+            padding:12px;
+            color:var(--text);
+            font-size:17px;
+            font-weight:600;
+            transition:.15s ease;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus{
+            border-color:var(--blue);
+            background:#fff;
+        }
+
+        .input-group textarea{
+            resize:vertical;
+            min-height:95px;
+            font-size:15px;
+            font-weight:500;
+        }
+
+        .total-box{
+            margin-top:14px;
+            padding:15px;
+            border-radius:15px;
+            background:#F2F2F7;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+        }
+
+        .total-label{
+            color:var(--secondary);
+            font-size:13px;
+            font-weight:600;
+        }
+
+        .total-value{
+            font-size:22px;
+            font-weight:750;
+            letter-spacing:-.4px;
+        }
+
+        /* PERFORMANCE */
+
+        .performance{
+            height:7px;
+            border-radius:10px;
+            margin-top:12px;
+            background:#E5E5EA;
+            overflow:hidden;
+        }
+
+        .performance-bar{
+            height:100%;
+            width:0;
+            border-radius:10px;
+            transition:.2s ease;
+        }
+
+        .status-green{
+            background:var(--green);
+        }
+
+        .status-yellow{
+            background:var(--yellow);
+        }
+
+        .status-red{
+            background:var(--red);
+        }
+
+        /* SALDO */
+
+        .saldo-row{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-top:15px;
+        }
+
+        .saldo-row label{
+            font-size:14px;
+            font-weight:600;
+        }
+
+        .saldo-row input{
+            width:120px;
+            border:1px solid var(--line);
+            background:#F8F8FA;
+            border-radius:12px;
+            padding:10px;
+            text-align:center;
+            outline:0;
+            font-weight:600;
+        }
+
+        /* OCCURRENCES */
+
+        .occurrence-list{
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+            margin-bottom:12px;
+        }
+
+        .occurrence-item{
+            background:#F2F2F7;
+            border-radius:13px;
+            padding:11px 12px;
+            display:flex;
+            align-items:flex-start;
+            gap:10px;
+        }
+
+        .occurrence-content{
+            flex:1;
+            min-width:0;
+        }
+
+        .occurrence-type{
+            font-size:12px;
+            color:var(--secondary);
+            font-weight:700;
+            margin-bottom:3px;
+        }
+
+        .occurrence-description{
+            font-size:14px;
+            line-height:1.35;
+            word-break:break-word;
+        }
+
+        .occurrence-actions{
+            display:flex;
+            gap:5px;
+            flex-shrink:0;
+        }
+
+        .mini-button{
+            width:32px;
+            height:32px;
+            border-radius:9px;
+            background:#fff;
+            color:#111;
+            font-size:14px;
+        }
+
+        .mini-button.delete{
+            color:var(--red);
+        }
+
+        .add-occurrence{
+            width:100%;
+            padding:13px;
+            border-radius:13px;
+            background:#F2F2F7;
+            color:var(--blue);
+            font-weight:700;
+            font-size:15px;
+        }
+
+        /* OCCURRENCE EDITOR */
+
+        .occurrence-editor{
+            margin-top:12px;
+            padding:14px;
+            border-radius:15px;
+            background:#F2F2F7;
+        }
+
+        .occurrence-editor select{
+            width:100%;
+            border:1px solid var(--line);
+            border-radius:12px;
+            background:#fff;
+            padding:11px;
+            outline:0;
+            margin-bottom:9px;
+        }
+
+        .occurrence-editor textarea{
+            width:100%;
+            min-height:80px;
+            resize:vertical;
+            border:1px solid var(--line);
+            border-radius:12px;
+            background:#fff;
+            padding:11px;
+            outline:0;
+        }
+
+        .editor-actions{
+            display:flex;
+            gap:8px;
+            margin-top:9px;
+        }
+
+        .editor-actions button{
+            flex:1;
+            padding:11px;
+            border-radius:11px;
+            font-weight:700;
+        }
+
+        .editor-cancel{
+            background:#fff;
+            color:#111;
+        }
+
+        .editor-save{
+            background:var(--blue);
+            color:#fff;
+        }
+
+        /* ACTIONS */
+
+        .save-button{
+            width:100%;
+            min-height:54px;
+            border-radius:16px;
+            background:var(--green);
+            color:#fff;
+            font-size:16px;
+            font-weight:750;
+            box-shadow:0 5px 16px rgba(52,199,89,.20);
+            margin-top:6px;
+        }
+
+        .save-button:active{
+            transform:scale(.985);
+        }
+
+        .delete-machine{
+            width:100%;
+            margin-top:12px;
+            padding:13px;
+            border-radius:14px;
+            background:transparent;
+            color:var(--red);
+            font-weight:650;
+        }
+
+        /* TOAST */
+
+        .toast{
+            position:fixed;
+            left:50%;
+            bottom:
+                calc(22px + env(safe-area-inset-bottom));
+            transform:translate(-50%,20px);
+            background:rgba(20,20,20,.94);
+            color:#fff;
+            padding:12px 17px;
+            border-radius:999px;
+            font-size:14px;
+            font-weight:600;
+            z-index:100;
+            opacity:0;
+            pointer-events:none;
+            transition:.22s ease;
+            white-space:nowrap;
+            max-width:calc(100vw - 30px);
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        .toast.show{
+            opacity:1;
+            transform:translate(-50%,0);
+        }
+
+        /* LOADING */
+
+        .loading{
+            position:fixed;
+            inset:0;
+            background:rgba(242,242,247,.72);
+            backdrop-filter:blur(8px);
+            -webkit-backdrop-filter:blur(8px);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:200;
+        }
+
+        .loading-box{
+            background:#fff;
+            padding:20px 24px;
+            border-radius:18px;
+            box-shadow:var(--shadow);
+            font-size:15px;
+            font-weight:600;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:520px){
+            main{
+                padding:16px;
+            }
+
+            .machine-grid{
+                grid-template-columns:repeat(4,1fr);
+                gap:8px;
+            }
+
+            .machine-button{
+                min-height:58px;
+                font-size:15px;
+            }
+        }
+
+        @media(max-width:350px){
+            .machine-grid{
+                grid-template-columns:repeat(3,1fr);
+            }
+
+            .hours-grid{
+                grid-template-columns:1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<header id="mainHeader" class="header">
-
-    <div class="header-inner">
-
-        <div>
-            <div class="brand-title">
-                CONTROLE DE PRODUÇÃO
+    <!-- HEADER PRINCIPAL -->
+    <header class="app-header" id="mainHeader">
+        <div class="header-inner">
+            <div>
+                <div class="app-title">CONTROLE DE PRODUÇÃO</div>
+                <div class="app-subtitle">Setor de Injeção</div>
             </div>
 
-            <div class="brand-subtitle">
-                Setor de Injeção
+            <div class="user-avatar" id="userAvatar">
+                --
             </div>
         </div>
+    </header>
 
-        <div id="userInitials" class="user-badge">
-            --
-        </div>
+    <main>
 
-    </div>
+        <!-- CONTEXTO -->
+        <section id="contextSection">
 
-</header>
-
-
-<main>
-
-    <!-- CONTEXTO PRINCIPAL -->
-
-    <section id="contextSection">
-
-        <div class="leader-block">
-
-            <div class="eyebrow">
-                Líder
-            </div>
-
-            <div id="leaderName" class="leader-name">
+            <div class="leader-label">LÍDER</div>
+            <div class="leader-name" id="leaderName">
                 Carregando...
             </div>
 
-        </div>
-
-
-        <section class="context-card">
-
             <div class="context-grid">
 
-                <div class="field context-date">
-
-                    <label for="date">
-                        Data
-                    </label>
-
+                <div class="field-card context-date">
+                    <div class="field-label">Data</div>
                     <input
                         type="date"
                         id="date"
                     >
-
                 </div>
 
-
-                <div class="field">
-
-                    <label for="shift">
-                        Turno
-                    </label>
+                <div class="field-card">
+                    <div class="field-label">Turno</div>
 
                     <select id="shift">
-
-                        <option value="1º turno">
-                            1º turno
-                        </option>
-
-                        <option value="2º turno">
-                            2º turno
-                        </option>
-
-                        <option value="3º turno">
-                            3º turno
-                        </option>
-
+                        <option value="1º turno">1º turno</option>
+                        <option value="2º turno">2º turno</option>
+                        <option value="3º turno">3º turno</option>
                     </select>
-
                 </div>
 
-
-                <div class="field">
-
-                    <label for="sector">
-                        Setor
-                    </label>
+                <div class="field-card">
+                    <div class="field-label">Setor</div>
 
                     <select id="sector">
-
-                        <option value="A">
-                            A
-                        </option>
-
-                        <option value="B">
-                            B
-                        </option>
-
-                        <option value="C">
-                            C
-                        </option>
-
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
                     </select>
-
                 </div>
 
             </div>
 
+            <!-- MÁQUINAS -->
+            <section class="section" id="machineListSection">
 
-            <div
-                id="accessRow"
-                class="access-row hidden"
-            >
+                <div class="section-title">
+                    Máquinas
+                </div>
 
-                <button
-                    class="access-btn"
-                    onclick="abrirAcessos()"
-                >
-                    Acessos
-                </button>
+                <div
+                    class="machine-grid"
+                    id="machineGrid"
+                ></div>
 
-            </div>
+            </section>
 
         </section>
 
-    </section>
+        <!-- TELA DA MÁQUINA -->
+        <section
+            id="machineScreen"
+            class="hidden"
+        >
 
+            <div class="machine-top">
 
-    <!-- LISTA DE MÁQUINAS -->
+                <button
+                    class="back-button"
+                    onclick="fecharTelaMaquina()"
+                    aria-label="Voltar"
+                >
+                    ‹
+                </button>
 
-    <section id="machineListSection">
+                <div>
+                    <div
+                        class="machine-title"
+                        id="machineTitle"
+                    >
+                        M01
+                    </div>
 
-        <div class="section-title">
-
-            <div>
-
-                <h2>
-                    Máquinas
-                </h2>
-
-                <p>
-                    Selecione uma máquina para apontar.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div
-            id="machineGrid"
-            class="machine-grid"
-        ></div>
-
-    </section>
-
-
-    <!-- TELA DA MÁQUINA -->
-
-    <section
-        id="machineScreen"
-        class="machine-screen hidden"
-    >
-
-        <div class="machine-top">
-
-            <button
-                class="back-btn"
-                onclick="fecharTelaMaquina()"
-                aria-label="Voltar"
-            >
-                ‹
-            </button>
-
-
-            <div class="machine-heading">
-
-                <div class="small">
-                    Apontamento
+                    <div
+                        class="machine-subtitle"
+                        id="machineSubtitle"
+                    >
+                        Apontamento da máquina
+                    </div>
                 </div>
 
-                <h2 id="machineTitle">
-                    M01
-                </h2>
-
             </div>
 
-        </div>
+            <!-- HORAS -->
+            <div class="form-card">
 
+                <div class="form-title">
+                    Produção
+                </div>
 
-        <!-- HORAS -->
+                <div class="hours-grid">
 
-        <div class="form-card">
+                    <div class="input-group">
+                        <label for="goodHours">
+                            Hora boa
+                        </label>
 
-            <h3>
-                Horas
-            </h3>
+                        <input
+                            type="text"
+                            id="goodHours"
+                            inputmode="numeric"
+                            placeholder="00:00"
+                            maxlength="5"
+                        >
+                    </div>
 
+                    <div class="input-group">
+                        <label for="replacementHours">
+                            Reposição
+                        </label>
 
-            <div class="hours-grid">
+                        <input
+                            type="text"
+                            id="replacementHours"
+                            inputmode="numeric"
+                            placeholder="00:00"
+                            maxlength="5"
+                        >
+                    </div>
 
-                <div class="field">
+                </div>
 
-                    <label for="horaBoa">
-                        Hora boa
+                <div class="total-box">
+
+                    <div class="total-label">
+                        Total baixado
+                    </div>
+
+                    <div
+                        class="total-value"
+                        id="totalHours"
+                    >
+                        00:00
+                    </div>
+
+                </div>
+
+                <div class="performance">
+                    <div
+                        class="performance-bar"
+                        id="performanceBar"
+                    ></div>
+                </div>
+
+                <div class="saldo-row">
+
+                    <label for="balance">
+                        Saldo
                     </label>
 
                     <input
                         type="text"
-                        id="horaBoa"
+                        id="balance"
                         inputmode="numeric"
                         placeholder="00:00"
-                        maxlength="5"
-                    >
-
-                </div>
-
-
-                <div class="field">
-
-                    <label for="reposicao">
-                        Reposição
-                    </label>
-
-                    <input
-                        type="text"
-                        id="reposicao"
-                        inputmode="numeric"
-                        placeholder="00:00"
-                        maxlength="5"
+                        maxlength="6"
                     >
 
                 </div>
 
             </div>
 
+            <!-- OCORRÊNCIAS -->
+            <div class="form-card">
 
-            <div class="hours-total">
+                <div class="form-title">
+                    Ocorrências
+                </div>
 
-                <span>
-                    Total baixado
-                </span>
+                <div
+                    class="occurrence-list"
+                    id="occurrenceList"
+                ></div>
 
-                <strong id="totalBaixado">
-                    00:00
-                </strong>
+                <button
+                    class="add-occurrence"
+                    onclick="abrirEditorOcorrencia()"
+                >
+                    + Adicionar ocorrência
+                </button>
 
-            </div>
-
-
-            <div
-                id="performanceStatus"
-                class="performance-status"
-            ></div>
-
-        </div>
-
-
-        <!-- SALDO -->
-
-        <div class="form-card">
-
-            <h3>
-                Saldo
-            </h3>
-
-
-            <div class="field">
-
-                <label for="saldo">
-                    Tem saldo?
-                </label>
-
-                <select id="saldo">
-
-                    <option value="">
-                        Não informado
-                    </option>
-
-                    <option value="00:00">
-                        Não
-                    </option>
-
-                    <option value="__CUSTOM__">
-                        Sim
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div
-                id="saldoInputWrapper"
-                class="field hidden"
-                style="margin-top:12px;"
-            >
-
-                <label for="saldoValue">
-                    Saldo
-                </label>
-
-                <input
-                    type="text"
-                    id="saldoValue"
-                    inputmode="numeric"
-                    placeholder="00:00"
-                    maxlength="5"
+                <div
+                    class="occurrence-editor hidden"
+                    id="occurrenceEditor"
                 >
 
-            </div>
+                    <select id="occurrenceType">
 
-        </div>
+                        <option value="Mecânico">
+                            Mecânico
+                        </option>
 
+                        <option value="Elétrico">
+                            Elétrico
+                        </option>
 
-        <!-- OCORRÊNCIAS -->
+                        <option value="Matriz">
+                            Matriz
+                        </option>
 
-        <div class="form-card">
+                        <option value="Material">
+                            Material
+                        </option>
 
-            <h3>
-                Ocorrências
-            </h3>
+                        <option value="Processo">
+                            Processo
+                        </option>
 
+                        <option value="Parada de máquina">
+                            Parada de máquina
+                        </option>
 
-            <div
-                id="occurrencesList"
-                class="occurrences-list"
-            ></div>
+                        <option value="Setup">
+                            Setup
+                        </option>
 
+                        <option value="Outro">
+                            Outro
+                        </option>
 
-            <button
-                id="addOccurrenceBtn"
-                class="add-occurrence"
-                onclick="abrirEditorOcorrencia()"
-            >
-                + Adicionar ocorrência
-            </button>
+                    </select>
 
+                    <textarea
+                        id="occurrenceDescription"
+                        placeholder="Descreva a ocorrência..."
+                    ></textarea>
 
-            <div
-                id="occurrenceEditor"
-                class="occurrence-editor hidden"
-            >
+                    <div class="editor-actions">
 
-                <div class="occurrence-editor-grid">
+                        <button
+                            class="editor-cancel"
+                            onclick="cancelarEditorOcorrencia()"
+                        >
+                            Cancelar
+                        </button>
 
-                    <div class="field">
-
-                        <label for="occurrenceType">
-                            Tipo
-                        </label>
-
-                        <select id="occurrenceType">
-
-                            <option value="Mecânico">
-                                Mecânico
-                            </option>
-
-                            <option value="Elétrico">
-                                Elétrico
-                            </option>
-
-                            <option value="Matriz">
-                                Matriz
-                            </option>
-
-                            <option value="Material">
-                                Material
-                            </option>
-
-                            <option value="Processo">
-                                Processo
-                            </option>
-
-                            <option value="Parada de máquina">
-                                Parada de máquina
-                            </option>
-
-                            <option value="Setup">
-                                Setup
-                            </option>
-
-                            <option value="Outro">
-                                Outro
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="occurrenceDescription">
-                            Descrição
-                        </label>
-
-                        <textarea
-                            id="occurrenceDescription"
-                            placeholder="Descreva a ocorrência..."
-                            style="min-height:90px;"
-                        ></textarea>
+                        <button
+                            class="editor-save"
+                            onclick="salvarOcorrenciaLocal()"
+                        >
+                            Salvar
+                        </button>
 
                     </div>
 
                 </div>
 
+            </div>
 
-                <div class="editor-actions">
+            <!-- OBSERVAÇÃO -->
+            <div class="form-card">
 
-                    <button
-                        class="cancel-btn"
-                        onclick="cancelarEditorOcorrencia()"
-                    >
-                        Cancelar
-                    </button>
+                <div class="form-title">
+                    Observação
+                </div>
 
+                <div class="input-group">
 
-                    <button
-                        class="confirm-btn"
-                        onclick="salvarOcorrenciaLocal()"
-                    >
-                        Salvar ocorrência
-                    </button>
+                    <textarea
+                        id="observation"
+                        placeholder="Observação geral da máquina..."
+                    ></textarea>
 
                 </div>
 
             </div>
 
-        </div>
-
-
-        <!-- OBSERVAÇÃO -->
-
-        <div class="form-card">
-
-            <h3>
-                Observação geral
-            </h3>
-
-            <textarea
-                id="observation"
-                placeholder="Observação opcional..."
-            ></textarea>
-
-        </div>
-
-
-        <!-- SALVAR -->
-
-        <button
-            id="saveMachineBtn"
-            class="save-btn"
-            onclick="salvarMaquina()"
-        >
-            Salvar máquina
-        </button>
-
-
-        <!-- EXCLUIR -->
-
-        <button
-            id="deleteMachineBtn"
-            class="delete-machine-btn hidden"
-            onclick="excluirMaquina()"
-        >
-            Excluir apontamento
-        </button>
-
-    </section>
-
-</main>
-
-
-<!-- TOAST -->
-
-<div
-    id="toast"
-    class="toast"
-></div>
-
-
-<!-- CONFIRMAÇÃO -->
-
-<div
-    id="confirmModal"
-    class="modal hidden"
->
-
-    <div class="modal-card">
-
-        <h3 id="confirmTitle">
-            Confirmar
-        </h3>
-
-        <div
-            id="confirmMessage"
-            style="color:#6e6e73;line-height:1.45;"
-        >
-            Deseja continuar?
-        </div>
-
-
-        <div class="modal-actions">
-
+            <!-- AÇÕES -->
             <button
-                class="modal-cancel"
-                onclick="fecharConfirmacao()"
+                class="save-button"
+                onclick="salvarMaquina()"
             >
-                Cancelar
+                Salvar máquina
             </button>
 
-
             <button
-                id="confirmActionBtn"
-                class="modal-save"
+                class="delete-machine hidden"
+                id="deleteMachineButton"
+                onclick="excluirMaquina()"
             >
-                Confirmar
+                Excluir apontamento
             </button>
 
-        </div>
+        </section>
 
+    </main>
+
+    <!-- TOAST -->
+    <div
+        class="toast"
+        id="toast"
+    ></div>
+
+    <!-- LOADING -->
+    <div
+        class="loading hidden"
+        id="loading"
+    >
+        <div class="loading-box">
+            Carregando...
+        </div>
     </div>
 
-</div>
-
-
 <script>
-
 /* =========================================================
    SUPABASE
 ========================================================= */
@@ -1171,7 +954,7 @@ const SUPABASE_KEY =
     "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
 
 const supabaseClient =
-    window.supabase.createClient(
+    supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
     );
@@ -1182,45 +965,21 @@ const supabaseClient =
 ========================================================= */
 
 let currentUser = null;
-
 let currentProfile = null;
-
-let machineAtual = null;
 
 let turnIdAtual = null;
 
+let machineAtual = null;
 let apontamentoAtual = null;
 
-let ocorrencias = [];
+let ocorrenciasAtuais = [];
 
-let occurrenceEditingIndex = null;
-
-let confirmCallback = null;
+let occurrenceEditIndex = null;
 
 
 /* =========================================================
-   CONFIGURAÇÃO
+   METAS
 ========================================================= */
-
-const sectorMachines = {
-
-    A:{
-        start:1,
-        end:29
-    },
-
-    B:{
-        start:30,
-        end:51
-    },
-
-    C:{
-        start:52,
-        end:85
-    }
-
-};
-
 
 const shiftTargets = {
 
@@ -1249,6 +1008,12 @@ const shiftInput =
 const sectorInput =
     document.getElementById("sector");
 
+const leaderName =
+    document.getElementById("leaderName");
+
+const userAvatar =
+    document.getElementById("userAvatar");
+
 const machineGrid =
     document.getElementById("machineGrid");
 
@@ -1258,38 +1023,35 @@ const machineListSection =
 const machineScreen =
     document.getElementById("machineScreen");
 
-const contextSection =
-    document.getElementById("contextSection");
-
 const mainHeader =
     document.getElementById("mainHeader");
+
+const contextSection =
+    document.getElementById("contextSection");
 
 const machineTitle =
     document.getElementById("machineTitle");
 
-const horaBoaInput =
-    document.getElementById("horaBoa");
+const machineSubtitle =
+    document.getElementById("machineSubtitle");
 
-const reposicaoInput =
-    document.getElementById("reposicao");
+const goodHoursInput =
+    document.getElementById("goodHours");
 
-const totalBaixadoElement =
-    document.getElementById("totalBaixado");
+const replacementHoursInput =
+    document.getElementById("replacementHours");
 
-const performanceStatus =
-    document.getElementById("performanceStatus");
+const totalHours =
+    document.getElementById("totalHours");
 
-const saldoInput =
-    document.getElementById("saldo");
+const performanceBar =
+    document.getElementById("performanceBar");
 
-const saldoInputWrapper =
-    document.getElementById("saldoInputWrapper");
+const balanceInput =
+    document.getElementById("balance");
 
-const saldoValueInput =
-    document.getElementById("saldoValue");
-
-const occurrencesList =
-    document.getElementById("occurrencesList");
+const occurrenceList =
+    document.getElementById("occurrenceList");
 
 const occurrenceEditor =
     document.getElementById("occurrenceEditor");
@@ -1303,56 +1065,27 @@ const occurrenceDescription =
 const observationInput =
     document.getElementById("observation");
 
-const deleteMachineBtn =
-    document.getElementById("deleteMachineBtn");
+const deleteMachineButton =
+    document.getElementById("deleteMachineButton");
 
 
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
 
-function pad(value){
+function showLoading(show){
 
-    return String(value)
-        .padStart(2,"0");
-
-}
-
-
-function machineCode(number){
-
-    return `M${pad(number)}`;
+    document
+        .getElementById("loading")
+        .classList.toggle(
+            "hidden",
+            !show
+        );
 
 }
 
 
-function getInitials(name){
-
-    if(!name){
-        return "--";
-    }
-
-    const parts =
-        name
-            .trim()
-            .split(/\s+/)
-            .filter(Boolean);
-
-    if(parts.length === 1){
-
-        return parts[0]
-            .substring(0,2)
-            .toUpperCase();
-
-    }
-
-    return (
-        parts[0][0] +
-        parts[parts.length - 1][0]
-    ).toUpperCase();
-
-}
-
+let toastTimer = null;
 
 function showToast(message){
 
@@ -1364,52 +1097,94 @@ function showToast(message){
 
     toast.classList.add("show");
 
-    clearTimeout(
-        showToast.timer
-    );
+    clearTimeout(toastTimer);
 
-    showToast.timer =
-        setTimeout(
-            () => {
-                toast.classList.remove("show");
-            },
-            2400
-        );
+    toastTimer =
+        setTimeout(() => {
 
+            toast.classList.remove("show");
+
+        }, 2400);
+
+}
+
+
+function formatMachine(value){
+
+    const number =
+        Number(value);
+
+    if(
+        !Number.isFinite(number)
+    ){
+        return String(value);
+    }
+
+    return "M" +
+        String(number).padStart(2,"0");
+
+}
+
+
+function machineNumber(value){
+
+    const match =
+        String(value || "")
+            .match(/^M(\d+)$/i);
+
+    if(!match){
+        return null;
+    }
+
+    const number =
+        Number(match[1]);
+
+    if(
+        !Number.isInteger(number) ||
+        number <= 0
+    ){
+        return null;
+    }
+
+    return number;
 }
 
 
 function normalizeMachine(value){
 
-    if(!value){
-        return "";
+    if(
+        typeof value === "number"
+    ){
+        return formatMachine(value);
     }
 
     const text =
-        String(value)
+        String(value || "")
             .trim()
             .toUpperCase();
 
-    if(/^M\d+$/.test(text)){
-        return text;
+    if(
+        /^M\d+$/.test(text)
+    ){
+        const number =
+            Number(text.substring(1));
+
+        return formatMachine(number);
     }
 
-    if(/^\d+$/.test(text)){
-        return machineCode(
+    if(
+        /^\d+$/.test(text)
+    ){
+        return formatMachine(
             Number(text)
         );
     }
 
     return text;
-
 }
 
 
-/* =========================================================
-   HORAS
-========================================================= */
-
-function timeToMinutes(value){
+function parseMinutes(value){
 
     if(
         value === null ||
@@ -1419,109 +1194,102 @@ function timeToMinutes(value){
     }
 
     const text =
-        String(value).trim();
+        String(value)
+            .trim();
 
     if(!text){
         return 0;
     }
 
-    const match =
-        text.match(
-            /^(\d{1,3}):([0-5]\d)$/
-        );
+    if(
+        /^\d{1,3}:\d{2}$/.test(text)
+    ){
 
-    if(!match){
-        return 0;
+        const parts =
+            text.split(":");
+
+        const hours =
+            Number(parts[0]);
+
+        const minutes =
+            Number(parts[1]);
+
+        if(
+            !Number.isInteger(hours) ||
+            !Number.isInteger(minutes) ||
+            minutes > 59
+        ){
+            return 0;
+        }
+
+        return hours * 60 + minutes;
     }
 
-    return (
-        Number(match[1]) * 60 +
-        Number(match[2])
-    );
+    if(
+        /^\d+$/.test(text)
+    ){
+        return Number(text);
+    }
 
+    return 0;
 }
 
 
-function minutesToTime(total){
+function minutesToHHMM(minutes){
 
-    total =
+    const total =
         Math.max(
             0,
             Math.round(
-                Number(total) || 0
+                Number(minutes) || 0
             )
         );
 
     const hours =
-        Math.floor(
-            total / 60
-        );
+        Math.floor(total / 60);
 
-    const minutes =
+    const mins =
         total % 60;
 
-    return (
-        `${pad(hours)}:${pad(minutes)}`
-    );
-
+    return String(hours).padStart(2,"0") +
+        ":" +
+        String(mins).padStart(2,"0");
 }
 
 
-function normalizeTimeInput(value){
+function getSectorMachines(sector){
 
-    let text =
-        String(value || "")
-            .replace(/\D/g,"")
-            .slice(0,4);
+    if(sector === "A"){
 
-    if(!text){
-        return "";
-    }
-
-    if(text.length <= 2){
-        return text;
-    }
-
-    const hours =
-        text.slice(0,-2);
-
-    const minutes =
-        text.slice(-2);
-
-    return `${hours}:${minutes}`;
-
-}
-
-
-function calculateTotal(){
-
-    const good =
-        timeToMinutes(
-            horaBoaInput.value
+        return Array.from(
+            {length:29},
+            (_,index) =>
+                index + 1
         );
 
-    const replacement =
-        timeToMinutes(
-            reposicaoInput.value
+    }
+
+    if(sector === "B"){
+
+        return Array.from(
+            {length:22},
+            (_,index) =>
+                index + 30
         );
 
-    return good + replacement;
+    }
 
-}
+    if(sector === "C"){
 
+        return Array.from(
+            {length:34},
+            (_,index) =>
+                index + 52
+        );
 
-function updateTotal(){
+    }
 
-    const total =
-        calculateTotal();
-
-    totalBaixadoElement.textContent =
-        minutesToTime(total);
-
-    performanceStatus.className =
-        "performance-status " +
-        getStatusClass(total);
-
+    return [];
 }
 
 
@@ -1533,19 +1301,45 @@ function getStatusClass(totalMinutes){
     const target =
         shiftTargets[shift];
 
-    if(totalMinutes >= target){
+    if(
+        totalMinutes >= target
+    ){
         return "status-green";
     }
 
     if(
-        totalMinutes >=
-        target - 48
+        totalMinutes >= target - 48
     ){
         return "status-yellow";
     }
 
     return "status-red";
+}
 
+
+/* =========================================================
+   DATA
+========================================================= */
+
+function todayLocal(){
+
+    const now =
+        new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(2,"0");
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(2,"0");
+
+    return `${year}-${month}-${day}`;
 }
 
 
@@ -1561,91 +1355,46 @@ async function carregarPerfil(){
     } =
         await supabaseClient
             .from("usuarios")
-            .select(
-                "id,nome,usuario,perfil,ativo,admin"
-            )
-            .eq(
-                "id",
-                currentUser.id
-            )
-            .maybeSingle();
+            .select("*")
+            .eq("id", currentUser.id)
+            .eq("ativo", true)
+            .single();
 
     if(error){
-        throw error;
-    }
-
-    if(
-        !data ||
-        !data.ativo ||
-        data.perfil !== "lider"
-    ){
-
-        window.location.href =
-            "index.html";
-
-        return false;
-
+        console.error(error);
+        throw new Error(
+            "Não foi possível carregar seu perfil."
+        );
     }
 
     currentProfile =
         data;
 
-    document.getElementById(
-        "leaderName"
-    ).textContent =
-        data.nome;
+    leaderName.textContent =
+        data.nome || "Líder";
 
-    document.getElementById(
-        "userInitials"
-    ).textContent =
-        getInitials(
-            data.nome
-        );
+    const initials =
+        String(
+            data.nome || "U"
+        )
+        .split(" ")
+        .filter(Boolean)
+        .slice(0,2)
+        .map(
+            name =>
+                name[0]
+                    .toUpperCase()
+        )
+        .join("");
 
-    if(data.admin === true){
-
-        document
-            .getElementById(
-                "accessRow"
-            )
-            .classList.remove(
-                "hidden"
-            );
-
-    }
-
-    return true;
-
+    userAvatar.textContent =
+        initials || "U";
 }
 
 
 /* =========================================================
-   ACESSOS
+   TURNO
 ========================================================= */
-
-function abrirAcessos(){
-
-    window.location.href =
-        "acessos.html";
-
-}
-
-
-/* =========================================================
-   GARANTIR TURNO
-========================================================= */
-
-/*
- * IMPORTANTE:
- *
- * A seleção de data/turno/setor NÃO significa que já
- * exista uma linha na tabela "turnos".
- *
- * Agora o líder não depende de turnIdAtual para salvar.
- *
- * Esta função tenta localizar o turno e, se ele ainda não
- * existir, cria o turno correspondente.
- */
 
 async function obterOuCriarTurno(){
 
@@ -1669,21 +1418,16 @@ async function obterOuCriarTurno(){
         !turno ||
         !setor
     ){
-
         throw new Error(
-            "Data, turno e setor são obrigatórios."
+            "Preencha data, turno e setor."
         );
-
     }
 
-
-    /*
-     * Primeiro tenta encontrar o turno.
-     */
+    /* Primeiro tenta localizar */
 
     const {
-        data: existente,
-        error: erroBusca
+        data: existing,
+        error: findError
     } =
         await supabaseClient
             .from("turnos")
@@ -1694,172 +1438,126 @@ async function obterOuCriarTurno(){
             .eq("lider_id", currentUser.id)
             .maybeSingle();
 
-    if(erroBusca){
-        throw erroBusca;
+    if(findError){
+        console.error(findError);
+        throw findError;
     }
 
-
-    if(existente){
+    if(existing){
 
         turnIdAtual =
-            existente.id;
+            existing.id;
 
-        return existente;
-
+        return existing;
     }
 
 
-    /*
-     * Não existe.
-     * Cria agora.
-     */
+    /* Se não existe, cria */
 
     const {
-        data: novoTurno,
-        error: erroCriacao
+        data: created,
+        error: createError
     } =
         await supabaseClient
             .from("turnos")
             .insert({
 
                 data:data,
-
                 turno:turno,
-
                 setor:setor,
-
-                lider_id:
-                    currentUser.id
+                lider_id:currentUser.id
 
             })
             .select("*")
             .single();
 
-
-    /*
-     * Se outro processo criou o mesmo turno
-     * simultaneamente, tenta buscar novamente.
-     */
-
     if(
-        erroCriacao &&
-        (
-            erroCriacao.code === "23505" ||
-            String(
-                erroCriacao.message || ""
-            )
-                .toLowerCase()
-                .includes("duplicate")
-        )
+        createError
     ){
 
-        const {
-            data: existenteDepois,
-            error: erroBuscaDepois
-        } =
-            await supabaseClient
-                .from("turnos")
-                .select("*")
-                .eq("data", data)
-                .eq("turno", turno)
-                .eq("setor", setor)
-                .eq("lider_id", currentUser.id)
-                .maybeSingle();
+        /*
+         * 23505 = conflito de chave única.
+         * Outro processo pode ter criado o turno
+         * entre a consulta e o INSERT.
+         */
 
-        if(erroBuscaDepois){
-            throw erroBuscaDepois;
-        }
+        if(
+            createError.code === "23505"
+        ){
 
-        if(existenteDepois){
+            const {
+                data: retry,
+                error: retryError
+            } =
+                await supabaseClient
+                    .from("turnos")
+                    .select("*")
+                    .eq("data", data)
+                    .eq("turno", turno)
+                    .eq("setor", setor)
+                    .eq("lider_id", currentUser.id)
+                    .single();
+
+            if(retryError){
+                console.error(retryError);
+                throw retryError;
+            }
 
             turnIdAtual =
-                existenteDepois.id;
+                retry.id;
 
-            return existenteDepois;
-
+            return retry;
         }
 
+        console.error(createError);
+        throw createError;
     }
-
-
-    if(erroCriacao){
-        throw erroCriacao;
-    }
-
 
     turnIdAtual =
-        novoTurno.id;
+        created.id;
 
-    return novoTurno;
-
+    return created;
 }
 
 
 /* =========================================================
-   CARREGAR TURNO
+   CARREGAR TURNO EXISTENTE
 ========================================================= */
 
 async function carregarTurno(){
 
-    /*
-     * Não cria automaticamente apenas ao mudar os filtros.
-     *
-     * Se existir, carrega.
-     * Se não existir, retorna null.
-     *
-     * A criação fica para o momento do primeiro salvamento.
-     */
-
-    if(!currentUser){
-        return null;
-    }
-
-    const data =
-        dateInput.value;
-
-    const turno =
-        shiftInput.value;
-
-    const setor =
-        sectorInput.value;
+    turnIdAtual = null;
 
     const {
-        data: turnos,
+        data,
         error
     } =
         await supabaseClient
             .from("turnos")
             .select("*")
-            .eq("data", data)
-            .eq("turno", turno)
-            .eq("setor", setor)
-            .eq(
-                "lider_id",
-                currentUser.id
-            )
-            .limit(1);
+            .eq("data", dateInput.value)
+            .eq("turno", shiftInput.value)
+            .eq("setor", sectorInput.value)
+            .eq("lider_id", currentUser.id)
+            .maybeSingle();
 
     if(error){
-        throw error;
+
+        console.error(error);
+
+        showToast(
+            "Erro ao carregar turno."
+        );
+
+        return;
     }
 
-    if(
-        turnos &&
-        turnos.length
-    ){
+    if(data){
 
         turnIdAtual =
-            turnos[0].id;
-
-        return turnos[0];
+            data.id;
 
     }
-
-    turnIdAtual =
-        null;
-
-    return null;
-
 }
 
 
@@ -1869,129 +1567,98 @@ async function carregarTurno(){
 
 async function carregarDados(){
 
-    machineAtual = null;
+    showLoading(true);
 
-    apontamentoAtual = null;
+    try{
 
-    ocorrencias = [];
-
-    turnIdAtual = null;
-
-    fecharTelaMaquina();
-
-    renderMachineGrid([]);
-
-    const turno =
         await carregarTurno();
 
-    if(!turno){
+        await renderMachineGrid();
 
-        turnIdAtual = null;
+    }catch(error){
 
-        renderMachineGrid([]);
+        console.error(error);
 
-        return;
+        showToast(
+            error.message ||
+            "Erro ao carregar dados."
+        );
+
+    }finally{
+
+        showLoading(false);
 
     }
-
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("apontamentos")
-            .select(`
-                *,
-                ocorrencias (
-                    id,
-                    tipo,
-                    descricao,
-                    criado_em
-                )
-            `)
-            .eq(
-                "turno_id",
-                turno.id
-            );
-
-
-    if(error){
-        throw error;
-    }
-
-    renderMachineGrid(
-        data || []
-    );
-
 }
 
 
 /* =========================================================
-   GRID
+   GRID DE MÁQUINAS
 ========================================================= */
 
-function renderMachineGrid(records){
+async function renderMachineGrid(){
 
     machineGrid.innerHTML = "";
 
-    const setor =
-        sectorInput.value;
+    const machines =
+        getSectorMachines(
+            sectorInput.value
+        );
 
-    const range =
-        sectorMachines[setor];
+    let savedMachines =
+        new Set();
 
-    const map =
-        new Map();
+    if(turnIdAtual){
 
-
-    (records || []).forEach(
-        record => {
-
-            const code =
-                normalizeMachine(
-                    record.maquina
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("apontamentos")
+                .select("maquina")
+                .eq(
+                    "turno_id",
+                    turnIdAtual
                 );
 
-            if(code){
-                map.set(
-                    code,
-                    record
+        if(error){
+
+            console.error(error);
+
+        }else{
+
+            savedMachines =
+                new Set(
+                    (data || [])
+                        .map(
+                            item =>
+                                normalizeMachine(
+                                    item.maquina
+                                )
+                        )
                 );
-            }
 
         }
-    );
+    }
 
 
-    for(
-        let number =
-            range.start;
+    machines.forEach(number => {
 
-        number <= range.end;
-
-        number++
-    ){
-
-        const code =
-            machineCode(number);
+        const machine =
+            formatMachine(number);
 
         const button =
             document.createElement(
                 "button"
             );
 
-        button.type =
-            "button";
-
         button.className =
-            "machine-btn";
+            "machine-button";
 
-        button.textContent =
-            code;
-
-
-        if(map.has(code)){
+        if(
+            savedMachines.has(machine)
+        ){
 
             button.classList.add(
                 "saved"
@@ -1999,26 +1666,18 @@ function renderMachineGrid(records){
 
         }
 
+        button.textContent =
+            machine;
 
-        button.addEventListener(
-            "click",
-            () => {
-
-                abrirMaquina(
-                    code,
-                    map.get(code) || null
-                );
-
-            }
-        );
-
+        button.onclick =
+            () =>
+                abrirMaquina(machine);
 
         machineGrid.appendChild(
             button
         );
 
-    }
-
+    });
 }
 
 
@@ -2026,53 +1685,20 @@ function renderMachineGrid(records){
    ABRIR MÁQUINA
 ========================================================= */
 
-function abrirMaquina(
-    machine,
-    record = null
-){
+async function abrirMaquina(machine){
 
     machineAtual =
         normalizeMachine(machine);
 
-    apontamentoAtual =
-        record || null;
-
-
-    ocorrencias =
-        record &&
-        Array.isArray(
-            record.ocorrencias
-        )
-
-        ? record.ocorrencias.map(
-            item => ({
-
-                id:
-                    item.id ?? null,
-
-                tipo:
-                    item.tipo ||
-                    "Outro",
-
-                descricao:
-                    item.descricao ||
-                    ""
-
-            })
-        )
-
-        : [];
-
-
     machineTitle.textContent =
         machineAtual;
 
+    machineSubtitle.textContent =
+        `${dateInput.value.split("-").reverse().join("/")} • ${shiftInput.value} • Setor ${sectorInput.value}`;
 
     /*
-     * Esconde TODA a área superior:
-     * nome, data, turno, setor e acesso.
-     *
-     * A tela da máquina fica independente.
+     * Esconde o contexto e o header
+     * enquanto a máquina está aberta.
      */
 
     contextSection.classList.add(
@@ -2091,30 +1717,12 @@ function abrirMaquina(
         "hidden"
     );
 
-
-    occurrenceEditor.classList.add(
-        "hidden"
-    );
-
-    occurrenceEditingIndex =
-        null;
-
-
-    carregarFormulario(
-        record
-    );
-
-
-    window.scrollTo({
-        top:0,
-        behavior:"instant"
-    });
-
+    await carregarFormulario();
 }
 
 
 /* =========================================================
-   FECHAR MÁQUINA
+   FECHAR TELA DA MÁQUINA
 ========================================================= */
 
 function fecharTelaMaquina(){
@@ -2123,7 +1731,7 @@ function fecharTelaMaquina(){
         "hidden"
     );
 
-    machineListSection.classList.remove(
+    mainHeader.classList.remove(
         "hidden"
     );
 
@@ -2131,10 +1739,9 @@ function fecharTelaMaquina(){
         "hidden"
     );
 
-    mainHeader.classList.remove(
+    machineListSection.classList.remove(
         "hidden"
     );
-
 
     machineAtual =
         null;
@@ -2142,402 +1749,202 @@ function fecharTelaMaquina(){
     apontamentoAtual =
         null;
 
-    occurrenceEditingIndex =
+    ocorrenciasAtuais =
+        [];
+
+    occurrenceEditIndex =
         null;
 
     occurrenceEditor.classList.add(
         "hidden"
     );
 
+    renderMachineGrid();
 }
 
 
 /* =========================================================
-   FORMULÁRIO
+   CARREGAR FORMULÁRIO
 ========================================================= */
 
-function carregarFormulario(
-    record
-){
+async function carregarFormulario(){
 
-    if(!record){
+    if(!turnIdAtual){
 
-        horaBoaInput.value =
+        await obterOuCriarTurno();
+
+    }
+
+    apontamentoAtual =
+        null;
+
+    ocorrenciasAtuais =
+        [];
+
+    occurrenceEditIndex =
+        null;
+
+    goodHoursInput.value =
+        "";
+
+    replacementHoursInput.value =
+        "";
+
+    balanceInput.value =
+        "";
+
+    observationInput.value =
+        "";
+
+    occurrenceEditor.classList.add(
+        "hidden"
+    );
+
+    deleteMachineButton.classList.add(
+        "hidden"
+    );
+
+    totalHours.textContent =
+        "00:00";
+
+    performanceBar.style.width =
+        "0%";
+
+    performanceBar.className =
+        "performance-bar";
+
+
+    const machineNumero =
+        machineNumber(
+            machineAtual
+        );
+
+    if(
+        !machineNumero
+    ){
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("apontamentos")
+            .select("*")
+            .eq(
+                "turno_id",
+                turnIdAtual
+            )
+            .eq(
+                "maquina",
+                machineNumero
+            )
+            .maybeSingle();
+
+    if(error){
+
+        console.error(error);
+
+        showToast(
+            "Erro ao carregar máquina."
+        );
+
+        return;
+    }
+
+
+    if(data){
+
+        apontamentoAtual =
+            data;
+
+        goodHoursInput.value =
+            data.horas_boas ||
             "";
 
-        reposicaoInput.value =
+        replacementHoursInput.value =
+            data.horas_reposicao ||
             "";
 
-        saldoInput.value =
+        balanceInput.value =
+            data.saldo ||
             "";
 
-        saldoValueInput.value =
+        observationInput.value =
+            data.observacao ||
             "";
 
-        saldoInputWrapper.classList.add(
+        deleteMachineButton.classList.remove(
             "hidden"
         );
 
-        observationInput.value =
-            "";
 
-        deleteMachineBtn.classList.add(
-            "hidden"
-        );
-
-    }else{
-
-        horaBoaInput.value =
-            record.hora_boa
-                ? minutesToTime(
-                    timeToMinutes(
-                        record.hora_boa
-                    )
-                )
-                : "";
-
-
-        reposicaoInput.value =
-            record.reposicao
-                ? minutesToTime(
-                    timeToMinutes(
-                        record.reposicao
-                    )
-                )
-                : "";
-
-
-        if(record.saldo){
-
-            saldoInput.value =
-                "__CUSTOM__";
-
-            saldoValueInput.value =
-                minutesToTime(
-                    timeToMinutes(
-                        record.saldo
-                    )
-                );
-
-            saldoInputWrapper.classList.remove(
-                "hidden"
-            );
-
-        }else{
-
-            saldoInput.value =
-                "00:00";
-
-            saldoValueInput.value =
-                "";
-
-            saldoInputWrapper.classList.add(
-                "hidden"
-            );
-
-        }
-
-
-        observationInput.value =
-            record.observacao || "";
-
-        deleteMachineBtn.classList.remove(
-            "hidden"
+        await carregarOcorrencias(
+            data.id
         );
 
     }
 
 
-    updateTotal();
-
+    atualizarTotal();
     renderOccurrences();
 
 }
-
-
-/* =========================================================
-   SALDO
-========================================================= */
-
-saldoInput.addEventListener(
-    "change",
-    () => {
-
-        if(
-            saldoInput.value ===
-            "__CUSTOM__"
-        ){
-
-            saldoInputWrapper.classList.remove(
-                "hidden"
-            );
-
-        }else{
-
-            saldoInputWrapper.classList.add(
-                "hidden"
-            );
-
-            saldoValueInput.value =
-                "";
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   INPUT DE HORAS
-========================================================= */
-
-horaBoaInput.addEventListener(
-    "input",
-    () => {
-
-        horaBoaInput.value =
-            normalizeTimeInput(
-                horaBoaInput.value
-            );
-
-        updateTotal();
-
-    }
-);
-
-
-reposicaoInput.addEventListener(
-    "input",
-    () => {
-
-        reposicaoInput.value =
-            normalizeTimeInput(
-                reposicaoInput.value
-            );
-
-        updateTotal();
-
-    }
-);
-
-
-saldoValueInput.addEventListener(
-    "input",
-    () => {
-
-        saldoValueInput.value =
-            normalizeTimeInput(
-                saldoValueInput.value
-            );
-
-    }
-);
 
 
 /* =========================================================
    OCORRÊNCIAS
 ========================================================= */
 
-function abrirEditorOcorrencia(
-    index = null
+async function carregarOcorrencias(
+    apontamentoId
 ){
 
-    occurrenceEditingIndex =
-        index;
-
-
-    if(index === null){
-
-        occurrenceType.value =
-            "Mecânico";
-
-        occurrenceDescription.value =
-            "";
-
-    }else{
-
-        const item =
-            ocorrencias[index];
-
-        occurrenceType.value =
-            item.tipo ||
-            "Outro";
-
-        occurrenceDescription.value =
-            item.descricao ||
-            "";
-
-    }
-
-
-    occurrenceEditor.classList.remove(
-        "hidden"
-    );
-
-    occurrenceDescription.focus();
-
-}
-
-
-function cancelarEditorOcorrencia(){
-
-    occurrenceEditingIndex =
-        null;
-
-    occurrenceEditor.classList.add(
-        "hidden"
-    );
-
-    occurrenceType.value =
-        "Mecânico";
-
-    occurrenceDescription.value =
-        "";
-
-}
-
-
-function salvarOcorrenciaLocal(){
-
-    const tipo =
-        occurrenceType.value;
-
-    const descricao =
-        occurrenceDescription.value
-            .trim();
-
-
-    if(!descricao){
-
-        showToast(
-            "Informe a descrição da ocorrência."
-        );
-
-        occurrenceDescription.focus();
-
-        return;
-
-    }
-
-
-    const item = {
-
-        id:null,
-
-        tipo,
-
-        descricao
-
-    };
-
-
-    if(
-        occurrenceEditingIndex ===
-        null
-    ){
-
-        ocorrencias.push(
-            item
-        );
-
-    }else{
-
-        const old =
-            ocorrencias[
-                occurrenceEditingIndex
-            ];
-
-        ocorrencias[
-            occurrenceEditingIndex
-        ] = {
-
-            id:
-                old.id || null,
-
-            tipo,
-
-            descricao
-
-        };
-
-    }
-
-
-    cancelarEditorOcorrencia();
-
-    renderOccurrences();
-
-}
-
-
-function editarOcorrencia(
-    index
-){
-
-    abrirEditorOcorrencia(
-        index
-    );
-
-}
-
-
-function removerOcorrencia(
-    index
-){
-
-    confirmar(
-        "Excluir ocorrência?",
-        "Esta ocorrência será removida do apontamento quando você salvar a máquina.",
-        () => {
-
-            ocorrencias.splice(
-                index,
-                1
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("ocorrencias")
+            .select("*")
+            .eq(
+                "apontamento_id",
+                apontamentoId
+            )
+            .order(
+                "id",
+                {ascending:true}
             );
 
-            renderOccurrences();
+    if(error){
 
-        }
-    );
+        console.error(error);
 
+        ocorrenciasAtuais =
+            [];
+
+        return;
+    }
+
+    ocorrenciasAtuais =
+        data || [];
 }
 
 
 function renderOccurrences(){
 
-    occurrencesList.innerHTML =
-        "";
+    occurrenceList.innerHTML = "";
 
-
-    if(!ocorrencias.length){
-
-        const empty =
-            document.createElement(
-                "div"
-            );
-
-        empty.style.color =
-            "#6e6e73";
-
-        empty.style.fontSize =
-            "13px";
-
-        empty.style.padding =
-            "5px 2px 2px";
-
-        empty.textContent =
-            "Nenhuma ocorrência adicionada.";
-
-        occurrencesList.appendChild(
-            empty
-        );
-
+    if(
+        !ocorrenciasAtuais.length
+    ){
         return;
-
     }
 
 
-    ocorrencias.forEach(
+    ocorrenciasAtuais.forEach(
         (item,index) => {
 
             const row =
@@ -2547,6 +1954,15 @@ function renderOccurrences(){
 
             row.className =
                 "occurrence-item";
+
+
+            const content =
+                document.createElement(
+                    "div"
+                );
+
+            content.className =
+                "occurrence-content";
 
 
             const type =
@@ -2575,6 +1991,15 @@ function renderOccurrences(){
                 "";
 
 
+            content.appendChild(
+                type
+            );
+
+            content.appendChild(
+                description
+            );
+
+
             const actions =
                 document.createElement(
                     "div"
@@ -2589,43 +2014,31 @@ function renderOccurrences(){
                     "button"
                 );
 
-            edit.type =
-                "button";
-
             edit.className =
-                "icon-btn";
+                "mini-button";
 
             edit.textContent =
                 "✎";
 
-            edit.addEventListener(
-                "click",
-                () => editarOcorrencia(
-                    index
-                )
-            );
+            edit.onclick =
+                () =>
+                    editarOcorrencia(index);
 
 
-            const remove =
+            const del =
                 document.createElement(
                     "button"
                 );
 
-            remove.type =
-                "button";
+            del.className =
+                "mini-button delete";
 
-            remove.className =
-                "icon-btn delete";
-
-            remove.textContent =
+            del.textContent =
                 "×";
 
-            remove.addEventListener(
-                "click",
-                () => removerOcorrencia(
-                    index
-                )
-            );
+            del.onclick =
+                () =>
+                    removerOcorrencia(index);
 
 
             actions.appendChild(
@@ -2633,30 +2046,243 @@ function renderOccurrences(){
             );
 
             actions.appendChild(
-                remove
+                del
             );
 
 
             row.appendChild(
-                type
-            );
-
-            row.appendChild(
-                description
+                content
             );
 
             row.appendChild(
                 actions
             );
 
-
-            occurrencesList.appendChild(
+            occurrenceList.appendChild(
                 row
             );
 
         }
     );
+}
 
+
+/* =========================================================
+   EDITOR DE OCORRÊNCIA
+========================================================= */
+
+function abrirEditorOcorrencia(){
+
+    occurrenceEditIndex =
+        null;
+
+    occurrenceType.value =
+        "Mecânico";
+
+    occurrenceDescription.value =
+        "";
+
+    occurrenceEditor.classList.remove(
+        "hidden"
+    );
+
+    occurrenceDescription.focus();
+}
+
+
+function cancelarEditorOcorrencia(){
+
+    occurrenceEditIndex =
+        null;
+
+    occurrenceDescription.value =
+        "";
+
+    occurrenceEditor.classList.add(
+        "hidden"
+    );
+}
+
+
+function editarOcorrencia(index){
+
+    const item =
+        ocorrenciasAtuais[index];
+
+    if(!item){
+        return;
+    }
+
+    occurrenceEditIndex =
+        index;
+
+    occurrenceType.value =
+        item.tipo ||
+        "Outro";
+
+    occurrenceDescription.value =
+        item.descricao ||
+        "";
+
+    occurrenceEditor.classList.remove(
+        "hidden"
+    );
+
+    occurrenceDescription.focus();
+}
+
+
+function salvarOcorrenciaLocal(){
+
+    const tipo =
+        occurrenceType.value;
+
+    const descricao =
+        occurrenceDescription.value
+            .trim();
+
+    if(!descricao){
+
+        showToast(
+            "Descreva a ocorrência."
+        );
+
+        return;
+    }
+
+
+    const item = {
+
+        tipo:tipo,
+        descricao:descricao
+
+    };
+
+
+    if(
+        occurrenceEditIndex === null
+    ){
+
+        ocorrenciasAtuais.push(
+            item
+        );
+
+    }else{
+
+        const existing =
+            ocorrenciasAtuais[
+                occurrenceEditIndex
+            ];
+
+        /*
+         * Preserva o ID caso já exista no banco.
+         */
+
+        if(existing && existing.id){
+
+            item.id =
+                existing.id;
+
+        }
+
+        ocorrenciasAtuais[
+            occurrenceEditIndex
+        ] = item;
+
+    }
+
+
+    occurrenceEditIndex =
+        null;
+
+    occurrenceDescription.value =
+        "";
+
+    occurrenceEditor.classList.add(
+        "hidden"
+    );
+
+    renderOccurrences();
+
+    showToast(
+        "Ocorrência adicionada."
+    );
+}
+
+
+function removerOcorrencia(index){
+
+    if(
+        !confirm(
+            "Excluir esta ocorrência?"
+        )
+    ){
+        return;
+    }
+
+    ocorrenciasAtuais.splice(
+        index,
+        1
+    );
+
+    renderOccurrences();
+}
+
+
+/* =========================================================
+   HORAS
+========================================================= */
+
+function atualizarTotal(){
+
+    const good =
+        parseMinutes(
+            goodHoursInput.value
+        );
+
+    const replacement =
+        parseMinutes(
+            replacementHoursInput.value
+        );
+
+    const total =
+        good + replacement;
+
+    totalHours.textContent =
+        minutesToHHMM(total);
+
+
+    const shift =
+        shiftInput.value;
+
+    const target =
+        shiftTargets[shift] || 0;
+
+    /*
+     * A barra representa apenas a proporção
+     * do total baixado em relação à meta.
+     */
+
+    let percent =
+        target > 0
+            ? (total / target) * 100
+            : 0;
+
+    percent =
+        Math.min(
+            100,
+            Math.max(
+                0,
+                percent
+            )
+        );
+
+    performanceBar.style.width =
+        `${percent}%`;
+
+    performanceBar.className =
+        "performance-bar " +
+        getStatusClass(total);
 }
 
 
@@ -2666,17 +2292,6 @@ function renderOccurrences(){
 
 async function salvarMaquina(){
 
-    if(!currentUser){
-
-        showToast(
-            "Sessão expirada."
-        );
-
-        return;
-
-    }
-
-
     if(!machineAtual){
 
         showToast(
@@ -2684,119 +2299,90 @@ async function salvarMaquina(){
         );
 
         return;
-
     }
 
 
-    /*
-     * CORREÇÃO PRINCIPAL:
-     *
-     * Não dependemos mais de turnIdAtual existir.
-     *
-     * Ao salvar, garantimos que o turno da combinação
-     * data + turno + setor + líder exista.
-     */
+    showLoading(true);
 
-    let turno;
 
     try{
 
-        turno =
+        /*
+         * Garante que o turno exista.
+         */
+
+        const turno =
             await obterOuCriarTurno();
 
-    }catch(error){
+        if(!turno || !turno.id){
 
-        console.error(
-            "Erro ao localizar/criar turno:",
-            error
-        );
-
-        mostrarErro(
-            "Não foi possível preparar o turno.",
-            error
-        );
-
-        return;
-
-    }
-
-
-    if(
-        !turno ||
-        !turno.id
-    ){
-
-        showToast(
-            "Não foi possível localizar o turno."
-        );
-
-        return;
-
-    }
-
-
-    turnIdAtual =
-        turno.id;
-
-
-    const horaBoa =
-        timeToMinutes(
-            horaBoaInput.value
-        );
-
-
-    const reposicao =
-        timeToMinutes(
-            reposicaoInput.value
-        );
-
-
-    const total =
-        horaBoa +
-        reposicao;
-
-
-    let saldo =
-        null;
-
-
-    if(
-        saldoInput.value ===
-        "__CUSTOM__"
-    ){
-
-        const saldoMinutes =
-            timeToMinutes(
-                saldoValueInput.value
+            throw new Error(
+                "Não foi possível localizar o turno."
             );
 
-        saldo =
-            minutesToTime(
-                saldoMinutes
+        }
+
+
+        const horasBoas =
+            minutesToHHMM(
+                parseMinutes(
+                    goodHoursInput.value
+                )
             );
 
-    }
+        const horasReposicao =
+            minutesToHHMM(
+                parseMinutes(
+                    replacementHoursInput.value
+                )
+            );
+
+        const saldo =
+            balanceInput.value
+                .trim();
+
+        const observacao =
+            observationInput.value
+                .trim();
 
 
-    const observacao =
-        observationInput.value
-            .trim();
+        /*
+         * CORREÇÃO PRINCIPAL:
+         *
+         * O banco/RPC espera INTEGER em p_maquina.
+         *
+         * A interface usa M02, M07 etc.
+         * Aqui convertemos M02 -> 2.
+         */
+
+        const maquinaNumero =
+            Number(
+                machineAtual.replace(
+                    "M",
+                    ""
+                )
+            );
 
 
-    const saveButton =
-        document.getElementById(
-            "saveMachineBtn"
-        );
+        if(
+            !Number.isInteger(
+                maquinaNumero
+            ) ||
+            maquinaNumero <= 0
+        ){
+
+            showToast(
+                "Máquina inválida."
+            );
+
+            return;
+        }
 
 
-    saveButton.disabled =
-        true;
-
-    saveButton.textContent =
-        "Salvando...";
-
-
-    try{
+        /*
+         * Salva/atualiza o apontamento
+         * através da função do Supabase.
+         */
 
         const {
             data,
@@ -2807,59 +2393,248 @@ async function salvarMaquina(){
                     "salvar_apontamento_lider",
                     {
 
-                        p_data:
-                            dateInput.value,
-
-                        p_turno:
-                            shiftInput.value,
-
-                        p_setor:
-                            sectorInput.value,
+                        p_turno_id:
+                            turno.id,
 
                         p_maquina:
-                            machineAtual,
+                            maquinaNumero,
 
-                        p_hora_boa:
-                            minutesToTime(
-                                horaBoa
-                            ),
+                        p_horas_boas:
+                            horasBoas,
 
-                        p_reposicao:
-                            minutesToTime(
-                                reposicao
-                            ),
-
-                        p_total_baixado:
-                            minutesToTime(
-                                total
-                            ),
+                        p_horas_reposicao:
+                            horasReposicao,
 
                         p_saldo:
-                            saldo,
+                            saldo || null,
 
                         p_observacao:
-                            observacao ||
-                            null,
-
-                        p_ocorrencias:
-                            ocorrencias.map(
-                                item => ({
-
-                                    tipo:
-                                        item.tipo,
-
-                                    descricao:
-                                        item.descricao
-
-                                })
-                            )
+                            observacao || null
 
                     }
                 );
 
 
         if(error){
+
+            console.error(
+                "Erro RPC:",
+                error
+            );
+
             throw error;
+        }
+
+
+        /*
+         * A RPC pode retornar o ID do apontamento.
+         * Caso retorne objeto/array, tentamos aproveitar.
+         */
+
+        let apontamentoId =
+            null;
+
+
+        if(
+            Array.isArray(data)
+        ){
+
+            if(data[0]){
+
+                apontamentoId =
+                    data[0].id ||
+                    data[0].apontamento_id ||
+                    null;
+
+            }
+
+        }else if(
+            data &&
+            typeof data === "object"
+        ){
+
+            apontamentoId =
+                data.id ||
+                data.apontamento_id ||
+                null;
+
+        }else if(
+            typeof data === "number"
+        ){
+
+            apontamentoId =
+                data;
+
+        }
+
+
+        /*
+         * Se a RPC não retornar o ID,
+         * buscamos o apontamento pelo turno
+         * e máquina.
+         */
+
+        if(!apontamentoId){
+
+            const {
+                data: saved,
+                error: savedError
+            } =
+                await supabaseClient
+                    .from("apontamentos")
+                    .select("*")
+                    .eq(
+                        "turno_id",
+                        turno.id
+                    )
+                    .eq(
+                        "maquina",
+                        maquinaNumero
+                    )
+                    .single();
+
+            if(savedError){
+
+                console.error(
+                    savedError
+                );
+
+                throw savedError;
+
+            }
+
+            apontamentoId =
+                saved.id;
+
+            apontamentoAtual =
+                saved;
+
+        }
+
+
+        /*
+         * Salva ocorrências.
+         *
+         * Primeiro removemos as antigas.
+         * Depois inserimos a lista atual.
+         *
+         * Isso mantém o editor simples:
+         * o estado da tela vira o estado do banco.
+         */
+
+        if(apontamentoId){
+
+            const {
+                error: deleteOccurrencesError
+            } =
+                await supabaseClient
+                    .from("ocorrencias")
+                    .delete()
+                    .eq(
+                        "apontamento_id",
+                        apontamentoId
+                    );
+
+            if(
+                deleteOccurrencesError
+            ){
+
+                console.error(
+                    deleteOccurrencesError
+                );
+
+                throw deleteOccurrencesError;
+
+            }
+
+
+            if(
+                ocorrenciasAtuais.length
+            ){
+
+                const rows =
+                    ocorrenciasAtuais
+                        .map(
+                            item => ({
+
+                                apontamento_id:
+                                    apontamentoId,
+
+                                tipo:
+                                    item.tipo ||
+                                    "Outro",
+
+                                descricao:
+                                    item.descricao ||
+                                    ""
+
+                            })
+                        )
+                        .filter(
+                            item =>
+                                item.descricao
+                                    .trim()
+                                    .length > 0
+                        );
+
+
+                if(rows.length){
+
+                    const {
+                        error:
+                            insertOccurrencesError
+                    } =
+                        await supabaseClient
+                            .from("ocorrencias")
+                            .insert(rows);
+
+
+                    if(
+                        insertOccurrencesError
+                    ){
+
+                        console.error(
+                            insertOccurrencesError
+                        );
+
+                        throw insertOccurrencesError;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+
+        /*
+         * Recarrega o apontamento salvo.
+         */
+
+        const {
+            data: finalData,
+            error: finalError
+        } =
+            await supabaseClient
+                .from("apontamentos")
+                .select("*")
+                .eq(
+                    "turno_id",
+                    turno.id
+                )
+                .eq(
+                    "maquina",
+                    maquinaNumero
+                )
+                .single();
+
+
+        if(!finalError){
+
+            apontamentoAtual =
+                finalData;
+
         }
 
 
@@ -2868,7 +2643,13 @@ async function salvarMaquina(){
         );
 
 
-        await carregarDados();
+        /*
+         * Atualiza o grid antes de voltar.
+         */
+
+        await renderMachineGrid();
+
+        fecharTelaMaquina();
 
 
     }catch(error){
@@ -2878,18 +2659,17 @@ async function salvarMaquina(){
             error
         );
 
-        mostrarErro(
-            "Não foi possível salvar.",
-            error
+        showToast(
+            "Não foi possível salvar. " +
+            (
+                error.message ||
+                "Erro desconhecido."
+            )
         );
 
     }finally{
 
-        saveButton.disabled =
-            false;
-
-        saveButton.textContent =
-            "Salvar máquina";
+        showLoading(false);
 
     }
 
@@ -2897,234 +2677,208 @@ async function salvarMaquina(){
 
 
 /* =========================================================
-   EXCLUIR
+   EXCLUIR MÁQUINA
 ========================================================= */
 
 async function excluirMaquina(){
 
-    if(!apontamentoAtual){
+    if(
+        !apontamentoAtual ||
+        !apontamentoAtual.id
+    ){
+
+        showToast(
+            "Não há apontamento para excluir."
+        );
+
         return;
     }
 
 
-    confirmar(
-        "Excluir apontamento?",
-        `O apontamento da ${machineAtual} será excluído.`,
-        async () => {
-
-            try{
-
-                const {
-                    error:
-                        occurrenceError
-                } =
-                    await supabaseClient
-                        .from("ocorrencias")
-                        .delete()
-                        .eq(
-                            "apontamento_id",
-                            apontamentoAtual.id
-                        );
-
-
-                if(occurrenceError){
-                    throw occurrenceError;
-                }
-
-
-                const {
-                    error
-                } =
-                    await supabaseClient
-                        .from("apontamentos")
-                        .delete()
-                        .eq(
-                            "id",
-                            apontamentoAtual.id
-                        );
-
-
-                if(error){
-                    throw error;
-                }
-
-
-                showToast(
-                    `${machineAtual} excluído ✓`
-                );
-
-
-                await carregarDados();
-
-
-            }catch(error){
-
-                console.error(
-                    "Erro ao excluir:",
-                    error
-                );
-
-                mostrarErro(
-                    "Não foi possível excluir.",
-                    error
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   CONFIRMAÇÃO
-========================================================= */
-
-function confirmar(
-    title,
-    message,
-    callback
-){
-
-    document.getElementById(
-        "confirmTitle"
-    ).textContent =
-        title;
-
-
-    document.getElementById(
-        "confirmMessage"
-    ).textContent =
-        message;
-
-
-    confirmCallback =
-        callback;
-
-
-    document
-        .getElementById(
-            "confirmModal"
+    if(
+        !confirm(
+            `Excluir o apontamento da ${machineAtual}?`
         )
-        .classList.remove(
-            "hidden"
-        );
-
-
-    document.getElementById(
-        "confirmActionBtn"
-    ).onclick =
-        async () => {
-
-            const action =
-                confirmCallback;
-
-            fecharConfirmacao();
-
-            if(action){
-                await action();
-            }
-
-        };
-
-}
-
-
-function fecharConfirmacao(){
-
-    document
-        .getElementById(
-            "confirmModal"
-        )
-        .classList.add(
-            "hidden"
-        );
-
-    confirmCallback =
-        null;
-
-}
-
-
-/* =========================================================
-   ERROS
-========================================================= */
-
-function mostrarErro(
-    titulo,
-    error
-){
-
-    let message =
-        error?.message ||
-        "Erro desconhecido.";
-
-
-    if(error?.details){
-
-        message +=
-            ` ${error.details}`;
-
+    ){
+        return;
     }
 
 
-    if(error?.hint){
+    showLoading(true);
 
-        message +=
-            ` ${error.hint}`;
-
-    }
-
-
-    showToast(
-        `${titulo} ${message}`
-    );
-
-}
-
-
-/* =========================================================
-   FILTROS
-========================================================= */
-
-async function atualizarPorFiltro(){
 
     try{
 
-        await carregarDados();
+        /*
+         * Primeiro exclui ocorrências.
+         */
+
+        const {
+            error:
+                occurrenceError
+        } =
+            await supabaseClient
+                .from("ocorrencias")
+                .delete()
+                .eq(
+                    "apontamento_id",
+                    apontamentoAtual.id
+                );
+
+
+        if(occurrenceError){
+
+            throw occurrenceError;
+
+        }
+
+
+        /*
+         * Depois exclui o apontamento.
+         */
+
+        const {
+            error:
+                deleteError
+        } =
+            await supabaseClient
+                .from("apontamentos")
+                .delete()
+                .eq(
+                    "id",
+                    apontamentoAtual.id
+                );
+
+
+        if(deleteError){
+
+            throw deleteError;
+
+        }
+
+
+        showToast(
+            `${machineAtual} excluído ✓`
+        );
+
+
+        await renderMachineGrid();
+
+        fecharTelaMaquina();
+
 
     }catch(error){
 
-        console.error(
-            error
+        console.error(error);
+
+        showToast(
+            "Não foi possível excluir. " +
+            (
+                error.message ||
+                "Erro desconhecido."
+            )
         );
 
-        mostrarErro(
-            "Erro ao carregar os dados.",
-            error
-        );
+    }finally{
+
+        showLoading(false);
 
     }
 
 }
 
 
-dateInput.addEventListener(
-    "change",
-    atualizarPorFiltro
+/* =========================================================
+   EVENTOS
+========================================================= */
+
+goodHoursInput.addEventListener(
+    "input",
+    atualizarTotal
 );
 
+replacementHoursInput.addEventListener(
+    "input",
+    atualizarTotal
+);
 
 shiftInput.addEventListener(
     "change",
-    atualizarPorFiltro
-);
+    async () => {
 
+        if(
+            machineScreen.classList.contains(
+                "hidden"
+            )
+        ){
+
+            await carregarDados();
+
+        }
+
+    }
+);
 
 sectorInput.addEventListener(
     "change",
-    atualizarPorFiltro
+    async () => {
+
+        if(
+            machineScreen.classList.contains(
+                "hidden"
+            )
+        ){
+
+            await carregarDados();
+
+        }
+
+    }
+);
+
+dateInput.addEventListener(
+    "change",
+    async () => {
+
+        if(
+            machineScreen.classList.contains(
+                "hidden"
+            )
+        ){
+
+            await carregarDados();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   AUTENTICAÇÃO
+========================================================= */
+
+supabaseClient.auth.onAuthStateChange(
+    async (
+        event,
+        session
+    ) => {
+
+        if(
+            !session ||
+            !session.user
+        ){
+
+            window.location.href =
+                "index.html";
+
+            return;
+        }
+
+        currentUser =
+            session.user;
+
+    }
 );
 
 
@@ -3134,78 +2888,69 @@ sectorInput.addEventListener(
 
 async function init(){
 
+    showLoading(true);
+
     try{
 
         const {
-            data,
-            error
+            data: {
+                session
+            }
         } =
             await supabaseClient
                 .auth
                 .getSession();
 
 
-        if(error){
-            throw error;
-        }
-
-
-        if(!data.session){
+        if(
+            !session ||
+            !session.user
+        ){
 
             window.location.href =
                 "index.html";
 
             return;
-
         }
 
 
         currentUser =
-            data.session.user;
+            session.user;
+
+
+        await carregarPerfil();
 
 
         /*
-         * Data atual local.
+         * Data atual como padrão.
          */
 
-        const now =
-            new Date();
+        if(!dateInput.value){
 
+            dateInput.value =
+                todayLocal();
 
-        const year =
-            now.getFullYear();
-
-        const month =
-            pad(
-                now.getMonth() + 1
-            );
-
-        const day =
-            pad(
-                now.getDate()
-            );
-
-
-        dateInput.value =
-            `${year}-${month}-${day}`;
-
-
-        /*
-         * Carrega perfil.
-         */
-
-        const profileOk =
-            await carregarPerfil();
-
-
-        if(!profileOk){
-            return;
         }
 
 
         /*
-         * Carrega os apontamentos existentes.
+         * Padrões iniciais.
          */
+
+        if(!shiftInput.value){
+
+            shiftInput.value =
+                "1º turno";
+
+        }
+
+        if(!sectorInput.value){
+
+            sectorInput.value =
+                "A";
+
+        }
+
 
         await carregarDados();
 
@@ -3217,43 +2962,19 @@ async function init(){
             error
         );
 
-        mostrarErro(
-            "Não foi possível carregar o sistema.",
-            error
+        showToast(
+            error.message ||
+            "Não foi possível carregar o sistema."
         );
+
+    }finally{
+
+        showLoading(false);
 
     }
 
 }
 
-
-/* =========================================================
-   AUTENTICAÇÃO
-========================================================= */
-
-supabaseClient
-    .auth
-    .onAuthStateChange(
-        (event, session) => {
-
-            if(
-                event ===
-                    "SIGNED_OUT" ||
-                !session
-            ){
-
-                window.location.href =
-                    "index.html";
-
-            }
-
-        }
-    );
-
-
-/* =========================================================
-   START
-========================================================= */
 
 init();
 
