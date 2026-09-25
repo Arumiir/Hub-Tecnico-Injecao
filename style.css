@@ -1,3 +1,7 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
 :root{
     --bg:#F2F2F7;
     --card:#FFFFFF;
@@ -14,14 +18,11 @@
 
 *{
     box-sizing:border-box;
-    margin:0;
-    padding:0;
     -webkit-tap-highlight-color:transparent;
 }
 
 html{
     scroll-behavior:smooth;
-    min-height:100%;
 }
 
 body{
@@ -59,25 +60,23 @@ button{
 }
 
 
-/* =====================================================
-   INDEX / LOGIN
-===================================================== */
+/* =========================================================
+   LOGIN / INDEX
+========================================================= */
 
-.login-page{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    padding:
-        max(20px,env(safe-area-inset-top))
-        20px
-        max(20px,env(safe-area-inset-bottom))
-        20px;
-}
-
-.login-page .app{
+.login-app{
     width:100%;
     max-width:430px;
+    margin:0 auto;
+    padding:
+        max(20px, env(safe-area-inset-top))
+        20px
+        max(20px, env(safe-area-inset-bottom))
+        20px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
 }
 
 .brand{
@@ -92,15 +91,12 @@ button{
     border-radius:21px;
     background:#000;
     color:#fff;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     font-size:23px;
     font-weight:700;
     letter-spacing:-1px;
-
     box-shadow:0 12px 30px rgba(0,0,0,.12);
 }
 
@@ -157,46 +153,45 @@ button{
     margin:0 0 7px 3px;
     font-size:13px;
     font-weight:600;
-    color:#3c3c43;
+    color:#3C3C43;
 }
 
 .input-wrap{
     position:relative;
 }
 
-.login-page input,
-.login-page select,
-.login-page textarea{
+.login-app input,
+.login-app select,
+.login-app textarea{
     width:100%;
     border:1px solid var(--line);
-    background:#f8f8fa;
+    background:#F8F8FA;
     color:var(--text);
     border-radius:14px;
     outline:none;
     font-family:inherit;
     font-size:16px;
-
     transition:
         border-color .18s ease,
         background .18s ease,
         box-shadow .18s ease;
 }
 
-.login-page input,
-.login-page select{
+.login-app input,
+.login-app select{
     height:51px;
     padding:0 15px;
 }
 
-.login-page textarea{
+.login-app textarea{
     min-height:95px;
     padding:13px 15px;
     resize:vertical;
 }
 
-.login-page input:focus,
-.login-page select:focus,
-.login-page textarea:focus{
+.login-app input:focus,
+.login-app select:focus,
+.login-app textarea:focus{
     background:#fff;
     border-color:rgba(0,122,255,.55);
     box-shadow:0 0 0 4px rgba(0,122,255,.10);
@@ -210,40 +205,32 @@ button{
     position:absolute;
     right:5px;
     top:5px;
-
     width:42px;
     height:41px;
-
     border:0;
     background:transparent;
-    color:#6e6e73;
+    color:#6E6E73;
     border-radius:11px;
-
     font-size:19px;
     cursor:pointer;
 }
 
 .password-toggle:active{
-    background:#e9e9ee;
+    background:#E9E9EE;
 }
 
 .primary{
     width:100%;
     height:51px;
-
     border:0;
     border-radius:15px;
-
     background:var(--blue);
     color:#fff;
-
     font-family:inherit;
     font-size:16px;
     font-weight:600;
     cursor:pointer;
-
     box-shadow:0 6px 15px rgba(0,122,255,.20);
-
     transition:
         transform .12s ease,
         background .15s ease;
@@ -251,7 +238,7 @@ button{
 
 .primary:active{
     transform:scale(.985);
-    background:#0066d6;
+    background:#0066D6;
 }
 
 .primary:disabled{
@@ -263,23 +250,19 @@ button{
 .secondary{
     width:100%;
     height:48px;
-
     border:1px solid var(--line);
     border-radius:14px;
-
-    background:#f8f8fa;
+    background:#F8F8FA;
     color:#111;
-
     font-family:inherit;
     font-size:15px;
     font-weight:600;
-
     cursor:pointer;
     margin-top:10px;
 }
 
 .secondary:active{
-    background:#ededf2;
+    background:#EDEDF2;
 }
 
 .links{
@@ -293,11 +276,9 @@ button{
     border:0;
     background:none;
     color:var(--blue);
-
     font-family:inherit;
     font-size:14px;
     font-weight:500;
-
     cursor:pointer;
     padding:5px;
 }
@@ -314,13 +295,10 @@ button{
 
 .message{
     display:none;
-
     border-radius:13px;
     padding:12px 13px;
-
     font-size:14px;
     line-height:1.4;
-
     margin-bottom:15px;
 }
 
@@ -329,18 +307,18 @@ button{
 }
 
 .message.error{
-    background:#fff0ef;
-    color:#b42318;
+    background:#FFF0EF;
+    color:#B42318;
 }
 
 .message.success{
-    background:#edf9f0;
-    color:#187a36;
+    background:#EDF9F0;
+    color:#187A36;
 }
 
 .message.info{
-    background:#edf5ff;
-    color:#075db5;
+    background:#EDF5FF;
+    color:#075DB5;
 }
 
 .profile-options{
@@ -362,27 +340,22 @@ button{
 .profile-option label{
     height:51px;
     margin:0;
-
     border:1px solid var(--line);
-    background:#f8f8fa;
+    background:#F8F8FA;
     border-radius:14px;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     cursor:pointer;
-
     font-size:15px;
     font-weight:600;
-    color:#3c3c43;
-
+    color:#3C3C43;
     transition:.18s ease;
 }
 
 .profile-option input:checked + label{
     border-color:var(--blue);
-    background:#edf5ff;
+    background:#EDF5FF;
     color:var(--blue);
     box-shadow:0 0 0 3px rgba(0,122,255,.08);
 }
@@ -391,17 +364,13 @@ button{
     display:flex;
     align-items:center;
     gap:5px;
-
     border:0;
     background:none;
     color:var(--blue);
-
     font-family:inherit;
     font-size:15px;
-
     padding:0;
     margin-bottom:20px;
-
     cursor:pointer;
 }
 
@@ -418,17 +387,13 @@ button{
 .success-icon{
     width:60px;
     height:60px;
-
     border-radius:50%;
-    background:#eaf8ee;
+    background:#EAF8EE;
     color:var(--green);
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     font-size:28px;
-
     margin:0 auto 18px;
 }
 
@@ -445,39 +410,20 @@ button{
 
 .footer{
     text-align:center;
-    color:#8e8e93;
+    color:#8E8E93;
     font-size:12px;
     margin-top:18px;
 }
 
-.login-page .loading{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-}
 
-.login-page .spinner{
-    width:17px;
-    height:17px;
-
-    border:2px solid rgba(255,255,255,.4);
-    border-top-color:#fff;
-    border-radius:50%;
-
-    animation:spin .7s linear infinite;
-}
-
-@keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
-}
+/* =========================================================
+   A PARTIR DAQUI
+   permanecem as regras visuais já validadas do LÍDER
+   e as regras específicas do SUPERVISOR
+========================================================= */
 
 
-/* =====================================================
-   HEADER GLOBAL
-===================================================== */
+/* HEADER */
 
 .app-header{
     position:sticky;
@@ -530,40 +476,34 @@ button{
 .user-avatar{
     width:38px;
     height:38px;
-
     border-radius:50%;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     background:#111;
     color:#fff;
-
     font-size:13px;
     font-weight:700;
-
     flex-shrink:0;
 }
 
 .logout-button{
     min-height:38px;
     padding:0 13px;
-
     border-radius:12px;
-
-    background:#fff;
+    background:#FFFFFF;
     color:var(--red);
-
     font-size:13px;
     font-weight:650;
-
     box-shadow:var(--shadow);
 }
 
 .logout-button:active{
     transform:scale(.96);
 }
+
+
+/* MAIN */
 
 main{
     width:100%;
@@ -573,9 +513,24 @@ main{
 }
 
 
-/* =====================================================
-   CONTEXTO GLOBAL
-===================================================== */
+/* CONTEXTO */
+
+.leader-label,
+.supervisor-label{
+    color:var(--secondary);
+    font-size:12px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+}
+
+.leader-name,
+.supervisor-name{
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:-.5px;
+    margin-top:3px;
+}
 
 .context-grid{
     display:grid;
@@ -619,26 +574,7 @@ input[type="date"]{
 }
 
 
-/* =====================================================
-   LÍDER
-===================================================== */
-
-.leader-label,
-.supervisor-label{
-    color:var(--secondary);
-    font-size:12px;
-    font-weight:600;
-    text-transform:uppercase;
-    letter-spacing:.5px;
-}
-
-.leader-name,
-.supervisor-name{
-    font-size:22px;
-    font-weight:700;
-    letter-spacing:-.5px;
-    margin-top:3px;
-}
+/* SECTIONS */
 
 .section{
     margin-top:22px;
@@ -652,6 +588,11 @@ input[type="date"]{
     letter-spacing:.5px;
     margin:0 4px 10px;
 }
+
+
+/* =========================================================
+   LÍDER
+========================================================= */
 
 .machine-grid{
     display:grid;
@@ -689,11 +630,9 @@ input[type="date"]{
 .back-button{
     width:42px;
     height:42px;
-
     border-radius:50%;
     background:#fff;
     box-shadow:var(--shadow);
-
     font-size:28px;
     line-height:1;
     color:#111;
@@ -771,7 +710,6 @@ input[type="date"]{
     padding:15px;
     border-radius:15px;
     background:#F2F2F7;
-
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -805,15 +743,15 @@ input[type="date"]{
     transition:.2s ease;
 }
 
-.leader-page .status-green{
+.status-green{
     background:var(--green);
 }
 
-.leader-page .status-yellow{
+.status-yellow{
     background:var(--yellow);
 }
 
-.leader-page .status-red{
+.status-red{
     background:var(--red);
 }
 
@@ -852,7 +790,6 @@ input[type="date"]{
     background:#F2F2F7;
     border-radius:13px;
     padding:11px 12px;
-
     display:flex;
     align-items:flex-start;
     gap:10px;
@@ -912,34 +849,32 @@ input[type="date"]{
     background:#F2F2F7;
 }
 
-.occurrence-editor select{
+.occurrence-editor select,
+.occurrence-editor textarea{
     width:100%;
     border:1px solid var(--line);
     border-radius:12px;
     background:#fff;
     padding:11px;
     outline:0;
+}
+
+.occurrence-editor select{
     margin-bottom:9px;
 }
 
 .occurrence-editor textarea{
-    width:100%;
     min-height:80px;
     resize:vertical;
-    border:1px solid var(--line);
-    border-radius:12px;
-    background:#fff;
-    padding:11px;
-    outline:0;
 }
 
-.leader-page .editor-actions{
+.editor-actions{
     display:flex;
     gap:8px;
     margin-top:9px;
 }
 
-.leader-page .editor-actions button{
+.editor-actions button{
     flex:1;
     padding:11px;
     border-radius:11px;
@@ -951,7 +886,7 @@ input[type="date"]{
     color:#111;
 }
 
-.leader-page .editor-save{
+.editor-save{
     background:var(--blue);
     color:#fff;
 }
@@ -983,9 +918,9 @@ input[type="date"]{
 }
 
 
-/* =====================================================
+/* =========================================================
    SUPERVISOR
-===================================================== */
+========================================================= */
 
 .tabs{
     display:grid;
@@ -1007,13 +942,13 @@ input[type="date"]{
 }
 
 .tab.active{
-    background:#fff;
-    color:#111;
+    background:#FFFFFF;
+    color:#111111;
     box-shadow:0 1px 4px rgba(0,0,0,.08);
 }
 
 .machine-card{
-    background:#fff;
+    background:#FFFFFF;
     border-radius:var(--radius);
     box-shadow:var(--shadow);
     margin-bottom:12px;
@@ -1023,14 +958,11 @@ input[type="date"]{
 .machine-card-header{
     width:100%;
     padding:16px;
-
     display:flex;
     align-items:center;
     justify-content:space-between;
-
     gap:12px;
-
-    background:#fff;
+    background:#FFFFFF;
     text-align:left;
 }
 
@@ -1040,7 +972,6 @@ input[type="date"]{
 
 .machine-left{
     min-width:0;
-
     display:flex;
     align-items:center;
     gap:12px;
@@ -1090,15 +1021,15 @@ input[type="date"]{
     transform:rotate(90deg);
 }
 
-.supervisor-page .status-green{
+.status-green{
     color:#248A3D;
 }
 
-.supervisor-page .status-yellow{
+.status-yellow{
     color:#9A7900;
 }
 
-.supervisor-page .status-red{
+.status-red{
     color:#C72E25;
 }
 
@@ -1169,7 +1100,7 @@ input[type="date"]{
     color:var(--blue);
 }
 
-.supervisor-page .editor{
+.editor{
     margin-top:13px;
     padding:14px;
     background:#F2F2F7;
@@ -1182,7 +1113,7 @@ input[type="date"]{
     margin-bottom:11px;
 }
 
-.supervisor-page .editor-grid{
+.editor-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:9px;
@@ -1196,8 +1127,8 @@ input[type="date"]{
     margin:0 0 6px 2px;
 }
 
-.supervisor-page .editor-field input,
-.supervisor-page .editor textarea{
+.editor-field input,
+.editor textarea{
     width:100%;
     border:1px solid var(--line);
     border-radius:12px;
@@ -1209,7 +1140,7 @@ input[type="date"]{
     font-weight:600;
 }
 
-.supervisor-page .editor textarea{
+.editor textarea{
     min-height:78px;
     resize:vertical;
     font-weight:500;
@@ -1220,14 +1151,14 @@ input[type="date"]{
     margin-top:10px;
 }
 
-.supervisor-page .editor-actions{
+.editor-actions{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:8px;
     margin-top:10px;
 }
 
-.supervisor-page .editor-cancel{
+.editor-cancel{
     min-height:44px;
     border-radius:12px;
     background:#fff;
@@ -1235,7 +1166,7 @@ input[type="date"]{
     font-weight:700;
 }
 
-.supervisor-page .editor-save{
+.editor-save{
     min-height:44px;
     border-radius:12px;
     background:var(--green);
@@ -1286,12 +1217,17 @@ input[type="date"]{
     white-space:pre-wrap;
 }
 
-.review-card{
-    margin-top:18px;
-    background:#fff;
+.review-card,
+.closing-card,
+.drive-card{
+    background:#FFFFFF;
     border-radius:var(--radius);
     padding:16px;
     box-shadow:var(--shadow);
+}
+
+.review-card{
+    margin-top:18px;
 }
 
 .review-title{
@@ -1342,10 +1278,6 @@ input[type="date"]{
 
 .closing-card{
     margin-top:12px;
-    background:#fff;
-    border-radius:var(--radius);
-    padding:16px;
-    box-shadow:var(--shadow);
 }
 
 .closing-title{
@@ -1370,7 +1302,6 @@ input[type="date"]{
     padding:13px;
     outline:0;
     color:var(--text);
-
     font-family:
         ui-monospace,
         SFMono-Regular,
@@ -1378,7 +1309,6 @@ input[type="date"]{
         Monaco,
         Consolas,
         monospace;
-
     font-size:13px;
     line-height:1.55;
 }
@@ -1394,7 +1324,8 @@ input[type="date"]{
     font-weight:750;
 }
 
-.copy-closing{
+.copy-closing,
+.copy-problems{
     width:100%;
     min-height:44px;
     margin-top:9px;
@@ -1406,11 +1337,7 @@ input[type="date"]{
 }
 
 .drive-card{
-    background:#fff;
-    border-radius:var(--radius);
-    padding:16px;
     margin-bottom:12px;
-    box-shadow:var(--shadow);
 }
 
 .drive-header{
@@ -1456,19 +1383,8 @@ input[type="date"]{
     color:var(--text);
 }
 
-.copy-problems{
-    width:100%;
-    min-height:45px;
-    margin-top:12px;
-    border-radius:13px;
-    background:#F2F2F7;
-    color:var(--blue);
-    font-size:14px;
-    font-weight:700;
-}
-
 .empty{
-    background:#fff;
+    background:#FFFFFF;
     border-radius:var(--radius);
     padding:30px 20px;
     text-align:center;
@@ -1479,37 +1395,30 @@ input[type="date"]{
 }
 
 
-/* =====================================================
+/* =========================================================
    TOAST / LOADING
-===================================================== */
+========================================================= */
 
 .toast{
     position:fixed;
-
     left:50%;
-    bottom:calc(22px + env(safe-area-inset-bottom));
-
+    bottom:calc(
+        22px +
+        env(safe-area-inset-bottom)
+    );
     transform:translate(-50%,20px);
-
     background:rgba(20,20,20,.94);
     color:#fff;
-
     padding:12px 17px;
     border-radius:999px;
-
     font-size:14px;
     font-weight:600;
-
     z-index:100;
-
     opacity:0;
     pointer-events:none;
-
     transition:.22s ease;
-
     white-space:nowrap;
     max-width:calc(100vw - 30px);
-
     overflow:hidden;
     text-overflow:ellipsis;
 }
@@ -1522,16 +1431,12 @@ input[type="date"]{
 .loading{
     position:fixed;
     inset:0;
-
     background:rgba(242,242,247,.72);
-
     backdrop-filter:blur(8px);
     -webkit-backdrop-filter:blur(8px);
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     z-index:200;
 }
 
@@ -1540,15 +1445,14 @@ input[type="date"]{
     padding:20px 24px;
     border-radius:18px;
     box-shadow:var(--shadow);
-
     font-size:15px;
     font-weight:600;
 }
 
 
-/* =====================================================
+/* =========================================================
    RESPONSIVO
-===================================================== */
+========================================================= */
 
 @media(max-width:520px){
 
@@ -1575,6 +1479,7 @@ input[type="date"]{
         padding-right:15px;
         padding-bottom:15px;
     }
+
 }
 
 @media(max-width:380px){
@@ -1599,29 +1504,25 @@ input[type="date"]{
     .machine-total{
         font-size:15px;
     }
-}
 
-@media(max-width:360px){
+    .brand h1{
+        font-size:23px;
+    }
 
-    .login-page .card{
+    .card{
         padding:22px 17px 18px;
     }
 
-    .login-page .brand h1{
-        font-size:23px;
-    }
 }
 
 @media(max-width:350px){
 
-    .leader-page .hours-grid{
+    .hours-grid,
+    .details-grid,
+    .editor-grid,
+    .edit-actions,
+    .editor-actions{
         grid-template-columns:1fr;
     }
 
-    .supervisor-page .details-grid,
-    .supervisor-page .editor-grid,
-    .supervisor-page .edit-actions,
-    .supervisor-page .editor-actions{
-        grid-template-columns:1fr;
-    }
 }
