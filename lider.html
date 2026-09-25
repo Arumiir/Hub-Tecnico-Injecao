@@ -115,7 +115,11 @@ main{
         calc(32px + env(safe-area-inset-bottom));
 }
 
-/* LEADER */
+/* CONTEXTO */
+
+#contextSection{
+    transition:.2s ease;
+}
 
 .leader-block{
     margin-bottom:20px;
@@ -136,8 +140,6 @@ main{
     font-weight:800;
     letter-spacing:-.7px;
 }
-
-/* CONTEXT */
 
 .context-card{
     background:var(--card);
@@ -196,8 +198,6 @@ textarea:focus{
     background:white;
 }
 
-/* ACCESS */
-
 .access-row{
     margin-top:14px;
 }
@@ -212,7 +212,7 @@ textarea:focus{
     font-weight:700;
 }
 
-/* SECTION */
+/* LISTA */
 
 .section-title{
     display:flex;
@@ -233,8 +233,6 @@ textarea:focus{
     color:var(--muted);
     font-size:13px;
 }
-
-/* MACHINE GRID */
 
 .machine-grid{
     display:grid;
@@ -274,7 +272,7 @@ textarea:focus{
     font-weight:900;
 }
 
-/* MACHINE SCREEN */
+/* TELA DA MÁQUINA */
 
 .machine-screen{
     animation:slideIn .2s ease;
@@ -326,7 +324,7 @@ textarea:focus{
     letter-spacing:-.6px;
 }
 
-/* FORM CARDS */
+/* FORMULÁRIOS */
 
 .form-card{
     background:white;
@@ -369,8 +367,6 @@ textarea:focus{
     font-size:18px;
 }
 
-/* STATUS */
-
 .performance-status{
     margin-top:10px;
     min-height:8px;
@@ -391,7 +387,7 @@ textarea:focus{
     background:var(--green);
 }
 
-/* OCCURRENCES */
+/* OCORRÊNCIAS */
 
 .occurrences-list{
     display:flex;
@@ -454,8 +450,6 @@ textarea:focus{
     color:#333;
 }
 
-/* OCCURRENCE EDITOR */
-
 .occurrence-editor{
     margin-top:12px;
     padding:14px;
@@ -492,7 +486,7 @@ textarea:focus{
     color:white;
 }
 
-/* OBSERVATION */
+/* OBSERVAÇÃO */
 
 textarea{
     min-height:110px;
@@ -501,7 +495,7 @@ textarea{
     line-height:1.4;
 }
 
-/* SAVE */
+/* BOTÕES */
 
 .save-btn{
     width:100%;
@@ -517,6 +511,10 @@ textarea{
 
 .save-btn:active{
     transform:scale(.98);
+}
+
+.save-btn:disabled{
+    opacity:.65;
 }
 
 .delete-machine-btn{
@@ -554,15 +552,6 @@ textarea{
 .toast.show{
     opacity:1;
     transform:translate(-50%,0);
-}
-
-/* LOADING */
-
-.loading{
-    padding:30px 10px;
-    text-align:center;
-    color:var(--muted);
-    font-size:14px;
 }
 
 /* MODAL */
@@ -614,9 +603,8 @@ textarea{
     color:white;
 }
 
-/* SMALL DEVICES */
-
 @media(max-width:380px){
+
     main{
         padding-left:12px;
         padding-right:12px;
@@ -640,97 +628,216 @@ textarea{
 
 <body>
 
-<header class="header">
+<header id="mainHeader" class="header">
+
     <div class="header-inner">
+
         <div>
-            <div class="brand-title">CONTROLE DE PRODUÇÃO</div>
-            <div class="brand-subtitle">Setor de Injeção</div>
+            <div class="brand-title">
+                CONTROLE DE PRODUÇÃO
+            </div>
+
+            <div class="brand-subtitle">
+                Setor de Injeção
+            </div>
         </div>
 
-        <div id="userInitials" class="user-badge">--</div>
+        <div id="userInitials" class="user-badge">
+            --
+        </div>
+
     </div>
+
 </header>
+
 
 <main>
 
-    <section class="leader-block">
-        <div class="eyebrow">Líder</div>
-        <div id="leaderName" class="leader-name">Carregando...</div>
-    </section>
+    <!-- CONTEXTO PRINCIPAL -->
 
-    <section class="context-card">
+    <section id="contextSection">
 
-        <div class="context-grid">
+        <div class="leader-block">
 
-            <div class="field context-date">
-                <label for="date">Data</label>
-                <input type="date" id="date">
+            <div class="eyebrow">
+                Líder
             </div>
 
-            <div class="field">
-                <label for="shift">Turno</label>
-                <select id="shift">
-                    <option value="1º turno">1º turno</option>
-                    <option value="2º turno">2º turno</option>
-                    <option value="3º turno">3º turno</option>
-                </select>
-            </div>
-
-            <div class="field">
-                <label for="sector">Setor</label>
-                <select id="sector">
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                </select>
+            <div id="leaderName" class="leader-name">
+                Carregando...
             </div>
 
         </div>
 
-        <div id="accessRow" class="access-row hidden">
-            <button class="access-btn" onclick="abrirAcessos()">
-                Acessos
-            </button>
-        </div>
+
+        <section class="context-card">
+
+            <div class="context-grid">
+
+                <div class="field context-date">
+
+                    <label for="date">
+                        Data
+                    </label>
+
+                    <input
+                        type="date"
+                        id="date"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="shift">
+                        Turno
+                    </label>
+
+                    <select id="shift">
+
+                        <option value="1º turno">
+                            1º turno
+                        </option>
+
+                        <option value="2º turno">
+                            2º turno
+                        </option>
+
+                        <option value="3º turno">
+                            3º turno
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="sector">
+                        Setor
+                    </label>
+
+                    <select id="sector">
+
+                        <option value="A">
+                            A
+                        </option>
+
+                        <option value="B">
+                            B
+                        </option>
+
+                        <option value="C">
+                            C
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="accessRow"
+                class="access-row hidden"
+            >
+
+                <button
+                    class="access-btn"
+                    onclick="abrirAcessos()"
+                >
+                    Acessos
+                </button>
+
+            </div>
+
+        </section>
 
     </section>
+
+
+    <!-- LISTA DE MÁQUINAS -->
 
     <section id="machineListSection">
 
         <div class="section-title">
+
             <div>
-                <h2>Máquinas</h2>
-                <p>Selecione uma máquina para apontar.</p>
+
+                <h2>
+                    Máquinas
+                </h2>
+
+                <p>
+                    Selecione uma máquina para apontar.
+                </p>
+
             </div>
+
         </div>
 
-        <div id="machineGrid" class="machine-grid"></div>
+
+        <div
+            id="machineGrid"
+            class="machine-grid"
+        ></div>
 
     </section>
 
-    <section id="machineScreen" class="machine-screen hidden">
+
+    <!-- TELA DA MÁQUINA -->
+
+    <section
+        id="machineScreen"
+        class="machine-screen hidden"
+    >
 
         <div class="machine-top">
 
-            <button class="back-btn" onclick="fecharTelaMaquina()" aria-label="Voltar">
+            <button
+                class="back-btn"
+                onclick="fecharTelaMaquina()"
+                aria-label="Voltar"
+            >
                 ‹
             </button>
 
+
             <div class="machine-heading">
-                <div class="small">Apontamento</div>
-                <h2 id="machineTitle">M01</h2>
+
+                <div class="small">
+                    Apontamento
+                </div>
+
+                <h2 id="machineTitle">
+                    M01
+                </h2>
+
             </div>
 
         </div>
 
+
+        <!-- HORAS -->
+
         <div class="form-card">
 
-            <h3>Horas</h3>
+            <h3>
+                Horas
+            </h3>
+
 
             <div class="hours-grid">
 
                 <div class="field">
-                    <label for="horaBoa">Hora boa</label>
+
+                    <label for="horaBoa">
+                        Hora boa
+                    </label>
+
                     <input
                         type="text"
                         id="horaBoa"
@@ -738,10 +845,16 @@ textarea{
                         placeholder="00:00"
                         maxlength="5"
                     >
+
                 </div>
 
+
                 <div class="field">
-                    <label for="reposicao">Reposição</label>
+
+                    <label for="reposicao">
+                        Reposição
+                    </label>
+
                     <input
                         type="text"
                         id="reposicao"
@@ -749,35 +862,77 @@ textarea{
                         placeholder="00:00"
                         maxlength="5"
                     >
+
                 </div>
 
             </div>
 
+
             <div class="hours-total">
-                <span>Total baixado</span>
-                <strong id="totalBaixado">00:00</strong>
+
+                <span>
+                    Total baixado
+                </span>
+
+                <strong id="totalBaixado">
+                    00:00
+                </strong>
+
             </div>
 
-            <div id="performanceStatus" class="performance-status"></div>
+
+            <div
+                id="performanceStatus"
+                class="performance-status"
+            ></div>
 
         </div>
 
+
+        <!-- SALDO -->
+
         <div class="form-card">
 
-            <h3>Saldo</h3>
+            <h3>
+                Saldo
+            </h3>
+
 
             <div class="field">
-                <label for="saldo">Tem saldo?</label>
+
+                <label for="saldo">
+                    Tem saldo?
+                </label>
 
                 <select id="saldo">
-                    <option value="">Não informado</option>
-                    <option value="00:00">Não</option>
-                    <option value="__CUSTOM__">Sim</option>
+
+                    <option value="">
+                        Não informado
+                    </option>
+
+                    <option value="00:00">
+                        Não
+                    </option>
+
+                    <option value="__CUSTOM__">
+                        Sim
+                    </option>
+
                 </select>
+
             </div>
 
-            <div id="saldoInputWrapper" class="field hidden" style="margin-top:12px;">
-                <label for="saldoValue">Saldo</label>
+
+            <div
+                id="saldoInputWrapper"
+                class="field hidden"
+                style="margin-top:12px;"
+            >
+
+                <label for="saldoValue">
+                    Saldo
+                </label>
+
                 <input
                     type="text"
                     id="saldoValue"
@@ -785,15 +940,26 @@ textarea{
                     placeholder="00:00"
                     maxlength="5"
                 >
+
             </div>
 
         </div>
 
+
+        <!-- OCORRÊNCIAS -->
+
         <div class="form-card">
 
-            <h3>Ocorrências</h3>
+            <h3>
+                Ocorrências
+            </h3>
 
-            <div id="occurrencesList" class="occurrences-list"></div>
+
+            <div
+                id="occurrencesList"
+                class="occurrences-list"
+            ></div>
+
 
             <button
                 id="addOccurrenceBtn"
@@ -803,36 +969,75 @@ textarea{
                 + Adicionar ocorrência
             </button>
 
-            <div id="occurrenceEditor" class="occurrence-editor hidden">
+
+            <div
+                id="occurrenceEditor"
+                class="occurrence-editor hidden"
+            >
 
                 <div class="occurrence-editor-grid">
 
                     <div class="field">
-                        <label for="occurrenceType">Tipo</label>
+
+                        <label for="occurrenceType">
+                            Tipo
+                        </label>
 
                         <select id="occurrenceType">
-                            <option value="Mecânico">Mecânico</option>
-                            <option value="Elétrico">Elétrico</option>
-                            <option value="Matriz">Matriz</option>
-                            <option value="Material">Material</option>
-                            <option value="Processo">Processo</option>
-                            <option value="Parada de máquina">Parada de máquina</option>
-                            <option value="Setup">Setup</option>
-                            <option value="Outro">Outro</option>
+
+                            <option value="Mecânico">
+                                Mecânico
+                            </option>
+
+                            <option value="Elétrico">
+                                Elétrico
+                            </option>
+
+                            <option value="Matriz">
+                                Matriz
+                            </option>
+
+                            <option value="Material">
+                                Material
+                            </option>
+
+                            <option value="Processo">
+                                Processo
+                            </option>
+
+                            <option value="Parada de máquina">
+                                Parada de máquina
+                            </option>
+
+                            <option value="Setup">
+                                Setup
+                            </option>
+
+                            <option value="Outro">
+                                Outro
+                            </option>
+
                         </select>
+
                     </div>
 
+
                     <div class="field">
-                        <label for="occurrenceDescription">Descrição</label>
+
+                        <label for="occurrenceDescription">
+                            Descrição
+                        </label>
 
                         <textarea
                             id="occurrenceDescription"
                             placeholder="Descreva a ocorrência..."
                             style="min-height:90px;"
                         ></textarea>
+
                     </div>
 
                 </div>
+
 
                 <div class="editor-actions">
 
@@ -842,6 +1047,7 @@ textarea{
                     >
                         Cancelar
                     </button>
+
 
                     <button
                         class="confirm-btn"
@@ -856,9 +1062,14 @@ textarea{
 
         </div>
 
+
+        <!-- OBSERVAÇÃO -->
+
         <div class="form-card">
 
-            <h3>Observação geral</h3>
+            <h3>
+                Observação geral
+            </h3>
 
             <textarea
                 id="observation"
@@ -867,6 +1078,9 @@ textarea{
 
         </div>
 
+
+        <!-- SALVAR -->
+
         <button
             id="saveMachineBtn"
             class="save-btn"
@@ -874,6 +1088,9 @@ textarea{
         >
             Salvar máquina
         </button>
+
+
+        <!-- EXCLUIR -->
 
         <button
             id="deleteMachineBtn"
@@ -887,17 +1104,35 @@ textarea{
 
 </main>
 
-<div id="toast" class="toast"></div>
 
-<div id="confirmModal" class="modal hidden">
+<!-- TOAST -->
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<!-- CONFIRMAÇÃO -->
+
+<div
+    id="confirmModal"
+    class="modal hidden"
+>
 
     <div class="modal-card">
 
-        <h3 id="confirmTitle">Confirmar</h3>
+        <h3 id="confirmTitle">
+            Confirmar
+        </h3>
 
-        <div id="confirmMessage" style="color:#6e6e73;line-height:1.45;">
+        <div
+            id="confirmMessage"
+            style="color:#6e6e73;line-height:1.45;"
+        >
             Deseja continuar?
         </div>
+
 
         <div class="modal-actions">
 
@@ -907,6 +1142,7 @@ textarea{
             >
                 Cancelar
             </button>
+
 
             <button
                 id="confirmActionBtn"
@@ -921,12 +1157,15 @@ textarea{
 
 </div>
 
+
 <script>
+
 /* =========================================================
    SUPABASE
 ========================================================= */
 
-const SUPABASE_URL = "https://icajmncojvidhrqlbevq.supabase.co";
+const SUPABASE_URL =
+    "https://icajmncojvidhrqlbevq.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_vQFsGutuZDHBruMghZkQYQ_BSwEBXFp";
@@ -943,6 +1182,7 @@ const supabaseClient =
 ========================================================= */
 
 let currentUser = null;
+
 let currentProfile = null;
 
 let machineAtual = null;
@@ -963,27 +1203,36 @@ let confirmCallback = null;
 ========================================================= */
 
 const sectorMachines = {
-    A: {
-        start: 1,
-        end: 29
+
+    A:{
+        start:1,
+        end:29
     },
 
-    B: {
-        start: 30,
-        end: 51
+    B:{
+        start:30,
+        end:51
     },
 
-    C: {
-        start: 52,
-        end: 85
+    C:{
+        start:52,
+        end:85
     }
+
 };
 
 
 const shiftTargets = {
-    "1º turno": 8 * 60 + 48,
-    "2º turno": 8 * 60 + 36,
-    "3º turno": 6 * 60 + 36
+
+    "1º turno":
+        8 * 60 + 48,
+
+    "2º turno":
+        8 * 60 + 36,
+
+    "3º turno":
+        6 * 60 + 36
+
 };
 
 
@@ -1008,6 +1257,12 @@ const machineListSection =
 
 const machineScreen =
     document.getElementById("machineScreen");
+
+const contextSection =
+    document.getElementById("contextSection");
+
+const mainHeader =
+    document.getElementById("mainHeader");
 
 const machineTitle =
     document.getElementById("machineTitle");
@@ -1057,12 +1312,17 @@ const deleteMachineBtn =
 ========================================================= */
 
 function pad(value){
-    return String(value).padStart(2,"0");
+
+    return String(value)
+        .padStart(2,"0");
+
 }
 
 
 function machineCode(number){
+
     return `M${pad(number)}`;
+
 }
 
 
@@ -1079,15 +1339,18 @@ function getInitials(name){
             .filter(Boolean);
 
     if(parts.length === 1){
+
         return parts[0]
             .substring(0,2)
             .toUpperCase();
+
     }
 
     return (
         parts[0][0] +
         parts[parts.length - 1][0]
     ).toUpperCase();
+
 }
 
 
@@ -1096,16 +1359,23 @@ function showToast(message){
     const toast =
         document.getElementById("toast");
 
-    toast.textContent = message;
+    toast.textContent =
+        message;
 
     toast.classList.add("show");
 
-    clearTimeout(showToast.timer);
+    clearTimeout(
+        showToast.timer
+    );
 
     showToast.timer =
-        setTimeout(() => {
-            toast.classList.remove("show");
-        }, 2400);
+        setTimeout(
+            () => {
+                toast.classList.remove("show");
+            },
+            2400
+        );
+
 }
 
 
@@ -1125,10 +1395,13 @@ function normalizeMachine(value){
     }
 
     if(/^\d+$/.test(text)){
-        return machineCode(Number(text));
+        return machineCode(
+            Number(text)
+        );
     }
 
     return text;
+
 }
 
 
@@ -1138,7 +1411,10 @@ function normalizeMachine(value){
 
 function timeToMinutes(value){
 
-    if(value === null || value === undefined){
+    if(
+        value === null ||
+        value === undefined
+    ){
         return 0;
     }
 
@@ -1150,7 +1426,9 @@ function timeToMinutes(value){
     }
 
     const match =
-        text.match(/^(\d{1,3}):([0-5]\d)$/);
+        text.match(
+            /^(\d{1,3}):([0-5]\d)$/
+        );
 
     if(!match){
         return 0;
@@ -1160,6 +1438,7 @@ function timeToMinutes(value){
         Number(match[1]) * 60 +
         Number(match[2])
     );
+
 }
 
 
@@ -1168,16 +1447,23 @@ function minutesToTime(total){
     total =
         Math.max(
             0,
-            Math.round(Number(total) || 0)
+            Math.round(
+                Number(total) || 0
+            )
         );
 
     const hours =
-        Math.floor(total / 60);
+        Math.floor(
+            total / 60
+        );
 
     const minutes =
         total % 60;
 
-    return `${pad(hours)}:${pad(minutes)}`;
+    return (
+        `${pad(hours)}:${pad(minutes)}`
+    );
+
 }
 
 
@@ -1203,27 +1489,24 @@ function normalizeTimeInput(value){
         text.slice(-2);
 
     return `${hours}:${minutes}`;
-}
 
-
-function formatTimeField(input){
-
-    const formatted =
-        normalizeTimeInput(input.value);
-
-    input.value = formatted;
 }
 
 
 function calculateTotal(){
 
     const good =
-        timeToMinutes(horaBoaInput.value);
+        timeToMinutes(
+            horaBoaInput.value
+        );
 
     const replacement =
-        timeToMinutes(reposicaoInput.value);
+        timeToMinutes(
+            reposicaoInput.value
+        );
 
     return good + replacement;
+
 }
 
 
@@ -1238,6 +1521,7 @@ function updateTotal(){
     performanceStatus.className =
         "performance-status " +
         getStatusClass(total);
+
 }
 
 
@@ -1253,16 +1537,20 @@ function getStatusClass(totalMinutes){
         return "status-green";
     }
 
-    if(totalMinutes >= target - 48){
+    if(
+        totalMinutes >=
+        target - 48
+    ){
         return "status-yellow";
     }
 
     return "status-red";
+
 }
 
 
 /* =========================================================
-   SUPABASE — PERFIL
+   PERFIL
 ========================================================= */
 
 async function carregarPerfil(){
@@ -1270,13 +1558,17 @@ async function carregarPerfil(){
     const {
         data,
         error
-    } = await supabaseClient
-        .from("usuarios")
-        .select(
-            "id,nome,usuario,perfil,ativo,admin"
-        )
-        .eq("id", currentUser.id)
-        .maybeSingle();
+    } =
+        await supabaseClient
+            .from("usuarios")
+            .select(
+                "id,nome,usuario,perfil,ativo,admin"
+            )
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .maybeSingle();
 
     if(error){
         throw error;
@@ -1287,25 +1579,43 @@ async function carregarPerfil(){
         !data.ativo ||
         data.perfil !== "lider"
     ){
-        window.location.href = "index.html";
+
+        window.location.href =
+            "index.html";
+
         return false;
+
     }
 
-    currentProfile = data;
+    currentProfile =
+        data;
 
-    document.getElementById("leaderName")
-        .textContent = data.nome;
+    document.getElementById(
+        "leaderName"
+    ).textContent =
+        data.nome;
 
-    document.getElementById("userInitials")
-        .textContent = getInitials(data.nome);
+    document.getElementById(
+        "userInitials"
+    ).textContent =
+        getInitials(
+            data.nome
+        );
 
     if(data.admin === true){
+
         document
-            .getElementById("accessRow")
-            .classList.remove("hidden");
+            .getElementById(
+                "accessRow"
+            )
+            .classList.remove(
+                "hidden"
+            );
+
     }
 
     return true;
+
 }
 
 
@@ -1314,15 +1624,191 @@ async function carregarPerfil(){
 ========================================================= */
 
 function abrirAcessos(){
-    window.location.href = "acessos.html";
+
+    window.location.href =
+        "acessos.html";
+
 }
 
 
 /* =========================================================
-   TURNOS
+   GARANTIR TURNO
+========================================================= */
+
+/*
+ * IMPORTANTE:
+ *
+ * A seleção de data/turno/setor NÃO significa que já
+ * exista uma linha na tabela "turnos".
+ *
+ * Agora o líder não depende de turnIdAtual para salvar.
+ *
+ * Esta função tenta localizar o turno e, se ele ainda não
+ * existir, cria o turno correspondente.
+ */
+
+async function obterOuCriarTurno(){
+
+    if(!currentUser){
+        throw new Error(
+            "Usuário não autenticado."
+        );
+    }
+
+    const data =
+        dateInput.value;
+
+    const turno =
+        shiftInput.value;
+
+    const setor =
+        sectorInput.value;
+
+    if(
+        !data ||
+        !turno ||
+        !setor
+    ){
+
+        throw new Error(
+            "Data, turno e setor são obrigatórios."
+        );
+
+    }
+
+
+    /*
+     * Primeiro tenta encontrar o turno.
+     */
+
+    const {
+        data: existente,
+        error: erroBusca
+    } =
+        await supabaseClient
+            .from("turnos")
+            .select("*")
+            .eq("data", data)
+            .eq("turno", turno)
+            .eq("setor", setor)
+            .eq("lider_id", currentUser.id)
+            .maybeSingle();
+
+    if(erroBusca){
+        throw erroBusca;
+    }
+
+
+    if(existente){
+
+        turnIdAtual =
+            existente.id;
+
+        return existente;
+
+    }
+
+
+    /*
+     * Não existe.
+     * Cria agora.
+     */
+
+    const {
+        data: novoTurno,
+        error: erroCriacao
+    } =
+        await supabaseClient
+            .from("turnos")
+            .insert({
+
+                data:data,
+
+                turno:turno,
+
+                setor:setor,
+
+                lider_id:
+                    currentUser.id
+
+            })
+            .select("*")
+            .single();
+
+
+    /*
+     * Se outro processo criou o mesmo turno
+     * simultaneamente, tenta buscar novamente.
+     */
+
+    if(
+        erroCriacao &&
+        (
+            erroCriacao.code === "23505" ||
+            String(
+                erroCriacao.message || ""
+            )
+                .toLowerCase()
+                .includes("duplicate")
+        )
+    ){
+
+        const {
+            data: existenteDepois,
+            error: erroBuscaDepois
+        } =
+            await supabaseClient
+                .from("turnos")
+                .select("*")
+                .eq("data", data)
+                .eq("turno", turno)
+                .eq("setor", setor)
+                .eq("lider_id", currentUser.id)
+                .maybeSingle();
+
+        if(erroBuscaDepois){
+            throw erroBuscaDepois;
+        }
+
+        if(existenteDepois){
+
+            turnIdAtual =
+                existenteDepois.id;
+
+            return existenteDepois;
+
+        }
+
+    }
+
+
+    if(erroCriacao){
+        throw erroCriacao;
+    }
+
+
+    turnIdAtual =
+        novoTurno.id;
+
+    return novoTurno;
+
+}
+
+
+/* =========================================================
+   CARREGAR TURNO
 ========================================================= */
 
 async function carregarTurno(){
+
+    /*
+     * Não cria automaticamente apenas ao mudar os filtros.
+     *
+     * Se existir, carrega.
+     * Se não existir, retorna null.
+     *
+     * A criação fica para o momento do primeiro salvamento.
+     */
 
     if(!currentUser){
         return null;
@@ -1340,36 +1826,56 @@ async function carregarTurno(){
     const {
         data: turnos,
         error
-    } = await supabaseClient
-        .from("turnos")
-        .select("*")
-        .eq("data", data)
-        .eq("turno", turno)
-        .eq("setor", setor)
-        .eq("lider_id", currentUser.id)
-        .limit(1);
+    } =
+        await supabaseClient
+            .from("turnos")
+            .select("*")
+            .eq("data", data)
+            .eq("turno", turno)
+            .eq("setor", setor)
+            .eq(
+                "lider_id",
+                currentUser.id
+            )
+            .limit(1);
 
     if(error){
         throw error;
     }
 
-    if(turnos && turnos.length){
+    if(
+        turnos &&
+        turnos.length
+    ){
+
+        turnIdAtual =
+            turnos[0].id;
+
         return turnos[0];
+
     }
 
+    turnIdAtual =
+        null;
+
     return null;
+
 }
 
 
 /* =========================================================
-   CARREGAMENTO DOS DADOS
+   CARREGAR DADOS
 ========================================================= */
 
 async function carregarDados(){
 
     machineAtual = null;
+
     apontamentoAtual = null;
+
     ocorrencias = [];
+
+    turnIdAtual = null;
 
     fecharTelaMaquina();
 
@@ -1379,34 +1885,45 @@ async function carregarDados(){
         await carregarTurno();
 
     if(!turno){
+
         turnIdAtual = null;
+
         renderMachineGrid([]);
+
         return;
+
     }
 
-    turnIdAtual = turno.id;
 
     const {
         data,
         error
-    } = await supabaseClient
-        .from("apontamentos")
-        .select(`
-            *,
-            ocorrencias (
-                id,
-                tipo,
-                descricao,
-                criado_em
-            )
-        `)
-        .eq("turno_id", turno.id);
+    } =
+        await supabaseClient
+            .from("apontamentos")
+            .select(`
+                *,
+                ocorrencias (
+                    id,
+                    tipo,
+                    descricao,
+                    criado_em
+                )
+            `)
+            .eq(
+                "turno_id",
+                turno.id
+            );
+
 
     if(error){
         throw error;
     }
 
-    renderMachineGrid(data || []);
+    renderMachineGrid(
+        data || []
+    );
+
 }
 
 
@@ -1427,19 +1944,32 @@ function renderMachineGrid(records){
     const map =
         new Map();
 
-    (records || []).forEach(record => {
 
-        const code =
-            normalizeMachine(record.maquina);
+    (records || []).forEach(
+        record => {
 
-        if(code){
-            map.set(code, record);
+            const code =
+                normalizeMachine(
+                    record.maquina
+                );
+
+            if(code){
+                map.set(
+                    code,
+                    record
+                );
+            }
+
         }
-    });
+    );
+
 
     for(
-        let number = range.start;
+        let number =
+            range.start;
+
         number <= range.end;
+
         number++
     ){
 
@@ -1447,23 +1977,48 @@ function renderMachineGrid(records){
             machineCode(number);
 
         const button =
-            document.createElement("button");
+            document.createElement(
+                "button"
+            );
 
-        button.type = "button";
-        button.className = "machine-btn";
-        button.textContent = code;
+        button.type =
+            "button";
+
+        button.className =
+            "machine-btn";
+
+        button.textContent =
+            code;
+
 
         if(map.has(code)){
-            button.classList.add("saved");
+
+            button.classList.add(
+                "saved"
+            );
+
         }
+
 
         button.addEventListener(
             "click",
-            () => abrirMaquina(code, map.get(code) || null)
+            () => {
+
+                abrirMaquina(
+                    code,
+                    map.get(code) || null
+                );
+
+            }
         );
 
-        machineGrid.appendChild(button);
+
+        machineGrid.appendChild(
+            button
+        );
+
     }
+
 }
 
 
@@ -1471,7 +2026,10 @@ function renderMachineGrid(records){
    ABRIR MÁQUINA
 ========================================================= */
 
-function abrirMaquina(machine, record = null){
+function abrirMaquina(
+    machine,
+    record = null
+){
 
     machineAtual =
         normalizeMachine(machine);
@@ -1479,32 +2037,79 @@ function abrirMaquina(machine, record = null){
     apontamentoAtual =
         record || null;
 
+
     ocorrencias =
-        record && Array.isArray(record.ocorrencias)
-            ? record.ocorrencias.map(item => ({
-                id: item.id ?? null,
-                tipo: item.tipo || "Outro",
-                descricao: item.descricao || ""
-            }))
-            : [];
+        record &&
+        Array.isArray(
+            record.ocorrencias
+        )
+
+        ? record.ocorrencias.map(
+            item => ({
+
+                id:
+                    item.id ?? null,
+
+                tipo:
+                    item.tipo ||
+                    "Outro",
+
+                descricao:
+                    item.descricao ||
+                    ""
+
+            })
+        )
+
+        : [];
+
 
     machineTitle.textContent =
         machineAtual;
 
-    machineListSection.classList.add("hidden");
 
-    machineScreen.classList.remove("hidden");
+    /*
+     * Esconde TODA a área superior:
+     * nome, data, turno, setor e acesso.
+     *
+     * A tela da máquina fica independente.
+     */
 
-    occurrenceEditor.classList.add("hidden");
+    contextSection.classList.add(
+        "hidden"
+    );
 
-    occurrenceEditingIndex = null;
+    mainHeader.classList.add(
+        "hidden"
+    );
 
-    carregarFormulario(record);
+    machineListSection.classList.add(
+        "hidden"
+    );
+
+    machineScreen.classList.remove(
+        "hidden"
+    );
+
+
+    occurrenceEditor.classList.add(
+        "hidden"
+    );
+
+    occurrenceEditingIndex =
+        null;
+
+
+    carregarFormulario(
+        record
+    );
+
 
     window.scrollTo({
         top:0,
-        behavior:"smooth"
+        behavior:"instant"
     });
+
 }
 
 
@@ -1514,17 +2119,36 @@ function abrirMaquina(machine, record = null){
 
 function fecharTelaMaquina(){
 
-    machineScreen.classList.add("hidden");
+    machineScreen.classList.add(
+        "hidden"
+    );
 
-    machineListSection.classList.remove("hidden");
+    machineListSection.classList.remove(
+        "hidden"
+    );
 
-    machineAtual = null;
+    contextSection.classList.remove(
+        "hidden"
+    );
 
-    apontamentoAtual = null;
+    mainHeader.classList.remove(
+        "hidden"
+    );
 
-    occurrenceEditingIndex = null;
 
-    occurrenceEditor.classList.add("hidden");
+    machineAtual =
+        null;
+
+    apontamentoAtual =
+        null;
+
+    occurrenceEditingIndex =
+        null;
+
+    occurrenceEditor.classList.add(
+        "hidden"
+    );
+
 }
 
 
@@ -1532,39 +2156,56 @@ function fecharTelaMaquina(){
    FORMULÁRIO
 ========================================================= */
 
-function carregarFormulario(record){
+function carregarFormulario(
+    record
+){
 
     if(!record){
 
-        horaBoaInput.value = "";
+        horaBoaInput.value =
+            "";
 
-        reposicaoInput.value = "";
+        reposicaoInput.value =
+            "";
 
-        saldoInput.value = "";
+        saldoInput.value =
+            "";
 
-        saldoValueInput.value = "";
+        saldoValueInput.value =
+            "";
 
-        saldoInputWrapper.classList.add("hidden");
+        saldoInputWrapper.classList.add(
+            "hidden"
+        );
 
-        observationInput.value = "";
+        observationInput.value =
+            "";
 
-        deleteMachineBtn.classList.add("hidden");
+        deleteMachineBtn.classList.add(
+            "hidden"
+        );
 
     }else{
 
         horaBoaInput.value =
             record.hora_boa
                 ? minutesToTime(
-                    timeToMinutes(record.hora_boa)
+                    timeToMinutes(
+                        record.hora_boa
+                    )
                 )
                 : "";
+
 
         reposicaoInput.value =
             record.reposicao
                 ? minutesToTime(
-                    timeToMinutes(record.reposicao)
+                    timeToMinutes(
+                        record.reposicao
+                    )
                 )
                 : "";
+
 
         if(record.saldo){
 
@@ -1573,30 +2214,44 @@ function carregarFormulario(record){
 
             saldoValueInput.value =
                 minutesToTime(
-                    timeToMinutes(record.saldo)
+                    timeToMinutes(
+                        record.saldo
+                    )
                 );
 
-            saldoInputWrapper.classList.remove("hidden");
+            saldoInputWrapper.classList.remove(
+                "hidden"
+            );
 
         }else{
 
             saldoInput.value =
                 "00:00";
 
-            saldoValueInput.value = "";
+            saldoValueInput.value =
+                "";
 
-            saldoInputWrapper.classList.add("hidden");
+            saldoInputWrapper.classList.add(
+                "hidden"
+            );
+
         }
+
 
         observationInput.value =
             record.observacao || "";
 
-        deleteMachineBtn.classList.remove("hidden");
+        deleteMachineBtn.classList.remove(
+            "hidden"
+        );
+
     }
+
 
     updateTotal();
 
     renderOccurrences();
+
 }
 
 
@@ -1608,18 +2263,26 @@ saldoInput.addEventListener(
     "change",
     () => {
 
-        if(saldoInput.value === "__CUSTOM__"){
+        if(
+            saldoInput.value ===
+            "__CUSTOM__"
+        ){
 
-            saldoInputWrapper
-                .classList.remove("hidden");
+            saldoInputWrapper.classList.remove(
+                "hidden"
+            );
 
         }else{
 
-            saldoInputWrapper
-                .classList.add("hidden");
+            saldoInputWrapper.classList.add(
+                "hidden"
+            );
 
-            saldoValueInput.value = "";
+            saldoValueInput.value =
+                "";
+
         }
+
     }
 );
 
@@ -1631,30 +2294,42 @@ saldoInput.addEventListener(
 horaBoaInput.addEventListener(
     "input",
     () => {
+
         horaBoaInput.value =
-            normalizeTimeInput(horaBoaInput.value);
+            normalizeTimeInput(
+                horaBoaInput.value
+            );
 
         updateTotal();
+
     }
 );
+
 
 reposicaoInput.addEventListener(
     "input",
     () => {
+
         reposicaoInput.value =
-            normalizeTimeInput(reposicaoInput.value);
+            normalizeTimeInput(
+                reposicaoInput.value
+            );
 
         updateTotal();
+
     }
 );
+
 
 saldoValueInput.addEventListener(
     "input",
     () => {
+
         saldoValueInput.value =
             normalizeTimeInput(
                 saldoValueInput.value
             );
+
     }
 );
 
@@ -1663,10 +2338,13 @@ saldoValueInput.addEventListener(
    OCORRÊNCIAS
 ========================================================= */
 
-function abrirEditorOcorrencia(index = null){
+function abrirEditorOcorrencia(
+    index = null
+){
 
     occurrenceEditingIndex =
         index;
+
 
     if(index === null){
 
@@ -1682,29 +2360,40 @@ function abrirEditorOcorrencia(index = null){
             ocorrencias[index];
 
         occurrenceType.value =
-            item.tipo || "Outro";
+            item.tipo ||
+            "Outro";
 
         occurrenceDescription.value =
-            item.descricao || "";
+            item.descricao ||
+            "";
+
     }
 
-    occurrenceEditor.classList.remove("hidden");
+
+    occurrenceEditor.classList.remove(
+        "hidden"
+    );
 
     occurrenceDescription.focus();
+
 }
 
 
 function cancelarEditorOcorrencia(){
 
-    occurrenceEditingIndex = null;
+    occurrenceEditingIndex =
+        null;
 
-    occurrenceEditor.classList.add("hidden");
+    occurrenceEditor.classList.add(
+        "hidden"
+    );
 
     occurrenceType.value =
         "Mecânico";
 
     occurrenceDescription.value =
         "";
+
 }
 
 
@@ -1714,7 +2403,9 @@ function salvarOcorrenciaLocal(){
         occurrenceType.value;
 
     const descricao =
-        occurrenceDescription.value.trim();
+        occurrenceDescription.value
+            .trim();
+
 
     if(!descricao){
 
@@ -1725,19 +2416,29 @@ function salvarOcorrenciaLocal(){
         occurrenceDescription.focus();
 
         return;
+
     }
 
+
     const item = {
+
         id:null,
+
         tipo,
+
         descricao
+
     };
 
+
     if(
-        occurrenceEditingIndex === null
+        occurrenceEditingIndex ===
+        null
     ){
 
-        ocorrencias.push(item);
+        ocorrencias.push(
+            item
+        );
 
     }else{
 
@@ -1749,49 +2450,71 @@ function salvarOcorrenciaLocal(){
         ocorrencias[
             occurrenceEditingIndex
         ] = {
-            id:old.id || null,
+
+            id:
+                old.id || null,
+
             tipo,
+
             descricao
+
         };
+
     }
+
 
     cancelarEditorOcorrencia();
 
     renderOccurrences();
+
 }
 
 
-function editarOcorrencia(index){
-    abrirEditorOcorrencia(index);
+function editarOcorrencia(
+    index
+){
+
+    abrirEditorOcorrencia(
+        index
+    );
+
 }
 
 
-function removerOcorrencia(index){
-
-    const item =
-        ocorrencias[index];
+function removerOcorrencia(
+    index
+){
 
     confirmar(
         "Excluir ocorrência?",
         "Esta ocorrência será removida do apontamento quando você salvar a máquina.",
         () => {
 
-            ocorrencias.splice(index,1);
+            ocorrencias.splice(
+                index,
+                1
+            );
 
             renderOccurrences();
+
         }
     );
+
 }
 
 
 function renderOccurrences(){
 
-    occurrencesList.innerHTML = "";
+    occurrencesList.innerHTML =
+        "";
+
 
     if(!ocorrencias.length){
 
         const empty =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         empty.style.color =
             "#6e6e73";
@@ -1805,60 +2528,92 @@ function renderOccurrences(){
         empty.textContent =
             "Nenhuma ocorrência adicionada.";
 
-        occurrencesList.appendChild(empty);
+        occurrencesList.appendChild(
+            empty
+        );
 
         return;
+
     }
+
 
     ocorrencias.forEach(
         (item,index) => {
 
             const row =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             row.className =
                 "occurrence-item";
 
+
             const type =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             type.className =
                 "occurrence-type";
 
             type.textContent =
-                item.tipo || "Outro";
+                item.tipo ||
+                "Outro";
+
 
             const description =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             description.className =
                 "occurrence-description";
 
             description.textContent =
-                item.descricao || "";
+                item.descricao ||
+                "";
+
 
             const actions =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             actions.className =
                 "occurrence-actions";
 
-            const edit =
-                document.createElement("button");
 
-            edit.type = "button";
-            edit.className = "icon-btn";
-            edit.textContent = "✎";
+            const edit =
+                document.createElement(
+                    "button"
+                );
+
+            edit.type =
+                "button";
+
+            edit.className =
+                "icon-btn";
+
+            edit.textContent =
+                "✎";
 
             edit.addEventListener(
                 "click",
-                () => editarOcorrencia(index)
+                () => editarOcorrencia(
+                    index
+                )
             );
 
-            const remove =
-                document.createElement("button");
 
-            remove.type = "button";
+            const remove =
+                document.createElement(
+                    "button"
+                );
+
+            remove.type =
+                "button";
+
             remove.className =
                 "icon-btn delete";
 
@@ -1867,24 +2622,46 @@ function renderOccurrences(){
 
             remove.addEventListener(
                 "click",
-                () => removerOcorrencia(index)
+                () => removerOcorrencia(
+                    index
+                )
             );
 
-            actions.appendChild(edit);
-            actions.appendChild(remove);
 
-            row.appendChild(type);
-            row.appendChild(description);
-            row.appendChild(actions);
+            actions.appendChild(
+                edit
+            );
 
-            occurrencesList.appendChild(row);
+            actions.appendChild(
+                remove
+            );
+
+
+            row.appendChild(
+                type
+            );
+
+            row.appendChild(
+                description
+            );
+
+            row.appendChild(
+                actions
+            );
+
+
+            occurrencesList.appendChild(
+                row
+            );
+
         }
     );
+
 }
 
 
 /* =========================================================
-   SALVAR
+   SALVAR MÁQUINA
 ========================================================= */
 
 async function salvarMaquina(){
@@ -1896,16 +2673,9 @@ async function salvarMaquina(){
         );
 
         return;
+
     }
 
-    if(!turnIdAtual){
-
-        showToast(
-            "Não foi possível localizar o turno."
-        );
-
-        return;
-    }
 
     if(!machineAtual){
 
@@ -1914,25 +2684,85 @@ async function salvarMaquina(){
         );
 
         return;
+
     }
+
+
+    /*
+     * CORREÇÃO PRINCIPAL:
+     *
+     * Não dependemos mais de turnIdAtual existir.
+     *
+     * Ao salvar, garantimos que o turno da combinação
+     * data + turno + setor + líder exista.
+     */
+
+    let turno;
+
+    try{
+
+        turno =
+            await obterOuCriarTurno();
+
+    }catch(error){
+
+        console.error(
+            "Erro ao localizar/criar turno:",
+            error
+        );
+
+        mostrarErro(
+            "Não foi possível preparar o turno.",
+            error
+        );
+
+        return;
+
+    }
+
+
+    if(
+        !turno ||
+        !turno.id
+    ){
+
+        showToast(
+            "Não foi possível localizar o turno."
+        );
+
+        return;
+
+    }
+
+
+    turnIdAtual =
+        turno.id;
+
 
     const horaBoa =
         timeToMinutes(
             horaBoaInput.value
         );
 
+
     const reposicao =
         timeToMinutes(
             reposicaoInput.value
         );
 
-    const total =
-        horaBoa + reposicao;
 
-    let saldo = null;
+    const total =
+        horaBoa +
+        reposicao;
+
+
+    let saldo =
+        null;
+
 
     if(
-        saldoInput.value === "__CUSTOM__"
+        saldoInput.value ===
+        "__CUSTOM__"
     ){
 
         const saldoMinutes =
@@ -1944,95 +2774,102 @@ async function salvarMaquina(){
             minutesToTime(
                 saldoMinutes
             );
+
     }
 
+
     const observacao =
-        observationInput.value.trim();
+        observationInput.value
+            .trim();
+
 
     const saveButton =
         document.getElementById(
             "saveMachineBtn"
         );
 
-    saveButton.disabled = true;
+
+    saveButton.disabled =
+        true;
 
     saveButton.textContent =
         "Salvando...";
 
-    try{
 
-        /*
-         * A RPC centraliza a criação/atualização
-         * do apontamento e das ocorrências.
-         */
+    try{
 
         const {
             data,
             error
-        } = await supabaseClient
-            .rpc(
-                "salvar_apontamento_lider",
-                {
-                    p_data:
-                        dateInput.value,
+        } =
+            await supabaseClient
+                .rpc(
+                    "salvar_apontamento_lider",
+                    {
 
-                    p_turno:
-                        shiftInput.value,
+                        p_data:
+                            dateInput.value,
 
-                    p_setor:
-                        sectorInput.value,
+                        p_turno:
+                            shiftInput.value,
 
-                    p_maquina:
-                        machineAtual,
+                        p_setor:
+                            sectorInput.value,
 
-                    p_hora_boa:
-                        minutesToTime(
-                            horaBoa
-                        ),
+                        p_maquina:
+                            machineAtual,
 
-                    p_reposicao:
-                        minutesToTime(
-                            reposicao
-                        ),
+                        p_hora_boa:
+                            minutesToTime(
+                                horaBoa
+                            ),
 
-                    p_total_baixado:
-                        minutesToTime(
-                            total
-                        ),
+                        p_reposicao:
+                            minutesToTime(
+                                reposicao
+                            ),
 
-                    p_saldo:
-                        saldo,
+                        p_total_baixado:
+                            minutesToTime(
+                                total
+                            ),
 
-                    p_observacao:
-                        observacao || null,
+                        p_saldo:
+                            saldo,
 
-                    p_ocorrencias:
-                        ocorrencias.map(
-                            item => ({
-                                tipo:
-                                    item.tipo,
+                        p_observacao:
+                            observacao ||
+                            null,
 
-                                descricao:
-                                    item.descricao
-                            })
-                        )
-                }
-            );
+                        p_ocorrencias:
+                            ocorrencias.map(
+                                item => ({
+
+                                    tipo:
+                                        item.tipo,
+
+                                    descricao:
+                                        item.descricao
+
+                                })
+                            )
+
+                    }
+                );
+
 
         if(error){
             throw error;
         }
 
+
         showToast(
             `${machineAtual} salvo ✓`
         );
 
+
         await carregarDados();
 
-        /*
-         * Volta automaticamente para
-         * a grade após salvar.
-         */
 
     }catch(error){
 
@@ -2048,16 +2885,19 @@ async function salvarMaquina(){
 
     }finally{
 
-        saveButton.disabled = false;
+        saveButton.disabled =
+            false;
 
         saveButton.textContent =
             "Salvar máquina";
+
     }
+
 }
 
 
 /* =========================================================
-   EXCLUIR MÁQUINA
+   EXCLUIR
 ========================================================= */
 
 async function excluirMaquina(){
@@ -2066,6 +2906,7 @@ async function excluirMaquina(){
         return;
     }
 
+
     confirmar(
         "Excluir apontamento?",
         `O apontamento da ${machineAtual} será excluído.`,
@@ -2073,44 +2914,48 @@ async function excluirMaquina(){
 
             try{
 
-                /*
-                 * Remove as ocorrências primeiro.
-                 */
-
                 const {
                     error:
                         occurrenceError
-                } = await supabaseClient
-                    .from("ocorrencias")
-                    .delete()
-                    .eq(
-                        "apontamento_id",
-                        apontamentoAtual.id
-                    );
+                } =
+                    await supabaseClient
+                        .from("ocorrencias")
+                        .delete()
+                        .eq(
+                            "apontamento_id",
+                            apontamentoAtual.id
+                        );
+
 
                 if(occurrenceError){
                     throw occurrenceError;
                 }
 
+
                 const {
                     error
-                } = await supabaseClient
-                    .from("apontamentos")
-                    .delete()
-                    .eq(
-                        "id",
-                        apontamentoAtual.id
-                    );
+                } =
+                    await supabaseClient
+                        .from("apontamentos")
+                        .delete()
+                        .eq(
+                            "id",
+                            apontamentoAtual.id
+                        );
+
 
                 if(error){
                     throw error;
                 }
 
+
                 showToast(
                     `${machineAtual} excluído ✓`
                 );
 
+
                 await carregarDados();
+
 
             }catch(error){
 
@@ -2123,9 +2968,12 @@ async function excluirMaquina(){
                     "Não foi possível excluir.",
                     error
                 );
+
             }
+
         }
     );
+
 }
 
 
@@ -2141,41 +2989,61 @@ function confirmar(
 
     document.getElementById(
         "confirmTitle"
-    ).textContent = title;
+    ).textContent =
+        title;
+
 
     document.getElementById(
         "confirmMessage"
-    ).textContent = message;
+    ).textContent =
+        message;
 
-    confirmCallback = callback;
+
+    confirmCallback =
+        callback;
+
 
     document
-        .getElementById("confirmModal")
-        .classList.remove("hidden");
+        .getElementById(
+            "confirmModal"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
 
     document.getElementById(
         "confirmActionBtn"
-    ).onclick = async () => {
+    ).onclick =
+        async () => {
 
-        const action =
-            confirmCallback;
+            const action =
+                confirmCallback;
 
-        fecharConfirmacao();
+            fecharConfirmacao();
 
-        if(action){
-            await action();
-        }
-    };
+            if(action){
+                await action();
+            }
+
+        };
+
 }
 
 
 function fecharConfirmacao(){
 
     document
-        .getElementById("confirmModal")
-        .classList.add("hidden");
+        .getElementById(
+            "confirmModal"
+        )
+        .classList.add(
+            "hidden"
+        );
 
-    confirmCallback = null;
+    confirmCallback =
+        null;
+
 }
 
 
@@ -2192,19 +3060,27 @@ function mostrarErro(
         error?.message ||
         "Erro desconhecido.";
 
+
     if(error?.details){
+
         message +=
             ` ${error.details}`;
+
     }
 
+
     if(error?.hint){
+
         message +=
             ` ${error.hint}`;
+
     }
+
 
     showToast(
         `${titulo} ${message}`
     );
+
 }
 
 
@@ -2212,60 +3088,43 @@ function mostrarErro(
    FILTROS
 ========================================================= */
 
+async function atualizarPorFiltro(){
+
+    try{
+
+        await carregarDados();
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+        mostrarErro(
+            "Erro ao carregar os dados.",
+            error
+        );
+
+    }
+
+}
+
+
 dateInput.addEventListener(
     "change",
-    async () => {
-
-        try{
-            await carregarDados();
-        }catch(error){
-
-            console.error(error);
-
-            mostrarErro(
-                "Erro ao carregar os dados.",
-                error
-            );
-        }
-    }
+    atualizarPorFiltro
 );
 
 
 shiftInput.addEventListener(
     "change",
-    async () => {
-
-        try{
-            await carregarDados();
-        }catch(error){
-
-            console.error(error);
-
-            mostrarErro(
-                "Erro ao carregar os dados.",
-                error
-            );
-        }
-    }
+    atualizarPorFiltro
 );
 
 
 sectorInput.addEventListener(
     "change",
-    async () => {
-
-        try{
-            await carregarDados();
-        }catch(error){
-
-            console.error(error);
-
-            mostrarErro(
-                "Erro ao carregar os dados.",
-                error
-            );
-        }
-    }
+    atualizarPorFiltro
 );
 
 
@@ -2280,13 +3139,16 @@ async function init(){
         const {
             data,
             error
-        } = await supabaseClient
-            .auth
-            .getSession();
+        } =
+            await supabaseClient
+                .auth
+                .getSession();
+
 
         if(error){
             throw error;
         }
+
 
         if(!data.session){
 
@@ -2294,10 +3156,13 @@ async function init(){
                 "index.html";
 
             return;
+
         }
+
 
         currentUser =
             data.session.user;
+
 
         /*
          * Data atual local.
@@ -2306,34 +3171,44 @@ async function init(){
         const now =
             new Date();
 
+
         const year =
             now.getFullYear();
 
         const month =
-            pad(now.getMonth() + 1);
+            pad(
+                now.getMonth() + 1
+            );
 
         const day =
-            pad(now.getDate());
+            pad(
+                now.getDate()
+            );
+
 
         dateInput.value =
             `${year}-${month}-${day}`;
 
+
         /*
-         * Perfil.
+         * Carrega perfil.
          */
 
         const profileOk =
             await carregarPerfil();
 
+
         if(!profileOk){
             return;
         }
 
+
         /*
-         * Grade inicial.
+         * Carrega os apontamentos existentes.
          */
 
         await carregarDados();
+
 
     }catch(error){
 
@@ -2346,7 +3221,9 @@ async function init(){
             "Não foi possível carregar o sistema.",
             error
         );
+
     }
+
 }
 
 
@@ -2360,13 +3237,16 @@ supabaseClient
         (event, session) => {
 
             if(
-                event === "SIGNED_OUT" ||
+                event ===
+                    "SIGNED_OUT" ||
                 !session
             ){
 
                 window.location.href =
                     "index.html";
+
             }
+
         }
     );
 
