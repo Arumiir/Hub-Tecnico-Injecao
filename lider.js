@@ -29,6 +29,8 @@ let ocorrenciasAtuais = [];
 
 let occurrenceEditIndex = null;
 
+let nativeTimeTarget = null;
+
 
 /* =========================================================
    METAS
@@ -120,6 +122,9 @@ const observationInput =
 
 const deleteMachineButton =
     document.getElementById("deleteMachineButton");
+
+const nativeTimePicker =
+    document.getElementById("nativeTimePicker");
 
 
 /* =========================================================
@@ -247,6 +252,10 @@ function normalizeMachine(value){
 }
 
 
+/* =========================================================
+   HORAS
+========================================================= */
+
 function parseMinutes(value){
 
     if(
@@ -256,12 +265,28 @@ function parseMinutes(value){
         return 0;
     }
 
+
     const text =
-        String(value).trim();
+        String(value)
+            .trim();
+
 
     if(!text){
         return 0;
     }
+
+
+    /*
+        Formatos aceitos:
+
+        08:30
+        8:30
+        0830
+        830
+        08
+        8
+    */
+
 
     if(
         /^\d{1,3}:\d{2}$/.test(text)
@@ -270,32 +295,142 @@ function parseMinutes(value){
         const parts =
             text.split(":");
 
+
         const hours =
             Number(parts[0]);
+
 
         const minutes =
             Number(parts[1]);
 
+
         if(
             !Number.isInteger(hours) ||
             !Number.isInteger(minutes) ||
+            hours < 0 ||
+            minutes < 0 ||
             minutes > 59
         ){
+
             return 0;
+
         }
 
-        return hours * 60 + minutes;
+
+        return (
+            hours * 60 +
+            minutes
+        );
+
     }
+
 
     if(
-        /^\d+$/.test(text)
+        /^\d{3,4}$/.test(text)
     ){
 
-        return Number(text);
+        let digits =
+            text;
+
+
+        if(
+            digits.length === 3
+        ){
+
+            digits =
+                "0" + digits;
+
+        }
+
+
+        const hours =
+            Number(
+                digits.substring(
+                    0,
+                    2
+                )
+            );
+
+
+        const minutes =
+            Number(
+                digits.substring(
+                    2,
+                    4
+                )
+            );
+
+
+        if(
+            minutes > 59
+        ){
+
+            return 0;
+
+        }
+
+
+        return (
+            hours * 60 +
+            minutes
+        );
 
     }
 
+
+    if(
+        /^\d{1,2}$/.test(text)
+    ){
+
+        const hours =
+            Number(text);
+
+
+        return hours * 60;
+
+    }
+
+
     return 0;
+}
+
+
+function normalizeTimeInput(input){
+
+    if(!input){
+        return;
+    }
+
+
+    const text =
+        String(input.value || "")
+            .trim();
+
+
+    if(!text){
+        return;
+    }
+
+
+    const minutes =
+        parseMinutes(text);
+
+
+    if(
+        minutes <= 0 &&
+        !/^0(?::0{1,2})?$/.test(text)
+    ){
+
+        return;
+
+    }
+
+
+    input.value =
+        minutesToHHMM(
+            minutes
+        );
+
 }
 
 
@@ -322,8 +457,202 @@ function minutesToHHMM(minutes){
         ":" +
         String(mins).padStart(2,"0")
     );
+
 }
 
+
+/* =========================================================
+   SELETOR NATIVO DE HORA
+========================================================= */
+
+function abrirSeletorHora(targetId){
+
+    const target =
+        document.getElementById(
+            targetId
+        );
+
+
+    if(!target){
+        return;
+    }
+
+
+    nativeTimeTarget =
+        target;
+
+
+    const minutes =
+        parseMinutes(
+            target.value
+        );
+
+
+    if(
+        target.value &&
+        minutes >= 0
+    ){
+
+        const hours =
+            Math.floor(
+                minutes / 60
+            );
+
+        const mins =
+            minutes % 60;
+
+
+        /*
+            input type=time trabalha
+            normalmente com HH:MM.
+        */
+
+        if(
+            hours <= 23
+        ){
+
+            nativeTimePicker.value =
+                String(hours)
+                    .padStart(2,"0") +
+                ":" +
+                String(mins)
+                    .padStart(2,"0");
+
+        }else{
+
+            nativeTimePicker.value =
+                "00:00";
+
+        }
+
+    }else{
+
+        nativeTimePicker.value =
+            "00:00";
+
+    }
+
+
+    /*
+        showPicker() é o caminho ideal
+        nos navegadores que suportam.
+
+        O fallback usa click().
+    */
+
+    try{
+
+        if(
+            typeof nativeTimePicker.showPicker ===
+            "function"
+        ){
+
+            nativeTimePicker.showPicker();
+
+        }else{
+
+            nativeTimePicker.click();
+
+        }
+
+    }catch(error){
+
+        nativeTimePicker.focus();
+        nativeTimePicker.click();
+
+    }
+
+}
+
+
+nativeTimePicker.addEventListener(
+    "change",
+    () => {
+
+        if(!nativeTimeTarget){
+            return;
+        }
+
+
+        if(!nativeTimePicker.value){
+            return;
+        }
+
+
+        nativeTimeTarget.value =
+            nativeTimePicker.value;
+
+
+        nativeTimeTarget.dispatchEvent(
+            new Event(
+                "input",
+                {
+                    bubbles:true
+                }
+            )
+        );
+
+
+        nativeTimeTarget =
+            null;
+
+    }
+);
+
+
+document
+    .querySelectorAll(
+        ".time-picker-button"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    abrirSeletorHora(
+                        button.dataset.timeTarget
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   FORMATAÇÃO DOS CAMPOS DE HORA
+========================================================= */
+
+[
+    goodHoursInput,
+    replacementHoursInput,
+    balanceInput
+].forEach(
+    input => {
+
+        input.addEventListener(
+            "blur",
+            () => {
+
+                normalizeTimeInput(
+                    input
+                );
+
+                atualizarTotal();
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   OUTRAS UTILIDADES
+========================================================= */
 
 function getSectorMachines(sector){
 
@@ -358,6 +687,7 @@ function getSectorMachines(sector){
     }
 
     return [];
+
 }
 
 
@@ -371,16 +701,21 @@ function getStatusClass(totalMinutes){
     if(
         totalMinutes >= target
     ){
+
         return "status-green";
+
     }
 
     if(
         totalMinutes >= target - 48
     ){
+
         return "status-yellow";
+
     }
 
     return "status-red";
+
 }
 
 
@@ -403,6 +738,7 @@ function todayLocal(){
         ).padStart(2,"0");
 
     return `${year}-${month}-${day}`;
+
 }
 
 
@@ -429,6 +765,7 @@ async function carregarPerfil(){
             )
             .single();
 
+
     if(error){
 
         console.error(error);
@@ -439,8 +776,10 @@ async function carregarPerfil(){
 
     }
 
+
     currentProfile =
         data;
+
 
     leaderName.textContent =
         data.nome ||
@@ -460,8 +799,10 @@ async function carregarPerfil(){
         )
         .join("");
 
+
     userAvatar.textContent =
         initials || "U";
+
 }
 
 
@@ -503,10 +844,12 @@ async function renderMachineGrid(){
 
     machineGrid.innerHTML = "";
 
+
     const machines =
         getSectorMachines(
             sectorInput.value
         );
+
 
     const savedMachines =
         new Set();
@@ -564,13 +907,16 @@ async function renderMachineGrid(){
             const machine =
                 formatMachine(number);
 
+
             const button =
                 document.createElement(
                     "button"
                 );
 
+
             button.className =
                 "machine-button";
+
 
             if(
                 savedMachines.has(machine)
@@ -582,12 +928,15 @@ async function renderMachineGrid(){
 
             }
 
+
             button.textContent =
                 machine;
+
 
             button.onclick =
                 () =>
                     abrirMaquina(machine);
+
 
             machineGrid.appendChild(
                 button
@@ -608,6 +957,7 @@ async function abrirMaquina(machine){
     machineAtual =
         normalizeMachine(machine);
 
+
     machineTitle.textContent =
         machineAtual;
 
@@ -627,13 +977,16 @@ async function abrirMaquina(machine){
         "hidden"
     );
 
+
     contextSection.classList.add(
         "hidden"
     );
 
+
     machineListSection.classList.add(
         "hidden"
     );
+
 
     machineScreen.classList.remove(
         "hidden"
@@ -655,13 +1008,16 @@ async function fecharTelaMaquina(){
         "hidden"
     );
 
+
     mainHeader.classList.remove(
         "hidden"
     );
 
+
     contextSection.classList.remove(
         "hidden"
     );
+
 
     machineListSection.classList.remove(
         "hidden"
@@ -671,14 +1027,18 @@ async function fecharTelaMaquina(){
     machineAtual =
         null;
 
+
     apontamentoAtual =
         null;
+
 
     ocorrenciasAtuais =
         [];
 
+
     occurrenceEditIndex =
         null;
+
 
     occurrenceEditor.classList.add(
         "hidden"
@@ -699,8 +1059,10 @@ async function carregarFormulario(){
     apontamentoAtual =
         null;
 
+
     ocorrenciasAtuais =
         [];
+
 
     occurrenceEditIndex =
         null;
@@ -709,18 +1071,23 @@ async function carregarFormulario(){
     goodHoursInput.value =
         "";
 
+
     replacementHoursInput.value =
         "";
+
 
     balanceInput.value =
         "";
 
+
     observationInput.value =
         "";
+
 
     occurrenceEditor.classList.add(
         "hidden"
     );
+
 
     deleteMachineButton.classList.add(
         "hidden"
@@ -730,8 +1097,10 @@ async function carregarFormulario(){
     totalHours.textContent =
         "00:00";
 
+
     performanceBar.style.width =
         "0%";
+
 
     performanceBar.className =
         "performance-bar";
@@ -746,7 +1115,9 @@ async function carregarFormulario(){
     if(
         !maquinaNumero
     ){
+
         return;
+
     }
 
 
@@ -789,6 +1160,7 @@ async function carregarFormulario(){
         );
 
         return;
+
     }
 
 
@@ -832,6 +1204,14 @@ async function carregarFormulario(){
         );
 
 
+        /*
+            Compatibilidade com registros
+            antigos e novos.
+
+            O RPC novo trabalha com
+            "categoria".
+        */
+
         if(
             Array.isArray(
                 data.ocorrencias
@@ -843,6 +1223,7 @@ async function carregarFormulario(){
                     item => ({
 
                         tipo:
+                            item.categoria ||
                             item.tipo ||
                             "Outro",
 
@@ -887,6 +1268,7 @@ function renderOccurrences(){
                     "div"
                 );
 
+
             row.className =
                 "occurrence-item";
 
@@ -895,6 +1277,7 @@ function renderOccurrences(){
                 document.createElement(
                     "div"
                 );
+
 
             content.className =
                 "occurrence-content";
@@ -905,8 +1288,10 @@ function renderOccurrences(){
                     "div"
                 );
 
+
             type.className =
                 "occurrence-type";
+
 
             type.textContent =
                 item.tipo ||
@@ -918,8 +1303,10 @@ function renderOccurrences(){
                     "div"
                 );
 
+
             description.className =
                 "occurrence-description";
+
 
             description.textContent =
                 item.descricao ||
@@ -929,6 +1316,7 @@ function renderOccurrences(){
             content.appendChild(
                 type
             );
+
 
             content.appendChild(
                 description
@@ -940,6 +1328,7 @@ function renderOccurrences(){
                     "div"
                 );
 
+
             actions.className =
                 "occurrence-actions";
 
@@ -949,11 +1338,14 @@ function renderOccurrences(){
                     "button"
                 );
 
+
             edit.className =
                 "mini-button";
 
+
             edit.textContent =
                 "✎";
+
 
             edit.onclick =
                 () =>
@@ -965,11 +1357,14 @@ function renderOccurrences(){
                     "button"
                 );
 
+
             del.className =
                 "mini-button delete";
 
+
             del.textContent =
                 "×";
+
 
             del.onclick =
                 () =>
@@ -980,6 +1375,7 @@ function renderOccurrences(){
                 edit
             );
 
+
             actions.appendChild(
                 del
             );
@@ -988,6 +1384,7 @@ function renderOccurrences(){
             row.appendChild(
                 content
             );
+
 
             row.appendChild(
                 actions
@@ -1009,15 +1406,19 @@ function abrirEditorOcorrencia(){
     occurrenceEditIndex =
         null;
 
+
     occurrenceType.value =
         "Mecânico";
+
 
     occurrenceDescription.value =
         "";
 
+
     occurrenceEditor.classList.remove(
         "hidden"
     );
+
 
     occurrenceDescription.focus();
 
@@ -1029,8 +1430,10 @@ function cancelarEditorOcorrencia(){
     occurrenceEditIndex =
         null;
 
+
     occurrenceDescription.value =
         "";
+
 
     occurrenceEditor.classList.add(
         "hidden"
@@ -1044,24 +1447,30 @@ function editarOcorrencia(index){
     const item =
         ocorrenciasAtuais[index];
 
+
     if(!item){
         return;
     }
 
+
     occurrenceEditIndex =
         index;
+
 
     occurrenceType.value =
         item.tipo ||
         "Outro";
 
+
     occurrenceDescription.value =
         item.descricao ||
         "";
 
+
     occurrenceEditor.classList.remove(
         "hidden"
     );
+
 
     occurrenceDescription.focus();
 
@@ -1072,6 +1481,7 @@ function salvarOcorrenciaLocal(){
 
     const tipo =
         occurrenceType.value;
+
 
     const descricao =
         occurrenceDescription.value
@@ -1085,6 +1495,7 @@ function salvarOcorrenciaLocal(){
         );
 
         return;
+
     }
 
 
@@ -1117,8 +1528,10 @@ function salvarOcorrenciaLocal(){
     occurrenceEditIndex =
         null;
 
+
     occurrenceDescription.value =
         "";
+
 
     occurrenceEditor.classList.add(
         "hidden"
@@ -1137,7 +1550,9 @@ function removerOcorrencia(index){
             "Excluir esta ocorrência?"
         )
     ){
+
         return;
+
     }
 
 
@@ -1153,7 +1568,7 @@ function removerOcorrencia(index){
 
 
 /* =========================================================
-   HORAS
+   HORAS / TOTAL
 ========================================================= */
 
 function atualizarTotal(){
@@ -1163,10 +1578,12 @@ function atualizarTotal(){
             goodHoursInput.value
         );
 
+
     const replacement =
         parseMinutes(
             replacementHoursInput.value
         );
+
 
     const total =
         good + replacement;
@@ -1222,6 +1639,7 @@ async function salvarMaquina(){
         );
 
         return;
+
     }
 
 
@@ -1251,6 +1669,7 @@ async function salvarMaquina(){
             );
 
             return;
+
         }
 
 
@@ -1282,12 +1701,18 @@ async function salvarMaquina(){
                 .trim();
 
 
+        /*
+            IMPORTANTE:
+            O RPC espera "categoria",
+            não "tipo".
+        */
+
         const ocorrencias =
             ocorrenciasAtuais
                 .map(
                     item => ({
 
-                        tipo:
+                        categoria:
                             item.tipo ||
                             "Outro",
 
@@ -1423,6 +1848,7 @@ async function excluirMaquina(){
         );
 
         return;
+
     }
 
 
@@ -1494,6 +1920,7 @@ async function excluirMaquina(){
             "Erro ao excluir:",
             error
         );
+
 
         showToast(
             "Não foi possível excluir. " +
@@ -1590,6 +2017,12 @@ replacementHoursInput.addEventListener(
 );
 
 
+balanceInput.addEventListener(
+    "input",
+    atualizarTotal
+);
+
+
 shiftInput.addEventListener(
     "change",
     async () => {
@@ -1663,7 +2096,9 @@ supabaseClient.auth.onAuthStateChange(
                 "index.html";
 
             return;
+
         }
+
 
         currentUser =
             session.user;
