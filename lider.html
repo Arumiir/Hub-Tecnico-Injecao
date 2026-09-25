@@ -211,13 +211,28 @@
                         Hora boa
                     </label>
 
-                    <input
-                        type="text"
-                        id="goodHours"
-                        inputmode="numeric"
-                        placeholder="00:00"
-                        maxlength="5"
-                    >
+                    <div class="time-input-wrapper">
+
+                        <input
+                            type="text"
+                            id="goodHours"
+                            inputmode="text"
+                            placeholder="00:00"
+                            maxlength="5"
+                            autocomplete="off"
+                        >
+
+                        <button
+                            type="button"
+                            class="time-picker-button"
+                            data-time-target="goodHours"
+                            aria-label="Selecionar hora boa"
+                            title="Selecionar hora"
+                        >
+                            <span>◷</span>
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -228,13 +243,28 @@
                         Reposição
                     </label>
 
-                    <input
-                        type="text"
-                        id="replacementHours"
-                        inputmode="numeric"
-                        placeholder="00:00"
-                        maxlength="5"
-                    >
+                    <div class="time-input-wrapper">
+
+                        <input
+                            type="text"
+                            id="replacementHours"
+                            inputmode="text"
+                            placeholder="00:00"
+                            maxlength="5"
+                            autocomplete="off"
+                        >
+
+                        <button
+                            type="button"
+                            class="time-picker-button"
+                            data-time-target="replacementHours"
+                            aria-label="Selecionar reposição"
+                            title="Selecionar hora"
+                        >
+                            <span>◷</span>
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -273,13 +303,28 @@
                     Saldo
                 </label>
 
-                <input
-                    type="text"
-                    id="balance"
-                    inputmode="numeric"
-                    placeholder="00:00"
-                    maxlength="5"
-                >
+                <div class="time-input-wrapper saldo-time">
+
+                    <input
+                        type="text"
+                        id="balance"
+                        inputmode="text"
+                        placeholder="00:00"
+                        maxlength="5"
+                        autocomplete="off"
+                    >
+
+                    <button
+                        type="button"
+                        class="time-picker-button"
+                        data-time-target="balance"
+                        aria-label="Selecionar saldo"
+                        title="Selecionar hora"
+                    >
+                        <span>◷</span>
+                    </button>
+
+                </div>
 
             </div>
 
@@ -419,6 +464,17 @@
     </section>
 
 </main>
+
+
+<!-- SELETOR NATIVO DE HORA -->
+
+<input
+    type="time"
+    id="nativeTimePicker"
+    class="native-time-picker"
+    step="60"
+    aria-hidden="true"
+>
 
 
 <div
