@@ -1,723 +1,936 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#F2F2F7">
-<title>Controle de Produção — Supervisor</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-:root{
-    --bg:#f2f2f7;
-    --card:#ffffff;
-    --text:#1c1c1e;
-    --muted:#8e8e93;
-    --line:#e5e5ea;
-
-    --blue:#007aff;
-    --blue-soft:#eaf3ff;
-
-    --green:#34c759;
-    --green-soft:#e9f8ed;
-
-    --yellow:#ffcc00;
-    --yellow-soft:#fff8d9;
-
-    --red:#ff3b30;
-    --red-soft:#ffebe9;
-
-    --danger:#ff3b30;
-
-    --shadow:0 2px 12px rgba(0,0,0,.045);
-    --radius:18px;
-}
-
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
-}
-
-html{
-    background:var(--bg);
-}
-
-body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "SF Pro Display",
-        "SF Pro Text",
-        "Helvetica Neue",
-        Arial,
-        sans-serif;
-    -webkit-font-smoothing:antialiased;
-}
-
-button,
-input,
-select,
-textarea{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-button:disabled{
-    opacity:.55;
-    cursor:default;
-}
-
-.hidden{
-    display:none !important;
-}
-
-/* =========================
-   APP
-========================= */
-
-.container{
-    width:min(100%, 760px);
-    margin:0 auto;
-    padding:
-        max(14px, env(safe-area-inset-top))
-        16px
-        calc(28px + env(safe-area-inset-bottom));
-}
-
-/* =========================
-   HEADER
-========================= */
-
-.header{
-    position:sticky;
-    top:0;
-    z-index:20;
-
-    margin:
-        calc(-1 * max(14px, env(safe-area-inset-top)))
-        -16px
-        18px;
-
-    padding:
-        calc(16px + max(14px, env(safe-area-inset-top)))
-        18px
-        16px;
-
-    background:rgba(242,242,247,.88);
-    backdrop-filter:blur(22px);
-    -webkit-backdrop-filter:blur(22px);
-
-    border-bottom:1px solid rgba(0,0,0,.06);
-}
-
-.header-top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:14px;
-}
-
-.header-brand{
-    min-width:0;
-}
-
-.header h1{
-    margin:0;
-    font-size:21px;
-    line-height:1.15;
-    font-weight:750;
-    letter-spacing:-.45px;
-}
-
-.header-subtitle{
-    margin:5px 0 0;
-    color:var(--muted);
-    font-size:14px;
-    font-weight:500;
-}
-
-.user-name{
-    margin-top:14px;
-    font-size:14px;
-    font-weight:650;
-    color:var(--text);
-}
-
-.logout{
-    flex:none;
-    border:0;
-    background:rgba(255,255,255,.8);
-    color:var(--blue);
-    border-radius:12px;
-    padding:9px 13px;
-    font-size:14px;
-    font-weight:600;
-    box-shadow:0 1px 4px rgba(0,0,0,.04);
-}
-
-/* =========================
-   CONTEXTO
-========================= */
-
-.controls{
-    background:var(--card);
-    border-radius:var(--radius);
-    padding:18px;
-    margin-bottom:14px;
-    box-shadow:var(--shadow);
-}
-
-.control-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-}
-
-.field{
-    min-width:0;
-}
-
-.field label{
-    display:block;
-    margin:0 0 7px 2px;
-    color:var(--muted);
-    font-size:12px;
-    font-weight:650;
-}
-
-input,
-select,
-textarea{
-    width:100%;
-    border:1px solid var(--line);
-    border-radius:13px;
-    padding:12px 13px;
-    background:#fff;
-    color:var(--text);
-    outline:none;
-    transition:
-        border-color .15s ease,
-        box-shadow .15s ease,
-        background .15s ease;
-}
-
-input,
-select{
-    min-height:46px;
-}
-
-textarea{
-    resize:vertical;
-    line-height:1.4;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-    border-color:rgba(0,122,255,.45);
-    box-shadow:0 0 0 3px rgba(0,122,255,.10);
-}
-
-/* =========================
-   TABS
-========================= */
-
-.tabs{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:5px;
-
-    padding:4px;
-    margin-bottom:16px;
-
-    background:#e5e5ea;
-    border-radius:14px;
-}
-
-.tab{
-    border:0;
-    background:transparent;
-    color:#6d6d72;
-    padding:10px 12px;
-    border-radius:11px;
-    font-size:14px;
-    font-weight:650;
-    transition:.18s ease;
-}
-
-.tab.active{
-    background:#fff;
-    color:var(--text);
-    box-shadow:0 1px 4px rgba(0,0,0,.08);
-}
-
-/* =========================
-   CARDS DE MÁQUINA
-========================= */
-
-.machine-card{
-    background:var(--card);
-    border-radius:var(--radius);
-    padding:18px;
-    margin-bottom:13px;
-    box-shadow:var(--shadow);
-}
-
-.machine-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    margin-bottom:16px;
-}
-
-.machine-title{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    font-size:19px;
-    font-weight:750;
-    letter-spacing:-.3px;
-}
-
-.machine-title::before{
-    content:"";
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:var(--blue);
-    box-shadow:0 0 0 4px var(--blue-soft);
-}
-
-.leader-name{
-    color:var(--muted);
-    font-size:12px;
-    font-weight:500;
-    text-align:right;
-}
-
-/* =========================
-   HORAS
-========================= */
-
-.hours-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-
-.total-box{
-    grid-column:1 / -1;
-    border-radius:14px;
-    padding:12px 14px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    min-height:58px;
-    transition:.15s ease;
-}
-
-.total-box.status-green{
-    background:var(--green-soft);
-    color:#248a3d;
-}
-
-.total-box.status-yellow{
-    background:var(--yellow-soft);
-    color:#9a7900;
-}
-
-.total-box.status-red{
-    background:var(--red-soft);
-    color:#c72e25;
-}
-
-.total-label{
-    font-size:12px;
-    font-weight:650;
-}
-
-.total-value{
-    font-size:19px;
-    font-weight:750;
-    letter-spacing:-.3px;
-}
-
-.section-label{
-    display:block;
-    margin:17px 0 7px 2px;
-    color:var(--muted);
-    font-size:12px;
-    font-weight:650;
-}
-
-.save-row{
-    display:grid;
-    grid-template-columns:1fr auto;
-    gap:9px;
-    margin-top:14px;
-}
-
-.save-btn{
-    min-height:46px;
-    border:0;
-    background:var(--green);
-    color:#fff;
-    border-radius:13px;
-    padding:11px 15px;
-    font-weight:700;
-    box-shadow:0 2px 6px rgba(52,199,89,.18);
-}
-
-.reset-btn{
-    min-height:46px;
-    border:0;
-    background:#f2f2f7;
-    color:var(--blue);
-    border-radius:13px;
-    padding:11px 15px;
-    font-weight:650;
-}
-
-/* =========================
-   OBSERVAÇÃO DO LÍDER
-========================= */
-
-.leader-observation{
-    background:#f7f7f9;
-    border:1px solid var(--line);
-    border-radius:13px;
-    padding:12px 13px;
-    font-size:13px;
-    line-height:1.45;
-    color:#48484a;
-}
-
-/* =========================
-   FECHAMENTO
-========================= */
-
-.closing-card{
-    background:var(--card);
-    border-radius:var(--radius);
-    padding:18px;
-    margin-top:15px;
-    box-shadow:var(--shadow);
-}
-
-.closing-card h2{
-    margin:0 0 4px;
-    font-size:18px;
-    font-weight:750;
-    letter-spacing:-.2px;
-}
-
-.closing-subtitle{
-    margin:0 0 13px;
-    color:var(--muted);
-    font-size:13px;
-}
-
-.closing-text{
-    min-height:250px;
-    resize:vertical;
-    background:#f7f7f9;
-    border-color:var(--line);
-    font-family:
-        ui-monospace,
-        SFMono-Regular,
-        Menlo,
-        Monaco,
-        Consolas,
-        monospace;
-    font-size:13px;
-    line-height:1.55;
-}
-
-.copy-btn{
-    width:100%;
-    min-height:46px;
-    margin-top:10px;
-    border:0;
-    background:var(--blue);
-    color:#fff;
-    border-radius:13px;
-    padding:11px 15px;
-    font-weight:700;
-}
-
-/* =========================
-   DRIVE
-========================= */
-
-.drive-card{
-    background:var(--card);
-    border-radius:var(--radius);
-    padding:18px;
-    margin-bottom:13px;
-    box-shadow:var(--shadow);
-}
-
-.drive-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    margin-bottom:11px;
-}
-
-.drive-title{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    font-size:19px;
-    font-weight:750;
-    letter-spacing:-.3px;
-}
-
-.drive-title::before{
-    content:"";
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:var(--blue);
-    box-shadow:0 0 0 4px var(--blue-soft);
-}
-
-.problem{
-    padding:11px 0;
-    border-bottom:1px solid #f0f0f2;
-    font-size:14px;
-    line-height:1.45;
-    color:#3a3a3c;
-}
-
-.problem:last-of-type{
-    border-bottom:0;
-}
-
-.problem-category{
-    font-weight:700;
-    color:var(--text);
-}
-
-.no-problems{
-    padding:12px;
-    border-radius:12px;
-    background:#f7f7f9;
-    color:var(--muted);
-    font-size:13px;
-}
-
-.drive-card .copy-btn{
-    margin-top:13px;
-    background:#f2f2f7;
-    color:var(--blue);
-}
-
-/* =========================
-   LOADING / EMPTY
-========================= */
-
-.loading,
-.empty{
-    background:var(--card);
-    border-radius:var(--radius);
-    padding:32px 20px;
-    text-align:center;
-    color:var(--muted);
-    box-shadow:var(--shadow);
-    font-size:14px;
-}
-
-.loading{
-    min-height:100px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-/* =========================
-   TOAST
-========================= */
-
-.toast{
-    position:fixed;
-    left:50%;
-    bottom:
-        calc(20px + env(safe-area-inset-bottom));
-
-    transform:
-        translate(-50%, 10px);
-
-    width:max-content;
-    max-width:calc(100% - 32px);
-
-    background:rgba(28,28,30,.94);
-    color:#fff;
-
-    padding:11px 16px;
-    border-radius:14px;
-
-    font-size:13px;
-    font-weight:600;
-
-    opacity:0;
-    pointer-events:none;
-
-    transition:
-        opacity .2s ease,
-        transform .2s ease;
-
-    z-index:1000;
-
-    box-shadow:0 5px 20px rgba(0,0,0,.18);
-}
-
-.toast.show{
-    opacity:1;
-    transform:translate(-50%, 0);
-}
-
-/* =========================
-   RESPONSIVO
-========================= */
-
-@media(max-width:520px){
-
-    .container{
-        width:100%;
-        padding-left:12px;
-        padding-right:12px;
-    }
-
-    .header{
-        margin-left:-12px;
-        margin-right:-12px;
-        padding-left:16px;
-        padding-right:16px;
-    }
-
-    .header h1{
-        font-size:20px;
-    }
-
-    .controls{
-        padding:15px;
-    }
-
-    .control-grid{
-        grid-template-columns:1fr 1fr;
-        gap:9px;
-    }
-
-    .machine-card,
-    .drive-card,
-    .closing-card{
-        padding:16px;
-    }
-
-    .machine-header{
-        align-items:flex-start;
-    }
-
-    .leader-name{
-        max-width:45%;
-    }
-}
-
-@media(max-width:360px){
-
-    .header h1{
-        font-size:18px;
-    }
-
-    .logout{
-        padding:8px 10px;
-    }
-
-    .machine-title,
-    .drive-title{
-        font-size:18px;
-    }
-
-    .save-row{
-        grid-template-columns:1fr;
-    }
-
-    .reset-btn{
-        width:100%;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#F2F2F7">
+    <title>Controle de Produção</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root{
+            --bg:#F2F2F7;
+            --card:#FFFFFF;
+            --text:#111111;
+            --secondary:#6E6E73;
+            --line:#E5E5EA;
+            --blue:#007AFF;
+            --green:#34C759;
+            --red:#FF3B30;
+            --yellow:#FFCC00;
+            --shadow:0 2px 12px rgba(0,0,0,.06);
+            --radius:18px;
+        }
+
+        *{
+            box-sizing:border-box;
+            -webkit-tap-highlight-color:transparent;
+        }
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            margin:0;
+            background:var(--bg);
+            color:var(--text);
+            font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
+                "SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+            min-height:100vh;
+            padding-bottom:env(safe-area-inset-bottom);
+        }
+
+        button,
+        input,
+        select,
+        textarea{
+            font:inherit;
+        }
+
+        button{
+            border:0;
+            cursor:pointer;
+        }
+
+        .hidden{
+            display:none !important;
+        }
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .app-header{
+            position:sticky;
+            top:0;
+            z-index:50;
+            padding:
+                calc(12px + env(safe-area-inset-top))
+                18px
+                12px;
+            background:rgba(242,242,247,.88);
+            backdrop-filter:blur(18px);
+            -webkit-backdrop-filter:blur(18px);
+            border-bottom:1px solid rgba(0,0,0,.05);
+        }
+
+        .header-inner{
+            max-width:760px;
+            margin:auto;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+        }
+
+        .app-title{
+            font-size:17px;
+            font-weight:700;
+            letter-spacing:-.2px;
+        }
+
+        .app-subtitle{
+            color:var(--secondary);
+            font-size:12px;
+            margin-top:2px;
+        }
+
+        .header-actions{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            flex-shrink:0;
+        }
+
+        .user-avatar{
+            width:38px;
+            height:38px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:#111;
+            color:#fff;
+            font-size:13px;
+            font-weight:700;
+            flex-shrink:0;
+        }
+
+        .logout-button{
+            min-height:38px;
+            padding:0 13px;
+            border-radius:12px;
+            background:#FFFFFF;
+            color:var(--red);
+            font-size:13px;
+            font-weight:650;
+            box-shadow:var(--shadow);
+        }
+
+        .logout-button:active{
+            transform:scale(.96);
+        }
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        main{
+            width:100%;
+            max-width:760px;
+            margin:0 auto;
+            padding:18px;
+        }
+
+        /* =====================================================
+           CONTEXTO
+        ===================================================== */
+
+        .supervisor-label{
+            color:var(--secondary);
+            font-size:12px;
+            font-weight:600;
+            text-transform:uppercase;
+            letter-spacing:.5px;
+        }
+
+        .supervisor-name{
+            font-size:22px;
+            font-weight:700;
+            letter-spacing:-.5px;
+            margin-top:3px;
+        }
+
+        .context-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+            margin-top:18px;
+        }
+
+        .context-date{
+            grid-column:1 / -1;
+        }
+
+        .field-card{
+            background:var(--card);
+            border-radius:var(--radius);
+            padding:14px 15px;
+            box-shadow:var(--shadow);
+        }
+
+        .field-label{
+            color:var(--secondary);
+            font-size:12px;
+            font-weight:600;
+            margin-bottom:7px;
+        }
+
+        .field-card input,
+        .field-card select{
+            width:100%;
+            border:0;
+            outline:0;
+            background:transparent;
+            color:var(--text);
+            font-size:16px;
+            font-weight:600;
+            padding:0;
+        }
+
+        input[type="date"]{
+            min-height:24px;
+        }
+
+        /* =====================================================
+           ABAS
+        ===================================================== */
+
+        .tabs{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:5px;
+            padding:4px;
+            background:#E5E5EA;
+            border-radius:15px;
+            margin-top:22px;
+        }
+
+        .tab{
+            min-height:42px;
+            border-radius:12px;
+            background:transparent;
+            color:#6E6E73;
+            font-size:14px;
+            font-weight:700;
+        }
+
+        .tab.active{
+            background:#FFFFFF;
+            color:#111111;
+            box-shadow:0 1px 4px rgba(0,0,0,.08);
+        }
+
+        /* =====================================================
+           SECTION
+        ===================================================== */
+
+        .section{
+            margin-top:22px;
+        }
+
+        .section-title{
+            font-size:13px;
+            font-weight:700;
+            color:var(--secondary);
+            text-transform:uppercase;
+            letter-spacing:.5px;
+            margin:0 4px 10px;
+        }
+
+        /* =====================================================
+           MACHINE CARDS
+        ===================================================== */
+
+        .machine-card{
+            background:#FFFFFF;
+            border-radius:var(--radius);
+            box-shadow:var(--shadow);
+            margin-bottom:12px;
+            overflow:hidden;
+        }
+
+        .machine-card-header{
+            width:100%;
+            padding:16px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            background:#FFFFFF;
+            text-align:left;
+        }
+
+        .machine-card-header:active{
+            background:#F8F8FA;
+        }
+
+        .machine-left{
+            min-width:0;
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+
+        .machine-dot{
+            width:9px;
+            height:9px;
+            border-radius:50%;
+            background:var(--blue);
+            box-shadow:0 0 0 4px #EAF3FF;
+            flex-shrink:0;
+        }
+
+        .machine-name{
+            font-size:18px;
+            font-weight:750;
+            letter-spacing:-.3px;
+        }
+
+        .machine-summary{
+            color:var(--secondary);
+            font-size:12px;
+            margin-top:3px;
+        }
+
+        .machine-right{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            flex-shrink:0;
+        }
+
+        .machine-total{
+            font-size:16px;
+            font-weight:750;
+        }
+
+        .chevron{
+            color:#8E8E93;
+            font-size:22px;
+            line-height:1;
+            transition:.18s ease;
+        }
+
+        .machine-card.open .chevron{
+            transform:rotate(90deg);
+        }
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status-green{
+            color:#248A3D;
+        }
+
+        .status-yellow{
+            color:#9A7900;
+        }
+
+        .status-red{
+            color:#C72E25;
+        }
+
+        .status-dot-green{
+            background:var(--green);
+        }
+
+        .status-dot-yellow{
+            background:var(--yellow);
+        }
+
+        .status-dot-red{
+            background:var(--red);
+        }
+
+        /* =====================================================
+           MACHINE DETAILS
+        ===================================================== */
+
+        .machine-details{
+            padding:0 16px 16px;
+            border-top:1px solid #F0F0F2;
+        }
+
+        .details-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
+            padding-top:14px;
+        }
+
+        .detail-box{
+            background:#F2F2F7;
+            border-radius:14px;
+            padding:12px;
+        }
+
+        .detail-label{
+            color:var(--secondary);
+            font-size:11px;
+            font-weight:650;
+            margin-bottom:4px;
+        }
+
+        .detail-value{
+            font-size:16px;
+            font-weight:700;
+        }
+
+        .edit-actions{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:9px;
+            margin-top:13px;
+        }
+
+        .edit-button,
+        .note-button{
+            min-height:44px;
+            border-radius:13px;
+            font-size:14px;
+            font-weight:700;
+        }
+
+        .edit-button{
+            background:#F2F2F7;
+            color:var(--blue);
+        }
+
+        .note-button{
+            background:#EAF3FF;
+            color:var(--blue);
+        }
+
+        /* =====================================================
+           EDITOR
+        ===================================================== */
+
+        .editor{
+            margin-top:13px;
+            padding:14px;
+            background:#F2F2F7;
+            border-radius:15px;
+        }
+
+        .editor-title{
+            font-size:14px;
+            font-weight:750;
+            margin-bottom:11px;
+        }
+
+        .editor-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:9px;
+        }
+
+        .editor-field label{
+            display:block;
+            color:var(--secondary);
+            font-size:11px;
+            font-weight:650;
+            margin:0 0 6px 2px;
+        }
+
+        .editor-field input,
+        .editor textarea{
+            width:100%;
+            border:1px solid var(--line);
+            border-radius:12px;
+            background:#fff;
+            padding:11px;
+            outline:0;
+            color:var(--text);
+            font-size:15px;
+            font-weight:600;
+        }
+
+        .editor textarea{
+            min-height:78px;
+            resize:vertical;
+            font-weight:500;
+            line-height:1.4;
+        }
+
+        .editor-note{
+            margin-top:10px;
+        }
+
+        .editor-actions{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:8px;
+            margin-top:10px;
+        }
+
+        .editor-cancel{
+            min-height:44px;
+            border-radius:12px;
+            background:#fff;
+            color:#111;
+            font-weight:700;
+        }
+
+        .editor-save{
+            min-height:44px;
+            border-radius:12px;
+            background:var(--green);
+            color:#fff;
+            font-weight:700;
+        }
+
+        /* =====================================================
+           OBSERVAÇÃO
+        ===================================================== */
+
+        .observation-box{
+            margin-top:12px;
+            padding:12px;
+            border-radius:13px;
+            background:#F7F7F9;
+            border:1px solid var(--line);
+        }
+
+        .observation-title{
+            color:var(--secondary);
+            font-size:11px;
+            font-weight:700;
+            margin-bottom:5px;
+        }
+
+        .observation-text{
+            color:#48484A;
+            font-size:13px;
+            line-height:1.45;
+            white-space:pre-wrap;
+        }
+
+        /* =====================================================
+           NOTA SUPERVISOR
+        ===================================================== */
+
+        .supervisor-note{
+            margin-top:12px;
+            padding:12px;
+            border-radius:13px;
+            background:#EAF3FF;
+        }
+
+        .supervisor-note-title{
+            color:var(--blue);
+            font-size:11px;
+            font-weight:700;
+            margin-bottom:5px;
+        }
+
+        .supervisor-note-text{
+            color:#174A78;
+            font-size:13px;
+            line-height:1.45;
+            white-space:pre-wrap;
+        }
+
+        /* =====================================================
+           FECHAMENTO
+        ===================================================== */
+
+        .review-card{
+            margin-top:18px;
+            background:#FFFFFF;
+            border-radius:var(--radius);
+            padding:16px;
+            box-shadow:var(--shadow);
+        }
+
+        .review-title{
+            font-size:16px;
+            font-weight:750;
+            margin-bottom:4px;
+        }
+
+        .review-subtitle{
+            color:var(--secondary);
+            font-size:13px;
+            line-height:1.4;
+            margin-bottom:13px;
+        }
+
+        .review-button{
+            width:100%;
+            min-height:50px;
+            border-radius:15px;
+            background:var(--green);
+            color:#fff;
+            font-size:15px;
+            font-weight:750;
+            box-shadow:0 4px 13px rgba(52,199,89,.18);
+        }
+
+        .reviewed-state{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            padding:12px 13px;
+            border-radius:13px;
+            background:#E9F8ED;
+            color:#248A3D;
+            font-size:14px;
+            font-weight:700;
+        }
+
+        .reviewed-change{
+            border:0;
+            background:transparent;
+            color:var(--blue);
+            font-size:13px;
+            font-weight:700;
+            padding:4px;
+        }
+
+        .closing-card{
+            margin-top:12px;
+            background:#FFFFFF;
+            border-radius:var(--radius);
+            padding:16px;
+            box-shadow:var(--shadow);
+        }
+
+        .closing-title{
+            font-size:17px;
+            font-weight:750;
+            margin-bottom:4px;
+        }
+
+        .closing-subtitle{
+            color:var(--secondary);
+            font-size:13px;
+            margin-bottom:12px;
+        }
+
+        .closing-text{
+            width:100%;
+            min-height:220px;
+            resize:vertical;
+            border:1px solid var(--line);
+            border-radius:14px;
+            background:#F7F7F9;
+            padding:13px;
+            outline:0;
+            color:var(--text);
+            font-family:
+                ui-monospace,
+                SFMono-Regular,
+                Menlo,
+                Monaco,
+                Consolas,
+                monospace;
+            font-size:13px;
+            line-height:1.55;
+        }
+
+        .send-button{
+            width:100%;
+            min-height:50px;
+            margin-top:10px;
+            border-radius:15px;
+            background:var(--blue);
+            color:#fff;
+            font-size:15px;
+            font-weight:750;
+        }
+
+        .copy-closing{
+            width:100%;
+            min-height:44px;
+            margin-top:9px;
+            border-radius:13px;
+            background:#F2F2F7;
+            color:var(--blue);
+            font-size:14px;
+            font-weight:700;
+        }
+
+        /* =====================================================
+           DRIVE
+        ===================================================== */
+
+        .drive-card{
+            background:#FFFFFF;
+            border-radius:var(--radius);
+            padding:16px;
+            margin-bottom:12px;
+            box-shadow:var(--shadow);
+        }
+
+        .drive-header{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            margin-bottom:10px;
+        }
+
+        .drive-machine{
+            font-size:19px;
+            font-weight:750;
+            letter-spacing:-.3px;
+        }
+
+        .drive-dot{
+            width:8px;
+            height:8px;
+            border-radius:50%;
+            background:var(--blue);
+            box-shadow:0 0 0 4px #EAF3FF;
+        }
+
+        .problem-list{
+            display:flex;
+            flex-direction:column;
+        }
+
+        .problem{
+            padding:11px 0;
+            border-bottom:1px solid #F0F0F2;
+            color:#3A3A3C;
+            font-size:14px;
+            line-height:1.45;
+        }
+
+        .problem:last-child{
+            border-bottom:0;
+        }
+
+        .problem-category{
+            font-weight:700;
+            color:var(--text);
+        }
+
+        .copy-problems{
+            width:100%;
+            min-height:45px;
+            margin-top:12px;
+            border-radius:13px;
+            background:#F2F2F7;
+            color:var(--blue);
+            font-size:14px;
+            font-weight:700;
+        }
+
+        /* =====================================================
+           EMPTY / LOADING
+        ===================================================== */
+
+        .empty{
+            background:#FFFFFF;
+            border-radius:var(--radius);
+            padding:30px 20px;
+            text-align:center;
+            color:var(--secondary);
+            box-shadow:var(--shadow);
+            font-size:14px;
+            line-height:1.45;
+        }
+
+        /* =====================================================
+           TOAST
+        ===================================================== */
+
+        .toast{
+            position:fixed;
+            left:50%;
+            bottom:calc(22px + env(safe-area-inset-bottom));
+            transform:translate(-50%,20px);
+            background:rgba(20,20,20,.94);
+            color:#fff;
+            padding:12px 17px;
+            border-radius:999px;
+            font-size:14px;
+            font-weight:600;
+            z-index:100;
+            opacity:0;
+            pointer-events:none;
+            transition:.22s ease;
+            white-space:nowrap;
+            max-width:calc(100vw - 30px);
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        .toast.show{
+            opacity:1;
+            transform:translate(-50%,0);
+        }
+
+        /* =====================================================
+           LOADING
+        ===================================================== */
+
+        .loading{
+            position:fixed;
+            inset:0;
+            background:rgba(242,242,247,.72);
+            backdrop-filter:blur(8px);
+            -webkit-backdrop-filter:blur(8px);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:200;
+        }
+
+        .loading-box{
+            background:#fff;
+            padding:20px 24px;
+            border-radius:18px;
+            box-shadow:var(--shadow);
+            font-size:15px;
+            font-weight:600;
+        }
+
+        @media(max-width:520px){
+
+            main{
+                padding:16px;
+            }
+
+            .machine-card-header{
+                padding:15px;
+            }
+
+            .machine-details{
+                padding-left:15px;
+                padding-right:15px;
+                padding-bottom:15px;
+            }
+
+        }
+
+        @media(max-width:380px){
+
+            .app-title{
+                font-size:15px;
+            }
+
+            .logout-button{
+                padding:0 10px;
+            }
+
+            .user-avatar{
+                width:34px;
+                height:34px;
+            }
+
+            .machine-total{
+                font-size:15px;
+            }
+
+        }
+
+        @media(max-width:350px){
+
+            .details-grid,
+            .editor-grid,
+            .edit-actions,
+            .editor-actions{
+                grid-template-columns:1fr;
+            }
+
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+<header class="app-header">
 
-    <header class="header">
+    <div class="header-inner">
 
-        <div class="header-top">
+        <div>
 
-            <div class="header-brand">
-                <h1>CONTROLE DE PRODUÇÃO</h1>
+            <div class="app-title">
+                CONTROLE DE PRODUÇÃO
+            </div>
 
-                <p class="header-subtitle">
-                    Setor de Injeção · Supervisor
-                </p>
+            <div class="app-subtitle">
+                Setor de Injeção
+            </div>
+
+        </div>
+
+        <div class="header-actions">
+
+            <div
+                class="user-avatar"
+                id="userAvatar">
+                --
             </div>
 
             <button
-                class="logout"
-                onclick="logout()">
+                class="logout-button"
+                onclick="sair()">
                 Sair
             </button>
 
         </div>
 
-        <div
-            id="userName"
-            class="user-name">
+    </div>
+
+</header>
+
+
+<main>
+
+    <!-- =====================================================
+         CONTEXTO
+    ====================================================== -->
+
+    <section>
+
+        <div class="supervisor-label">
+            SUPERVISOR
         </div>
 
-    </header>
+        <div
+            class="supervisor-name"
+            id="supervisorName">
+            Carregando...
+        </div>
 
 
-    <!-- =========================
-         FILTROS
-    ========================= -->
+        <div class="context-grid">
 
-    <section class="controls">
+            <div class="field-card context-date">
 
-        <div class="control-grid">
-
-            <!-- DATA -->
-
-            <div class="field">
-                <label for="data">
+                <div class="field-label">
                     Data
-                </label>
+                </div>
 
                 <input
                     type="date"
                     id="data">
+
             </div>
 
 
-            <!-- TURNO -->
+            <div class="field-card">
 
-            <div class="field">
-                <label for="turno">
+                <div class="field-label">
                     Turno
-                </label>
+                </div>
 
                 <select id="turno">
 
@@ -734,15 +947,15 @@ textarea:focus{
                     </option>
 
                 </select>
+
             </div>
 
 
-            <!-- SETOR -->
+            <div class="field-card">
 
-            <div class="field">
-                <label for="setor">
+                <div class="field-label">
                     Setor
-                </label>
+                </div>
 
                 <select id="setor">
 
@@ -759,6 +972,7 @@ textarea:focus{
                     </option>
 
                 </select>
+
             </div>
 
         </div>
@@ -766,9 +980,9 @@ textarea:focus{
     </section>
 
 
-    <!-- =========================
+    <!-- =====================================================
          ABAS
-    ========================= -->
+    ====================================================== -->
 
     <div class="tabs">
 
@@ -778,7 +992,6 @@ textarea:focus{
             onclick="mostrarAba('horas')">
             Horas baixadas
         </button>
-
 
         <button
             id="tabDrive"
@@ -790,79 +1003,127 @@ textarea:focus{
     </div>
 
 
-    <main>
+    <!-- =====================================================
+         HORAS
+    ====================================================== -->
 
-        <!-- =========================
-             HORAS
-        ========================= -->
+    <section
+        id="abaHoras"
+        class="section">
 
-        <section id="abaHoras">
+        <div class="section-title">
+            Horas baixadas setor
+            <span id="tituloSetor">
+                A
+            </span>
+        </div>
 
-            <div
-                id="listaHoras"
-                class="loading">
-                Carregando...
+
+        <div id="listaHoras"></div>
+
+
+        <!-- REVISÃO -->
+
+        <div
+            class="review-card"
+            id="reviewCard">
+
+            <div class="review-title">
+                Fechamento do turno
             </div>
 
-
-            <div
-                id="fechamento"
-                class="closing-card hidden">
-
-                <h2>
-                    Fechamento do turno
-                </h2>
-
-                <p class="closing-subtitle">
-                    Texto pronto para copiar e enviar.
-                </p>
-
-                <textarea
-                    id="textoFechamento"
-                    class="closing-text"
-                    readonly>
-                </textarea>
-
-
-                <button
-                    class="copy-btn"
-                    onclick="copiarFechamento()">
-                    Copiar horas
-                </button>
-
+            <div class="review-subtitle">
+                Revise os apontamentos antes de liberar o fechamento.
             </div>
 
-        </section>
+            <button
+                class="review-button"
+                id="reviewButton"
+                onclick="marcarRevisado()">
+                Revisado ✓
+            </button>
+
+        </div>
 
 
-        <!-- =========================
-             DRIVE
-        ========================= -->
+        <!-- FECHAMENTO -->
 
-        <section
-            id="abaDrive"
-            class="hidden">
+        <div
+            class="closing-card hidden"
+            id="closingCard">
 
-            <div
-                id="listaDrive"
-                class="loading">
-                Carregando...
+            <div class="closing-title">
+                Fechamento do setor
             </div>
 
-        </section>
+            <div class="closing-subtitle">
+                Texto pronto para compartilhar.
+            </div>
 
-    </main>
+            <textarea
+                id="textoFechamento"
+                class="closing-text"
+                readonly>
+            </textarea>
 
+            <button
+                class="send-button"
+                onclick="enviarWhatsApp()">
+                Enviar
+            </button>
+
+            <button
+                class="copy-closing"
+                onclick="copiarFechamento()">
+                Copiar fechamento
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DRIVE
+    ====================================================== -->
+
+    <section
+        id="abaDrive"
+        class="section hidden">
+
+        <div class="section-title">
+            Problemas do setor
+        </div>
+
+        <div id="listaDrive"></div>
+
+    </section>
+
+</main>
+
+
+<div
+    class="toast"
+    id="toast">
 </div>
 
 
 <div
-    id="toast"
-    class="toast">
+    class="loading hidden"
+    id="loading">
+
+    <div class="loading-box">
+        Carregando...
+    </div>
+
 </div>
 
 
 <script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
 
 const SUPABASE_URL =
     "https://icajmncojvidhrqlbevq.supabase.co";
@@ -876,6 +1137,22 @@ const supabaseClient =
         SUPABASE_KEY
     );
 
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+let currentUser = null;
+let currentProfile = null;
+
+let dados = [];
+
+let maquinaAberta = null;
+
+
+/* =========================================================
+   METAS
+========================================================= */
 
 const shiftTargets = {
 
@@ -891,100 +1168,401 @@ const shiftTargets = {
 };
 
 
-let session = null;
-let perfil = null;
-let dados = [];
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const dataInput =
+    document.getElementById("data");
+
+const turnoInput =
+    document.getElementById("turno");
+
+const setorInput =
+    document.getElementById("setor");
+
+const listaHoras =
+    document.getElementById("listaHoras");
+
+const listaDrive =
+    document.getElementById("listaDrive");
+
+const closingCard =
+    document.getElementById("closingCard");
+
+const reviewCard =
+    document.getElementById("reviewCard");
+
+const textoFechamento =
+    document.getElementById("textoFechamento");
 
 
-/* =========================
-   INICIALIZAÇÃO
-========================= */
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
+let toastTimer = null;
 
-        const hoje =
-            new Date();
+function mostrarToast(
+    mensagem
+){
 
+    const toast =
+        document.getElementById("toast");
 
-        const ano =
-            hoje.getFullYear();
+    toast.textContent =
+        mensagem;
 
+    toast.classList.add("show");
 
-        const mes =
-            String(
-                hoje.getMonth() + 1
-            ).padStart(2,"0");
+    clearTimeout(
+        toastTimer
+    );
 
+    toastTimer =
+        setTimeout(
+            () => {
 
-        const dia =
-            String(
-                hoje.getDate()
-            ).padStart(2,"0");
+                toast.classList.remove(
+                    "show"
+                );
 
+            },
+            2300
+        );
 
-        document.getElementById(
-            "data"
-        ).value =
-            `${ano}-${mes}-${dia}`;
-
-
-        document
-            .getElementById("data")
-            .addEventListener(
-                "change",
-                carregarDados
-            );
+}
 
 
-        document
-            .getElementById("turno")
-            .addEventListener(
-                "change",
-                carregarDados
-            );
+function showLoading(
+    show
+){
+
+    document
+        .getElementById("loading")
+        .classList.toggle(
+            "hidden",
+            !show
+        );
+
+}
 
 
-        document
-            .getElementById("setor")
-            .addEventListener(
-                "change",
-                carregarDados
-            );
+function escapeHtml(
+    value
+){
 
+    if(
+        value === null ||
+        value === undefined
+    ){
 
-        await verificarAcesso();
+        return "";
 
     }
-);
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
 
 
-/* =========================
+function normalizarMaquina(
+    valor
+){
+
+    if(
+        valor === null ||
+        valor === undefined ||
+        valor === ""
+    ){
+
+        return null;
+
+    }
+
+    let texto =
+        String(valor)
+            .trim()
+            .toUpperCase();
+
+    texto =
+        texto.replace(
+            /^M/,
+            ""
+        );
+
+    const numero =
+        Number(texto);
+
+    if(
+        !Number.isInteger(numero) ||
+        numero <= 0
+    ){
+
+        return null;
+
+    }
+
+    return numero;
+
+}
+
+
+function formatMachine(
+    valor
+){
+
+    const numero =
+        normalizarMaquina(
+            valor
+        );
+
+    if(
+        numero === null
+    ){
+
+        return "M--";
+
+    }
+
+    return `M${String(
+        numero
+    ).padStart(2,"0")}`;
+
+}
+
+
+function parseTime(
+    value
+){
+
+    if(
+        value === null ||
+        value === undefined ||
+        value === ""
+    ){
+
+        return 0;
+
+    }
+
+    const texto =
+        String(value)
+            .trim();
+
+    if(
+        /^\d{1,3}:\d{2}$/.test(texto)
+    ){
+
+        const partes =
+            texto.split(":");
+
+        const horas =
+            Number(partes[0]);
+
+        const minutos =
+            Number(partes[1]);
+
+        if(
+            minutos > 59
+        ){
+
+            return 0;
+
+        }
+
+        return (
+            horas * 60 +
+            minutos
+        );
+
+    }
+
+    const numero =
+        Number(texto);
+
+    return Number.isFinite(numero)
+        ? numero
+        : 0;
+
+}
+
+
+function formatMinutes(
+    minutes
+){
+
+    minutes =
+        Number(minutes) || 0;
+
+    const negativo =
+        minutes < 0;
+
+    minutes =
+        Math.abs(minutes);
+
+    const horas =
+        Math.floor(
+            minutes / 60
+        );
+
+    const minutos =
+        minutes % 60;
+
+    const resultado =
+        `${String(
+            horas
+        ).padStart(2,"0")}:${String(
+            minutos
+        ).padStart(2,"0")}`;
+
+    return negativo
+        ? `-${resultado}`
+        : resultado;
+
+}
+
+
+function todayLocal(){
+
+    const now =
+        new Date();
+
+    const ano =
+        now.getFullYear();
+
+    const mes =
+        String(
+            now.getMonth() + 1
+        ).padStart(2,"0");
+
+    const dia =
+        String(
+            now.getDate()
+        ).padStart(2,"0");
+
+    return `${ano}-${mes}-${dia}`;
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function getStatusClass(
+    totalMinutes
+){
+
+    const target =
+        shiftTargets[
+            turnoInput.value
+        ];
+
+    if(
+        totalMinutes >= target
+    ){
+
+        return "status-green";
+
+    }
+
+    if(
+        totalMinutes >= target - 48
+    ){
+
+        return "status-yellow";
+
+    }
+
+    return "status-red";
+
+}
+
+
+function getStatusDotClass(
+    totalMinutes
+){
+
+    const target =
+        shiftTargets[
+            turnoInput.value
+        ];
+
+    if(
+        totalMinutes >= target
+    ){
+
+        return "status-dot-green";
+
+    }
+
+    if(
+        totalMinutes >= target - 48
+    ){
+
+        return "status-dot-yellow";
+
+    }
+
+    return "status-dot-red";
+
+}
+
+
+/* =========================================================
    AUTENTICAÇÃO
-========================= */
+========================================================= */
 
 async function verificarAcesso(){
 
     const {
         data:{
-            session:currentSession
+            session
         }
     } =
-        await supabaseClient.auth.getSession();
+        await supabaseClient
+            .auth
+            .getSession();
 
-
-    if(!currentSession){
+    if(
+        !session
+    ){
 
         window.location.href =
             "index.html";
 
-        return;
+        return false;
+
     }
 
-
-    session =
-        currentSession;
+    currentUser =
+        session.user;
 
 
     const {
@@ -994,27 +1572,42 @@ async function verificarAcesso(){
         await supabaseClient
             .from("usuarios")
             .select("*")
-            .eq("id",session.user.id)
-            .eq("ativo",true)
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .eq(
+                "ativo",
+                true
+            )
             .single();
 
 
-    if(error || !usuario){
+    if(
+        error ||
+        !usuario
+    ){
 
         alert(
             "Usuário sem cadastro no sistema."
         );
 
-        await supabaseClient.auth.signOut();
+        await supabaseClient
+            .auth
+            .signOut();
 
         window.location.href =
             "index.html";
 
-        return;
+        return false;
+
     }
 
 
-    if(usuario.perfil !== "supervisor"){
+    if(
+        usuario.perfil !==
+        "supervisor"
+    ){
 
         alert(
             "Acesso restrito ao supervisor."
@@ -1023,140 +1616,227 @@ async function verificarAcesso(){
         window.location.href =
             "lider.html";
 
-        return;
+        return false;
+
     }
 
 
-    perfil =
+    currentProfile =
         usuario;
 
 
     document.getElementById(
-        "userName"
+        "supervisorName"
     ).textContent =
-        usuario.nome;
+        usuario.nome ||
+        "Supervisor";
 
 
-    await carregarDados();
+    const initials =
+        String(
+            usuario.nome ||
+            "U"
+        )
+        .split(" ")
+        .filter(Boolean)
+        .slice(0,2)
+        .map(
+            nome =>
+                nome[0]
+                    .toUpperCase()
+        )
+        .join("");
+
+
+    document.getElementById(
+        "userAvatar"
+    ).textContent =
+        initials ||
+        "U";
+
+
+    return true;
 
 }
 
 
-/* =========================
-   CARREGAR DADOS
-========================= */
+/* =========================================================
+   CARREGAMENTO
+========================================================= */
 
 async function carregarDados(){
 
     const data =
-        document.getElementById(
-            "data"
-        ).value;
-
+        dataInput.value;
 
     const turno =
-        document.getElementById(
-            "turno"
-        ).value;
-
+        turnoInput.value;
 
     const setor =
-        document.getElementById(
-            "setor"
-        ).value;
+        setorInput.value;
 
 
-    if(!data || !turno || !setor){
+    if(
+        !data ||
+        !turno ||
+        !setor
+    ){
 
         return;
+
     }
 
 
-    /* =========================
-       ESTADO DE CARREGAMENTO
-    ========================= */
+    showLoading(true);
+
+    dados = [];
+
+    maquinaAberta = null;
+
+    resetarRevisao();
+
+
+    listaHoras.innerHTML =
+        "";
+
+    listaDrive.innerHTML =
+        "";
+
 
     document.getElementById(
-        "listaHoras"
-    ).innerHTML =
-        `<div class="loading">
-            Carregando...
-        </div>`;
+        "tituloSetor"
+    ).textContent =
+        setor;
 
 
-    document.getElementById(
-        "listaDrive"
-    ).innerHTML =
-        `<div class="loading">
-            Carregando...
-        </div>`;
+    try{
 
+        /*
+         * O líder grava os apontamentos
+         * dentro de public.apontamentos.
+         *
+         * Filtramos simultaneamente:
+         *
+         * DATA
+         * TURNO
+         * SETOR
+         */
 
-    document
-        .getElementById("fechamento")
-        .classList.add("hidden");
-
-
-    /*
-       IMPORTANTE:
-
-       A consulta agora filtra
-       simultaneamente:
-
-       DATA
-       TURNO
-       SETOR
-
-       Isso impede que apontamentos
-       de outro setor apareçam.
-    */
-
-    const {
-        data:turnos,
-        error
-    } =
-        await supabaseClient
-            .from("turnos")
-            .select(`
-                id,
-                data,
-                turno,
-                setor,
-                lider_id,
-                usuarios (
-                    nome
-                ),
-                apontamentos (
+        const {
+            data:apontamentos,
+            error
+        } =
+            await supabaseClient
+                .from("apontamentos")
+                .select(`
                     id,
+                    data,
+                    turno,
+                    setor,
                     maquina,
+                    lider_id,
                     hora_boa,
                     reposicao,
                     total_baixado,
                     saldo,
                     observacao,
                     nota_supervisor,
-                    ocorrencias (
-                        id,
-                        categoria,
-                        descricao
+                    ocorrencias,
+                    usuarios (
+                        nome
                     )
+                `)
+                .eq(
+                    "data",
+                    data
                 )
-            `)
-            .eq(
-                "data",
-                data
+                .eq(
+                    "turno",
+                    turno
+                )
+                .eq(
+                    "setor",
+                    setor
+                )
+                .order(
+                    "maquina",
+                    {
+                        ascending:true
+                    }
+                );
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        /*
+         * Mantém somente registros
+         * realmente pertencentes ao
+         * contexto selecionado.
+         */
+
+        const mapa =
+            new Map();
+
+
+        for(
+            const item of
+            (apontamentos || [])
+        ){
+
+            const maquina =
+                normalizarMaquina(
+                    item.maquina
+                );
+
+
+            if(
+                maquina === null
+            ){
+
+                continue;
+
+            }
+
+
+            mapa.set(
+                maquina,
+                {
+
+                    ...item,
+
+                    maquina:maquina,
+
+                    lider_nome:
+                        item.usuarios?.nome ||
+                        "—"
+
+                }
+            );
+
+        }
+
+
+        dados =
+            Array.from(
+                mapa.values()
             )
-            .eq(
-                "turno",
-                turno
-            )
-            .eq(
-                "setor",
-                setor
+            .sort(
+                (a,b) =>
+                    a.maquina -
+                    b.maquina
             );
 
 
-    if(error){
+        renderHoras();
+
+        renderDrive();
+
+    }catch(error){
 
         console.error(
             "Erro Supabase:",
@@ -1164,159 +1844,54 @@ async function carregarDados(){
         );
 
 
-        document.getElementById(
-            "listaHoras"
-        ).innerHTML =
-            `<div class="empty">
-                Erro ao carregar os dados.
+        listaHoras.innerHTML = `
+
+            <div class="empty">
+
+                Não foi possível carregar os apontamentos.
+
                 <br><br>
+
                 ${escapeHtml(
                     error.message ||
                     "Erro desconhecido."
                 )}
-            </div>`;
+
+            </div>
+
+        `;
 
 
-        document.getElementById(
-            "listaDrive"
-        ).innerHTML =
-            `<div class="empty">
-                Erro ao carregar os dados.
-            </div>`;
+        listaDrive.innerHTML = `
 
+            <div class="empty">
 
-        return;
-    }
+                Não foi possível carregar os problemas.
 
+            </div>
 
-    dados = [];
+        `;
 
+    }finally{
 
-    /*
-       Cada turno retornado já pertence
-       ao setor selecionado.
-    */
-
-    for(
-        const turnoItem of
-        (turnos || [])
-    ){
-
-        /*
-           Proteção adicional no frontend.
-
-           Mesmo que futuramente a consulta
-           seja alterada, não deixamos passar
-           um turno de outro setor.
-        */
-
-        if(
-            turnoItem.setor !== setor
-        ){
-
-            continue;
-        }
-
-
-        for(
-            const apontamento of
-            (turnoItem.apontamentos || [])
-        ){
-
-            dados.push({
-
-                ...apontamento,
-
-                lider_nome:
-                    turnoItem.usuarios?.nome ||
-                    "—",
-
-                turno_id:
-                    turnoItem.id,
-
-                setor:
-                    turnoItem.setor
-
-            });
-
-        }
+        showLoading(false);
 
     }
-
-
-    /*
-       Caso mais de um líder tenha apontado
-       a mesma máquina no mesmo setor/turno,
-       usamos o último registro encontrado.
-    */
-
-    const mapa =
-        new Map();
-
-
-    for(
-        const item of dados
-    ){
-
-        const maquinaNumero =
-            normalizarMaquina(
-                item.maquina
-            );
-
-
-        if(
-            maquinaNumero === null
-        ){
-
-            continue;
-        }
-
-
-        mapa.set(
-            maquinaNumero,
-            {
-                ...item,
-                maquina:
-                    maquinaNumero
-            }
-        );
-
-    }
-
-
-    dados =
-        Array.from(
-            mapa.values()
-        )
-        .sort(
-            (a,b) =>
-                a.maquina -
-                b.maquina
-        );
-
-
-    renderHoras();
-
-    renderDrive();
 
 }
 
 
-/* =========================
-   HORAS
-========================= */
+/* =========================================================
+   RENDER HORAS
+========================================================= */
 
 function renderHoras(){
 
-    const container =
-        document.getElementById(
-            "listaHoras"
-        );
+    if(
+        !dados.length
+    ){
 
-
-    if(!dados.length){
-
-        container.innerHTML = `
+        listaHoras.innerHTML = `
 
             <div class="empty">
 
@@ -1334,72 +1909,334 @@ function renderHoras(){
 
         `;
 
+        reviewCard.classList.add(
+            "hidden"
+        );
 
-        document
-            .getElementById("fechamento")
-            .classList.add("hidden");
-
+        closingCard.classList.add(
+            "hidden"
+        );
 
         return;
+
     }
 
 
-    container.innerHTML = "";
+    reviewCard.classList.remove(
+        "hidden"
+    );
 
 
-    for(
-        const item of dados
-    ){
+    listaHoras.innerHTML =
+        "";
 
-        const card =
-            document.createElement(
-                "div"
+
+    dados.forEach(
+        item => {
+
+            const card =
+                criarCardMaquina(
+                    item
+                );
+
+            listaHoras.appendChild(
+                card
             );
 
+        }
+    );
 
-        card.className =
-            "machine-card";
-
-
-        const total =
-            Number(
-                item.total_baixado || 0
-            );
+}
 
 
-        const status =
-            getStatusClass(
-                total
-            );
+/* =========================================================
+   CARD DA MÁQUINA
+========================================================= */
+
+function criarCardMaquina(
+    item
+){
+
+    const card =
+        document.createElement(
+            "div"
+        );
 
 
-        const maquina =
-            formatMachine(
-                item.maquina
-            );
+    card.className =
+        "machine-card";
 
 
-        card.innerHTML = `
+    card.dataset.id =
+        item.id;
 
-            <div class="machine-header">
 
-                <div class="machine-title">
-                    ${maquina}
+    const total =
+        Number(
+            item.total_baixado ||
+            0
+        );
+
+
+    const status =
+        getStatusClass(
+            total
+        );
+
+
+    const dotStatus =
+        getStatusDotClass(
+            total
+        );
+
+
+    const maquina =
+        formatMachine(
+            item.maquina
+        );
+
+
+    const resumo =
+        item.nota_supervisor
+            ? "Nota do supervisor"
+            : item.observacao
+                ? "Com observação"
+                : `Líder: ${item.lider_nome}`;
+
+
+    card.innerHTML = `
+
+        <button
+            class="machine-card-header"
+            onclick="abrirCard(${item.id})">
+
+            <div class="machine-left">
+
+                <div
+                    class="machine-dot ${dotStatus}">
                 </div>
 
-                <div class="leader-name">
-                    Líder:
-                    ${escapeHtml(
-                        item.lider_nome
+                <div>
+
+                    <div class="machine-name">
+                        ${maquina}
+                    </div>
+
+                    <div class="machine-summary">
+                        ${escapeHtml(resumo)}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="machine-right">
+
+                <div
+                    class="machine-total ${status}">
+                    ${formatMinutes(total)}
+                </div>
+
+                <div class="chevron">
+                    ›
+                </div>
+
+            </div>
+
+        </button>
+
+
+        <div
+            class="machine-details hidden"
+            id="details-${item.id}">
+
+            ${criarDetalhes(item)}
+
+        </div>
+
+    `;
+
+
+    return card;
+
+}
+
+
+/* =========================================================
+   DETALHES
+========================================================= */
+
+function criarDetalhes(
+    item
+){
+
+    const horaBoa =
+        formatMinutes(
+            item.hora_boa
+        );
+
+
+    const reposicao =
+        formatMinutes(
+            item.reposicao
+        );
+
+
+    const saldo =
+        formatMinutes(
+            item.saldo
+        );
+
+
+    return `
+
+        <div class="details-grid">
+
+            <div class="detail-box">
+
+                <div class="detail-label">
+                    Hora boa
+                </div>
+
+                <div class="detail-value">
+                    ${horaBoa}
+                </div>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <div class="detail-label">
+                    Reposição
+                </div>
+
+                <div class="detail-value">
+                    ${reposicao}
+                </div>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <div class="detail-label">
+                    Total baixado
+                </div>
+
+                <div class="detail-value">
+                    ${formatMinutes(
+                        item.total_baixado
                     )}
                 </div>
 
             </div>
 
 
-            <div class="hours-grid">
+            <div class="detail-box">
 
-                <div class="field">
+                <div class="detail-label">
+                    Saldo
+                </div>
+
+                <div class="detail-value">
+                    ${saldo}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        ${
+            item.observacao
+                ? `
+
+                <div class="observation-box">
+
+                    <div class="observation-title">
+                        Observação do líder
+                    </div>
+
+                    <div class="observation-text">
+                        ${escapeHtml(
+                            item.observacao
+                        )}
+                    </div>
+
+                </div>
+
+                `
+                : ""
+        }
+
+
+        ${
+            item.nota_supervisor
+                ? `
+
+                <div class="supervisor-note">
+
+                    <div class="supervisor-note-title">
+                        Nota do supervisor
+                    </div>
+
+                    <div class="supervisor-note-text">
+                        ${escapeHtml(
+                            item.nota_supervisor
+                        )}
+                    </div>
+
+                </div>
+
+                `
+                : ""
+        }
+
+
+        <div class="edit-actions">
+
+            <button
+                class="edit-button"
+                onclick="abrirEditor(
+                    ${item.id},
+                    event
+                )">
+
+                Editar horas
+
+            </button>
+
+
+            <button
+                class="note-button"
+                onclick="abrirEditorNota(
+                    ${item.id},
+                    event
+                )">
+
+                ${item.nota_supervisor
+                    ? "Editar nota"
+                    : "Fazer nota"}
+
+            </button>
+
+        </div>
+
+
+        <div
+            class="editor hidden"
+            id="editor-${item.id}">
+
+            <div class="editor-title">
+                Editar apontamento
+            </div>
+
+
+            <div class="editor-grid">
+
+                <div class="editor-field">
 
                     <label>
                         Hora boa
@@ -1407,15 +2244,16 @@ function renderHoras(){
 
                     <input
                         type="text"
+                        data-editor="hora_boa"
                         value="${formatMinutes(
                             item.hora_boa
                         )}"
-                        data-field="hora_boa">
+                        placeholder="00:00">
 
                 </div>
 
 
-                <div class="field">
+                <div class="editor-field">
 
                     <label>
                         Reposição
@@ -1423,293 +2261,453 @@ function renderHoras(){
 
                     <input
                         type="text"
+                        data-editor="reposicao"
                         value="${formatMinutes(
                             item.reposicao
                         )}"
-                        data-field="reposicao">
+                        placeholder="00:00">
 
                 </div>
 
 
-                <div class="total-box ${status}">
+                <div class="editor-field">
 
-                    <div class="total-label">
-                        Total baixado
-                    </div>
+                    <label>
+                        Saldo
+                    </label>
 
-                    <div
-                        class="total-value"
-                        data-total>
-                        ${formatMinutes(
-                            item.total_baixado
-                        )}
-                    </div>
+                    <input
+                        type="text"
+                        data-editor="saldo"
+                        value="${formatMinutes(
+                            item.saldo
+                        )}"
+                        placeholder="00:00">
 
                 </div>
 
             </div>
 
 
-            <label class="section-label">
-                Saldo
-            </label>
+            <div class="editor-note">
 
-            <input
-                type="text"
-                value="${formatMinutes(
-                    item.saldo
-                )}"
-                data-field="saldo"
-                placeholder="Ex.: 05:12">
+                <div class="editor-field">
 
+                    <label>
+                        Nota do supervisor
+                    </label>
 
-            <label class="section-label">
-                Nota do supervisor
-            </label>
+                    <textarea
+                        data-editor="nota"
+                        placeholder="Digite uma nota, se necessário...">${escapeHtml(
+                            item.nota_supervisor || ""
+                        )}</textarea>
 
-            <textarea
-                rows="2"
-                data-field="nota_supervisor"
-                placeholder="Ex.: ligada de máquina">${escapeHtml(
-                    item.nota_supervisor || ""
-                )}</textarea>
-
-
-            ${
-                item.observacao
-                ?
-                `
-                <label class="section-label">
-                    Observação do líder
-                </label>
-
-                <div class="leader-observation">
-                    ${escapeHtml(
-                        item.observacao
-                    )}
                 </div>
-                `
-                :
-                ""
-            }
+
+            </div>
 
 
-            <div class="save-row">
+            <div class="editor-actions">
 
                 <button
-                    class="save-btn"
-                    onclick="salvarSupervisor(
+                    class="editor-cancel"
+                    onclick="fecharEditor(
                         ${item.id},
-                        this
+                        event
                     )">
-                    Salvar alterações
+
+                    Cancelar
+
                 </button>
 
 
                 <button
-                    class="reset-btn"
-                    onclick="carregarDados()">
-                    Atualizar
+                    class="editor-save"
+                    onclick="salvarEdicao(
+                        ${item.id},
+                        event
+                    )">
+
+                    Salvar
+
                 </button>
 
             </div>
 
-        `;
+        </div>
+
+    `;
+
+}
 
 
-        const inputs =
-            card.querySelectorAll(
-                'input[data-field="hora_boa"], input[data-field="reposicao"]'
-            );
+/* =========================================================
+   ABRIR CARD
+========================================================= */
+
+function abrirCard(
+    id
+){
+
+    const card =
+        document.querySelector(
+            `.machine-card[data-id="${id}"]`
+        );
 
 
-        inputs.forEach(
-            input => {
+    if(!card){
+        return;
+    }
 
-                input.addEventListener(
-                    "input",
-                    () =>
-                        atualizarTotalCard(
-                            card
-                        )
-                );
+
+    const details =
+        document.getElementById(
+            `details-${id}`
+        );
+
+
+    if(!details){
+        return;
+    }
+
+
+    const estavaAberto =
+        !details.classList.contains(
+            "hidden"
+        );
+
+
+    document
+        .querySelectorAll(
+            ".machine-card"
+        )
+        .forEach(
+            outro => {
+
+                if(
+                    outro !== card
+                ){
+
+                    outro.classList.remove(
+                        "open"
+                    );
+
+                    const outroDetails =
+                        outro.querySelector(
+                            ".machine-details"
+                        );
+
+                    if(outroDetails){
+
+                        outroDetails.classList.add(
+                            "hidden"
+                        );
+
+                    }
+
+                }
 
             }
         );
 
 
-        container.appendChild(
-            card
+    if(
+        estavaAberto
+    ){
+
+        card.classList.remove(
+            "open"
+        );
+
+        details.classList.add(
+            "hidden"
+        );
+
+        maquinaAberta =
+            null;
+
+    }else{
+
+        card.classList.add(
+            "open"
+        );
+
+        details.classList.remove(
+            "hidden"
+        );
+
+        maquinaAberta =
+            id;
+
+    }
+
+}
+
+
+/* =========================================================
+   EDITOR
+========================================================= */
+
+function abrirEditor(
+    id,
+    event
+){
+
+    if(event){
+        event.stopPropagation();
+    }
+
+
+    const details =
+        document.getElementById(
+            `details-${id}`
+        );
+
+
+    if(!details){
+        return;
+    }
+
+
+    details.classList.remove(
+        "hidden"
+    );
+
+
+    const editor =
+        document.getElementById(
+            `editor-${id}`
+        );
+
+
+    if(editor){
+
+        editor.classList.remove(
+            "hidden"
+        );
+
+        const input =
+            editor.querySelector(
+                '[data-editor="hora_boa"]'
+            );
+
+        if(input){
+            input.focus();
+        }
+
+    }
+
+}
+
+
+function abrirEditorNota(
+    id,
+    event
+){
+
+    if(event){
+        event.stopPropagation();
+    }
+
+
+    const details =
+        document.getElementById(
+            `details-${id}`
+        );
+
+
+    if(!details){
+        return;
+    }
+
+
+    details.classList.remove(
+        "hidden"
+    );
+
+
+    const editor =
+        document.getElementById(
+            `editor-${id}`
+        );
+
+
+    if(editor){
+
+        editor.classList.remove(
+            "hidden"
+        );
+
+
+        const textarea =
+            editor.querySelector(
+                '[data-editor="nota"]'
+            );
+
+
+        if(textarea){
+
+            textarea.focus();
+
+            textarea.selectionStart =
+                textarea.value.length;
+
+        }
+
+    }
+
+}
+
+
+function fecharEditor(
+    id,
+    event
+){
+
+    if(event){
+        event.stopPropagation();
+    }
+
+
+    const editor =
+        document.getElementById(
+            `editor-${id}`
+        );
+
+
+    if(editor){
+
+        editor.classList.add(
+            "hidden"
         );
 
     }
 
-
-    gerarFechamento();
-
 }
 
 
-/* =========================
-   ATUALIZA TOTAL NO CARD
-========================= */
+/* =========================================================
+   SALVAR EDIÇÃO
+========================================================= */
 
-function atualizarTotalCard(
-    card
-){
-
-    const horaBoa =
-        parseTime(
-            card.querySelector(
-                'input[data-field="hora_boa"]'
-            ).value
-        );
-
-
-    const reposicao =
-        parseTime(
-            card.querySelector(
-                'input[data-field="reposicao"]'
-            ).value
-        );
-
-
-    const total =
-        horaBoa +
-        reposicao;
-
-
-    const totalBox =
-        card.querySelector(
-            ".total-box"
-        );
-
-
-    const totalValue =
-        card.querySelector(
-            "[data-total]"
-        );
-
-
-    totalValue.textContent =
-        formatMinutes(
-            total
-        );
-
-
-    totalBox.classList.remove(
-        "status-green",
-        "status-yellow",
-        "status-red"
-    );
-
-
-    totalBox.classList.add(
-        getStatusClass(
-            total
-        )
-    );
-
-}
-
-
-/* =========================
-   SALVAR ALTERAÇÕES
-========================= */
-
-async function salvarSupervisor(
+async function salvarEdicao(
     id,
-    button
+    event
 ){
 
-    const card =
-        button.closest(
-            ".machine-card"
+    if(event){
+        event.stopPropagation();
+    }
+
+
+    const editor =
+        document.getElementById(
+            `editor-${id}`
         );
+
+
+    if(!editor){
+        return;
+    }
 
 
     const horaBoa =
         parseTime(
-            card.querySelector(
-                'input[data-field="hora_boa"]'
+            editor.querySelector(
+                '[data-editor="hora_boa"]'
             ).value
         );
 
 
     const reposicao =
         parseTime(
-            card.querySelector(
-                'input[data-field="reposicao"]'
+            editor.querySelector(
+                '[data-editor="reposicao"]'
             ).value
         );
-
-
-    const total =
-        horaBoa +
-        reposicao;
 
 
     const saldo =
         parseTime(
-            card.querySelector(
-                'input[data-field="saldo"]'
+            editor.querySelector(
+                '[data-editor="saldo"]'
             ).value
         );
 
 
     const nota =
-        card.querySelector(
-            'textarea[data-field="nota_supervisor"]'
-        ).value.trim();
+        editor.querySelector(
+            '[data-editor="nota"]'
+        ).value
+            .trim();
 
 
-    button.disabled =
+    const total =
+        horaBoa +
+        reposicao;
+
+
+    const botao =
+        editor.querySelector(
+            ".editor-save"
+        );
+
+
+    botao.disabled =
         true;
 
-
-    button.textContent =
+    botao.textContent =
         "Salvando...";
 
 
-    const {
-        error
-    } =
-        await supabaseClient
-            .from("apontamentos")
-            .update({
+    try{
 
-                hora_boa:
-                    horaBoa,
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("apontamentos")
+                .update({
 
-                reposicao:
-                    reposicao,
+                    hora_boa:
+                        horaBoa,
 
-                total_baixado:
-                    total,
+                    reposicao:
+                        reposicao,
 
-                saldo:
-                    saldo,
+                    total_baixado:
+                        total,
 
-                nota_supervisor:
-                    nota ||
-                    null
+                    saldo:
+                        saldo,
 
-            })
-            .eq(
-                "id",
-                id
-            );
+                    nota_supervisor:
+                        nota ||
+                        null
 
-
-    button.disabled =
-        false;
+                })
+                .eq(
+                    "id",
+                    id
+                );
 
 
-    button.textContent =
-        "Salvar alterações";
+        if(error){
+
+            throw error;
+
+        }
 
 
-    if(error){
+        mostrarToast(
+            "Apontamento atualizado ✓"
+        );
+
+
+        await carregarDados();
+
+    }catch(error){
 
         console.error(
             "Erro ao salvar:",
@@ -1718,140 +2716,34 @@ async function salvarSupervisor(
 
 
         mostrarToast(
-            "Erro ao salvar alterações."
+            "Não foi possível salvar."
         );
 
 
-        return;
+    }finally{
+
+        botao.disabled =
+            false;
+
+        botao.textContent =
+            "Salvar";
+
     }
-
-
-    mostrarToast(
-        "Apontamento atualizado ✓"
-    );
-
-
-    await carregarDados();
 
 }
 
 
-/* =========================
-   FECHAMENTO
-========================= */
-
-function gerarFechamento(){
-
-    if(!dados.length){
-
-        document
-            .getElementById("fechamento")
-            .classList.add("hidden");
-
-        return;
-    }
-
-
-    const setor =
-        document.getElementById(
-            "setor"
-        ).value;
-
-
-    const linhas = [];
-
-
-    linhas.push(
-        `Horas baixadas setor ${setor}`
-    );
-
-
-    linhas.push("");
-
-
-    for(
-        const item of dados
-    ){
-
-        const maquina =
-            formatMachine(
-                item.maquina
-            );
-
-
-        const total =
-            formatMinutes(
-                item.total_baixado
-            );
-
-
-        let linha =
-            `${maquina} - ${total}`;
-
-
-        if(
-            item.saldo !== null &&
-            item.saldo !== undefined &&
-            Number(item.saldo) !== 0
-        ){
-
-            linha +=
-                ` (Saldo - ${formatMinutes(
-                    item.saldo
-                )})`;
-
-        }
-
-
-        if(
-            item.nota_supervisor
-        ){
-
-            linha +=
-                ` — ${item.nota_supervisor}`;
-
-        }
-
-
-        linhas.push(
-            linha
-        );
-
-    }
-
-
-    document.getElementById(
-        "textoFechamento"
-    ).value =
-        linhas.join(
-            "\n"
-        );
-
-
-    document
-        .getElementById("fechamento")
-        .classList.remove(
-            "hidden"
-        );
-
-}
-
-
-/* =========================
+/* =========================================================
    DRIVE
-========================= */
+========================================================= */
 
 function renderDrive(){
 
-    const container =
-        document.getElementById(
-            "listaDrive"
-        );
+    if(
+        !dados.length
+    ){
 
-
-    if(!dados.length){
-
-        container.innerHTML = `
+        listaDrive.innerHTML = `
 
             <div class="empty">
 
@@ -1869,58 +2761,69 @@ function renderDrive(){
 
         `;
 
-
         return;
+
     }
 
 
-    container.innerHTML = "";
+    const maquinasComProblemas =
+        dados.filter(
+            item =>
+                Array.isArray(
+                    item.ocorrencias
+                ) &&
+                item.ocorrencias.length > 0
+        );
 
 
-    for(
-        const item of dados
+    if(
+        !maquinasComProblemas.length
     ){
 
-        const card =
-            document.createElement(
-                "div"
-            );
+        listaDrive.innerHTML = `
+
+            <div class="empty">
+
+                Nenhum problema registrado
+                neste contexto.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
 
 
-        card.className =
-            "drive-card";
+    listaDrive.innerHTML =
+        "";
 
 
-        const maquina =
-            formatMachine(
-                item.maquina
-            );
+    maquinasComProblemas.forEach(
+        item => {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
 
 
-        const ocorrencias =
-            item.ocorrencias ||
-            [];
+            card.className =
+                "drive-card";
 
 
-        let problemasHTML =
-            "";
+            const maquina =
+                formatMachine(
+                    item.maquina
+                );
 
 
-        if(
-            !ocorrencias.length
-        ){
+            const ocorrencias =
+                item.ocorrencias;
 
-            problemasHTML = `
 
-                <div class="no-problems">
-                    Nenhum problema registrado.
-                </div>
-
-            `;
-
-        }else{
-
-            problemasHTML =
+            const problemas =
                 ocorrencias
                     .map(
                         oc => `
@@ -1930,12 +2833,15 @@ function renderDrive(){
                                 •
                                 <span class="problem-category">
                                     ${escapeHtml(
-                                        oc.categoria
+                                        oc.tipo ||
+                                        oc.categoria ||
+                                        "Outro"
                                     )}
                                 </span>:
 
                                 ${escapeHtml(
-                                    oc.descricao
+                                    oc.descricao ||
+                                    ""
                                 )}
 
                             </div>
@@ -1944,60 +2850,54 @@ function renderDrive(){
                     )
                     .join("");
 
-        }
 
+            card.innerHTML = `
 
-        card.innerHTML = `
+                <div class="drive-header">
 
-            <div class="drive-header">
+                    <div class="drive-dot"></div>
 
-                <div class="drive-title">
-                    ${maquina}
+                    <div class="drive-machine">
+                        ${maquina}
+                    </div>
+
                 </div>
 
-            </div>
 
+                <div class="problem-list">
 
-            ${problemasHTML}
+                    ${problemas}
 
+                </div>
 
-            ${
-                ocorrencias.length
-                ?
-                `
 
                 <button
-                    class="copy-btn"
+                    class="copy-problems"
                     onclick="copiarProblemas(
                         ${item.maquina},
                         this
                     )">
 
-                    Copiar problemas da
-                    ${maquina}
+                    Copiar problemas
 
                 </button>
 
-                `
-                :
-                ""
-            }
-
-        `;
+            `;
 
 
-        container.appendChild(
-            card
-        );
+            listaDrive.appendChild(
+                card
+            );
 
-    }
+        }
+    );
 
 }
 
 
-/* =========================
+/* =========================================================
    COPIAR PROBLEMAS
-========================= */
+========================================================= */
 
 async function copiarProblemas(
     maquinaNumero,
@@ -2029,52 +2929,52 @@ async function copiarProblemas(
         );
 
         return;
+
     }
 
 
     const ocorrencias =
-        item.ocorrencias ||
-        [];
+        Array.isArray(
+            item.ocorrencias
+        )
+            ? item.ocorrencias
+            : [];
 
 
-    if(!ocorrencias.length){
+    if(
+        !ocorrencias.length
+    ){
 
         mostrarToast(
             "Não há problemas registrados."
         );
 
         return;
-    }
-
-
-    const maquina =
-        formatMachine(
-            numero
-        );
-
-
-    const linhas =
-        [
-            maquina,
-            ""
-        ];
-
-
-    for(
-        const oc of ocorrencias
-    ){
-
-        linhas.push(
-            `• ${oc.categoria}: ${oc.descricao}`
-        );
 
     }
 
+
+    /*
+     * IMPORTANTE:
+     *
+     * O número da máquina NÃO entra
+     * no texto copiado.
+     */
 
     const texto =
-        linhas.join(
-            "\n"
-        );
+        ocorrencias
+            .map(
+                oc =>
+                    `• ${
+                        oc.tipo ||
+                        oc.categoria ||
+                        "Outro"
+                    }: ${
+                        oc.descricao ||
+                        ""
+                    }`
+            )
+            .join("\n");
 
 
     try{
@@ -2085,11 +2985,11 @@ async function copiarProblemas(
 
 
         button.textContent =
-            `Problemas da ${maquina} copiados ✓`;
+            "Problemas copiados ✓";
 
 
         mostrarToast(
-            `Problemas da ${maquina} copiados ✓`
+            "Problemas copiados ✓"
         );
 
 
@@ -2097,7 +2997,7 @@ async function copiarProblemas(
             () => {
 
                 button.textContent =
-                    `Copiar problemas da ${maquina}`;
+                    "Copiar problemas";
 
             },
             1800
@@ -2120,16 +3020,277 @@ async function copiarProblemas(
 }
 
 
-/* =========================
+/* =========================================================
+   REVISÃO
+========================================================= */
+
+function resetarRevisao(){
+
+    closingCard.classList.add(
+        "hidden"
+    );
+
+
+    const reviewButton =
+        document.getElementById(
+            "reviewButton"
+        );
+
+
+    reviewButton.classList.remove(
+        "hidden"
+    );
+
+
+    reviewButton.textContent =
+        "Revisado ✓";
+
+
+    const reviewState =
+        document.getElementById(
+            "reviewedState"
+        );
+
+
+    if(reviewState){
+
+        reviewState.remove();
+
+    }
+
+}
+
+
+/*
+ * A revisão é uma etapa da interface.
+ *
+ * Ela libera o fechamento somente
+ * depois do clique do supervisor.
+ */
+
+function marcarRevisado(){
+
+    if(
+        !dados.length
+    ){
+
+        mostrarToast(
+            "Não há apontamentos para revisar."
+        );
+
+        return;
+
+    }
+
+
+    gerarFechamento();
+
+
+    const reviewButton =
+        document.getElementById(
+            "reviewButton"
+        );
+
+
+    reviewButton.classList.add(
+        "hidden"
+    );
+
+
+    const existing =
+        document.getElementById(
+            "reviewedState"
+        );
+
+
+    if(
+        !existing
+    ){
+
+        const state =
+            document.createElement(
+                "div"
+            );
+
+
+        state.id =
+            "reviewedState";
+
+        state.className =
+            "reviewed-state";
+
+
+        state.innerHTML = `
+
+            <span>
+                Revisado ✓
+            </span>
+
+            <button
+                class="reviewed-change"
+                onclick="alterarRevisao()">
+
+                Revisar novamente
+
+            </button>
+
+        `;
+
+
+        reviewCard
+            .querySelector(
+                ".review-subtitle"
+            )
+            .insertAdjacentElement(
+                "afterend",
+                state
+            );
+
+    }
+
+
+    mostrarToast(
+        "Turno revisado ✓"
+    );
+
+}
+
+
+function alterarRevisao(){
+
+    closingCard.classList.add(
+        "hidden"
+    );
+
+
+    const state =
+        document.getElementById(
+            "reviewedState"
+        );
+
+
+    if(state){
+
+        state.remove();
+
+    }
+
+
+    document
+        .getElementById(
+            "reviewButton"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+}
+
+
+/* =========================================================
+   FECHAMENTO
+========================================================= */
+
+function gerarFechamento(){
+
+    const setor =
+        setorInput.value;
+
+
+    const linhas = [];
+
+
+    linhas.push(
+        `Horas baixadas setor ${setor}`
+    );
+
+
+    linhas.push("");
+
+
+    dados.forEach(
+        item => {
+
+            const maquina =
+                formatMachine(
+                    item.maquina
+                );
+
+
+            let linha =
+                `${maquina} - ${
+                    formatMinutes(
+                        item.total_baixado
+                    )
+                }`;
+
+
+            if(
+                item.saldo !== null &&
+                item.saldo !== undefined &&
+                Number(item.saldo) !== 0
+            ){
+
+                linha +=
+                    ` (Saldo - ${
+                        formatMinutes(
+                            item.saldo
+                        )
+                    })`;
+
+            }
+
+
+            if(
+                item.nota_supervisor
+            ){
+
+                linha +=
+                    ` — ${
+                        item.nota_supervisor
+                    }`;
+
+            }
+
+
+            linhas.push(
+                linha
+            );
+
+        }
+    );
+
+
+    textoFechamento.value =
+        linhas.join("\n");
+
+
+    closingCard.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =========================================================
    COPIAR FECHAMENTO
-========================= */
+========================================================= */
 
 async function copiarFechamento(){
 
     const texto =
-        document.getElementById(
-            "textoFechamento"
-        ).value;
+        textoFechamento.value;
+
+
+    if(!texto){
+
+        mostrarToast(
+            "Nenhum fechamento disponível."
+        );
+
+        return;
+
+    }
 
 
     try{
@@ -2140,9 +3301,8 @@ async function copiarFechamento(){
 
 
         mostrarToast(
-            "Horas copiadas ✓"
+            "Fechamento copiado ✓"
         );
-
 
     }catch(error){
 
@@ -2160,9 +3320,45 @@ async function copiarFechamento(){
 }
 
 
-/* =========================
+/* =========================================================
+   WHATSAPP
+========================================================= */
+
+function enviarWhatsApp(){
+
+    const texto =
+        textoFechamento.value;
+
+
+    if(!texto){
+
+        mostrarToast(
+            "Nenhum fechamento disponível."
+        );
+
+        return;
+
+    }
+
+
+    const url =
+        "https://wa.me/?text=" +
+        encodeURIComponent(
+            texto
+        );
+
+
+    window.open(
+        url,
+        "_blank"
+    );
+
+}
+
+
+/* =========================================================
    ABAS
-========================= */
+========================================================= */
 
 function mostrarAba(
     aba
@@ -2173,18 +3369,15 @@ function mostrarAba(
             "abaHoras"
         );
 
-
     const drive =
         document.getElementById(
             "abaDrive"
         );
 
-
     const tabHoras =
         document.getElementById(
             "tabHoras"
         );
-
 
     const tabDrive =
         document.getElementById(
@@ -2200,21 +3393,17 @@ function mostrarAba(
             "hidden"
         );
 
-
         drive.classList.add(
             "hidden"
         );
-
 
         tabHoras.classList.add(
             "active"
         );
 
-
         tabDrive.classList.remove(
             "active"
         );
-
 
     }else{
 
@@ -2222,16 +3411,13 @@ function mostrarAba(
             "hidden"
         );
 
-
         drive.classList.remove(
             "hidden"
         );
 
-
         tabHoras.classList.remove(
             "active"
         );
-
 
         tabDrive.classList.add(
             "active"
@@ -2242,282 +3428,20 @@ function mostrarAba(
 }
 
 
-/* =========================
-   STATUS
-========================= */
-
-function getStatusClass(
-    totalMinutes
-){
-
-    const turno =
-        document.getElementById(
-            "turno"
-        ).value;
-
-
-    const target =
-        shiftTargets[
-            turno
-        ];
-
-
-    if(
-        totalMinutes >=
-        target
-    ){
-
-        return "status-green";
-
-    }
-
-
-    if(
-        totalMinutes >=
-        target - 48
-    ){
-
-        return "status-yellow";
-
-    }
-
-
-    return "status-red";
-
-}
-
-
-/* =========================
-   TEMPO
-========================= */
-
-function parseTime(
-    value
-){
-
-    if(
-        !value
-    ){
-
-        return 0;
-
-    }
-
-
-    value =
-        String(
-            value
-        )
-        .trim()
-        .replace(
-            ",",
-            ":"
-        );
-
-
-    if(
-        value.includes(":")
-    ){
-
-        const parts =
-            value.split(":");
-
-
-        const horas =
-            Number(
-                parts[0]
-            ) || 0;
-
-
-        const minutos =
-            Number(
-                parts[1]
-            ) || 0;
-
-
-        return (
-            horas * 60 +
-            minutos
-        );
-
-    }
-
-
-    const numero =
-        Number(
-            value
-        );
-
-
-    return Number.isFinite(
-        numero
-    )
-        ? numero
-        : 0;
-
-}
-
-
-function formatMinutes(
-    minutes
-){
-
-    minutes =
-        Number(
-            minutes
-        ) || 0;
-
-
-    const negativo =
-        minutes < 0;
-
-
-    minutes =
-        Math.abs(
-            minutes
-        );
-
-
-    const horas =
-        Math.floor(
-            minutes / 60
-        );
-
-
-    const mins =
-        minutes % 60;
-
-
-    const resultado =
-        `${String(
-            horas
-        ).padStart(2,"0")}:${String(
-            mins
-        ).padStart(2,"0")}`;
-
-
-    return negativo
-        ? `-${resultado}`
-        : resultado;
-
-}
-
-
-/* =========================
-   MÁQUINA
-========================= */
-
-function normalizarMaquina(
-    valor
-){
-
-    if(
-        valor === null ||
-        valor === undefined ||
-        valor === ""
-    ){
-
-        return null;
-
-    }
-
-
-    let texto =
-        String(
-            valor
-        )
-        .trim()
-        .toUpperCase();
-
-
-    /*
-       Aceita:
-
-       1
-       01
-       M1
-       M01
-       m01
-    */
-
-    texto =
-        texto.replace(
-            /^M/,
-            ""
-        );
-
-
-    const numero =
-        Number(
-            texto
-        );
-
-
-    if(
-        !Number.isInteger(
-            numero
-        ) ||
-        numero <= 0
-    ){
-
-        return null;
-
-    }
-
-
-    return numero;
-
-}
-
-
-function formatMachine(
-    valor
-){
-
-    const numero =
-        normalizarMaquina(
-            valor
-        );
-
-
-    if(
-        numero === null
-    ){
-
-        return "M--";
-
-    }
-
-
-    return `M${String(
-        numero
-    ).padStart(2,"0")}`;
-
-}
-
-
-/* =========================
-   CONTEXTO ATUAL
-========================= */
+/* =========================================================
+   CONTEXTO
+========================================================= */
 
 function getContextoTexto(){
 
     const data =
-        document.getElementById(
-            "data"
-        ).value;
-
+        dataInput.value;
 
     const turno =
-        document.getElementById(
-            "turno"
-        ).value;
-
+        turnoInput.value;
 
     const setor =
-        document.getElementById(
-            "setor"
-        ).value;
+        setorInput.value;
 
 
     let dataFormatada =
@@ -2550,102 +3474,150 @@ function getContextoTexto(){
 }
 
 
-/* =========================
-   UTILITÁRIOS
-========================= */
+/* =========================================================
+   EVENTOS DOS FILTROS
+========================================================= */
 
-function escapeHtml(
-    value
-){
+dataInput.addEventListener(
+    "change",
+    carregarDados
+);
 
-    if(
-        value === null ||
-        value === undefined
-    ){
 
-        return "";
+turnoInput.addEventListener(
+    "change",
+    carregarDados
+);
+
+
+setorInput.addEventListener(
+    "change",
+    carregarDados
+);
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function sair(){
+
+    const confirmar =
+        confirm(
+            "Deseja sair do sistema?"
+        );
+
+
+    if(!confirmar){
+
+        return;
 
     }
 
 
-    return String(
-        value
-    )
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-    .replace(
-        /</g,
-        "&lt;"
-    )
-    .replace(
-        />/g,
-        "&gt;"
-    )
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-    .replace(
-        /'/g,
-        "&#039;"
-    );
-
-}
+    showLoading(true);
 
 
-function mostrarToast(
-    texto
-){
+    try{
 
-    const toast =
-        document.getElementById(
-            "toast"
+        const {
+            error
+        } =
+            await supabaseClient
+                .auth
+                .signOut();
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        window.location.href =
+            "index.html";
+
+    }catch(error){
+
+        console.error(
+            "Erro ao sair:",
+            error
         );
 
 
-    toast.textContent =
-        texto;
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        window.toastTimer
-    );
-
-
-    window.toastTimer =
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            2000
+        mostrarToast(
+            "Não foi possível sair."
         );
 
+    }finally{
+
+        showLoading(false);
+
+    }
+
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+async function init(){
+
+    showLoading(true);
+
+
+    try{
+
+        const acesso =
+            await verificarAcesso();
+
+
+        if(!acesso){
+
+            return;
+
+        }
+
+
+        dataInput.value =
+            todayLocal();
+
+
+        turnoInput.value =
+            "1º turno";
+
+
+        setorInput.value =
+            "A";
+
+
+        await carregarDados();
+
+    }catch(error){
+
+        console.error(
+            "Erro na inicialização:",
+            error
+        );
+
+
+        mostrarToast(
+            error.message ||
+            "Não foi possível carregar o sistema."
+        );
+
+    }finally{
+
+        showLoading(false);
+
+    }
+
 }
 
 
-/* =========================
-   LOGOUT
-========================= */
-
-async function logout(){
-
-    await supabaseClient.auth.signOut();
-
-    window.location.href =
-        "index.html";
-
-}
+init();
 
 </script>
 
